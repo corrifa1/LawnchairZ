@@ -191,6 +191,9 @@ class PreferenceManager @Inject constructor(
 
     // Keeps launcher animations at 1x when the system animator duration scale is turned down.
     val normalLauncherAnimationSpeed = BoolPref("pref_normalLauncherAnimationSpeed", false)
+
+    // Experimental: keep One UI from locking when folding from the home screen (FoldBridgeController).
+    val foldBridge = BoolPref("pref_foldBridge", false)
     val hasOpenedSettings = BoolPref("pref_hasOpenedSettings", false)
 
     val lawnchairMajorVersion = IntPref(

@@ -44,6 +44,7 @@ import app.lawnchair.animation.LauncherAnimationSpeed
 import app.lawnchair.animation.shouldAnimateReturn
 import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.data.AppDatabase
+import app.lawnchair.fold.FoldBridgeController
 import app.lawnchair.gestures.GestureController
 import app.lawnchair.gestures.VerticalSwipeTouchController
 import app.lawnchair.gestures.config.GestureHandlerConfig
@@ -172,6 +173,8 @@ class LawnchairLauncher : QuickstepLauncher() {
     private var pendingAppReturn: AppReturnTracker.PendingReturn? = null
     private var lastIntentHadGestureNavContract = false
     private var configurationChangedSinceStop = false
+
+    private val foldBridge by unsafeLazy { FoldBridgeController(this) }
 
     // The icon Launcher keeps "stay pressed" (scaled up) until the launch animation reports back.
     private var pressedLaunchIcon: WeakReference<BubbleTextView>? = null
@@ -531,6 +534,7 @@ class LawnchairLauncher : QuickstepLauncher() {
         super.onResume()
         // The system resets the process animator scale when the global setting changes.
         LauncherAnimationSpeed.reapply()
+        foldBridge.setActive(prefs.foldBridge.get())
         restartIfPending()
         maybeStartAppReturnAnimation(lastIntentHadGestureNavContract && prefs.enableGnc.get())
         lastIntentHadGestureNavContract = false
@@ -557,6 +561,7 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onPause() {
         appReturnAnimator.finish()
+        foldBridge.setActive(false)
         super.onPause()
     }
 
