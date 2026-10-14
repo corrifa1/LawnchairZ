@@ -567,17 +567,25 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             mDirectionVector[1] = mTopBorderActive ? -1 : 1;
         }
 
-        // LawnCher: widget stacks. In preset mode, snap to the nearest preset size.
-        if (mStackResize != null) {
-            int[] cells = {cellX, cellY, spanX, spanY};
-            mStackResize.snap(cells, lp.cellHSpan, lp.cellVSpan, mLeftBorderActive,
-                    mTopBorderActive, mCellLayout.getCountX(), mCellLayout.getCountY());
+        // LawnCher: widget stacks. In preset mode, snap to the preset nearest the whole drag.
+        if (mStackResize != null && mStackResize.isPreset()) {
+            int[] cells = {
+                    lp.useTmpCoords ? lp.getTmpCellX() : lp.getCellX(),
+                    lp.useTmpCoords ? lp.getTmpCellY() : lp.getCellY(),
+                    lp.cellHSpan, lp.cellVSpan};
+            mStackResize.snapFromDrag(cells,
+                    lp.cellHSpan - mRunningHInc, lp.cellVSpan - mRunningVInc,
+                    (mDeltaX + mDeltaXAddOn) / xThreshold, (mDeltaY + mDeltaYAddOn) / yThreshold,
+                    mLeftBorderActive, mRightBorderActive, mTopBorderActive, mBottomBorderActive,
+                    mCellLayout.getCountX(), mCellLayout.getCountY());
             cellX = cells[0];
             cellY = cells[1];
             hSpanDelta = cells[2] - lp.cellHSpan;
             vSpanDelta = cells[3] - lp.cellVSpan;
             spanX = cells[2];
             spanY = cells[3];
+            mDirectionVector[0] = hSpanDelta == 0 ? 0 : (mLeftBorderActive ? -1 : 1);
+            mDirectionVector[1] = vSpanDelta == 0 ? 0 : (mTopBorderActive ? -1 : 1);
         }
 
         if (!onDismiss && vSpanDelta == 0 && hSpanDelta == 0) return;

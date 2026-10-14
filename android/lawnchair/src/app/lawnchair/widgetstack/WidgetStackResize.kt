@@ -30,7 +30,7 @@ import com.android.launcher3.util.Themes
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo
 
 /** Resize rules for a stack, used by AppWidgetResizeFrame. */
-class WidgetStackResize private constructor(
+class WidgetStackResize internal constructor(
     /** The span range every child supports. */
     val range: WidgetStackSizing.SpanRange,
     /** Resize directions every child allows. */
@@ -43,21 +43,52 @@ class WidgetStackResize private constructor(
     val maxSpanX get() = range.maxX
     val maxSpanY get() = range.maxY
 
+    /** Whether the stack snaps to preset sizes rather than resizing freely. */
+    val isPreset: Boolean get() = presets != null
+
     /**
-     * In preset mode, replaces the frame's proposed cells `[cellX, cellY, spanX, spanY]` with the
-     * nearest preset, anchored on the edge opposite the one being dragged. [oldSpan] is the span
-     * before this step. No-op in free mode or when no preset fits.
+     * Preset mode: works out the stack's cells `[cellX, cellY, spanX, spanY]` from the whole drag
+     * so far. The frame's own step-by-step resizing compares the finger with the last applied
+     * span, which would bounce between presets after a snap jumps more than one cell.
+     *
+     * [cells] holds the current cells on entry. [startSpanX]/[startSpanY] is the span when the
+     * drag began and [dragCellsX]/[dragCellsY] the drag distance in cells (right/down positive).
+     * The edge opposite the dragged one stays put. Leaves [cells] alone when no preset fits.
      */
-    fun snap(cells: IntArray, oldSpanX: Int, oldSpanY: Int, leftActive: Boolean, topActive: Boolean, countX: Int, countY: Int) {
+    fun snapFromDrag(
+        cells: IntArray,
+        startSpanX: Int,
+        startSpanY: Int,
+        dragCellsX: Float,
+        dragCellsY: Float,
+        left: Boolean,
+        right: Boolean,
+        top: Boolean,
+        bottom: Boolean,
+        countX: Int,
+        countY: Int,
+    ) {
         val presets = presets ?: return
         val (cellX, cellY, spanX, spanY) = cells.toList()
+        val wantX = when {
+            left -> startSpanX - Math.round(dragCellsX)
+            right -> startSpanX + Math.round(dragCellsX)
+            else -> spanX
+        }
+        val wantY = when {
+            top -> startSpanY - Math.round(dragCellsY)
+            bottom -> startSpanY + Math.round(dragCellsY)
+            else -> spanY
+        }
         val snapped = WidgetStackSizing.snapToPreset(
-            spanX, spanY, presets, range, growingX = spanX > oldSpanX, growingY = spanY > oldSpanY,
+            wantX, wantY, presets, range,
+            oldSpanX = if (left || right) startSpanX else spanX,
+            oldSpanY = if (top || bottom) startSpanY else spanY,
         ) ?: return
-        val right = cellX + spanX
-        val bottom = cellY + spanY
-        cells[0] = (if (leftActive) right - snapped.x else cellX).coerceIn(0, countX - snapped.x)
-        cells[1] = (if (topActive) bottom - snapped.y else cellY).coerceIn(0, countY - snapped.y)
+        val rightEdge = cellX + spanX
+        val bottomEdge = cellY + spanY
+        cells[0] = (if (left) rightEdge - snapped.x else cellX).coerceIn(0, (countX - snapped.x).coerceAtLeast(0))
+        cells[1] = (if (top) bottomEdge - snapped.y else cellY).coerceIn(0, (countY - snapped.y).coerceAtLeast(0))
         cells[2] = snapped.x
         cells[3] = snapped.y
     }

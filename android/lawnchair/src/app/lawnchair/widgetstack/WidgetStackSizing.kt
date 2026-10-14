@@ -64,21 +64,33 @@ object WidgetStackSizing {
     }
 
     /**
-     * Snaps a proposed span to the nearest preset in [range]. On a tie the preset in the
-     * direction the user is resizing wins. Returns null when no preset fits.
+     * Snaps a proposed span to the nearest preset in [range]. On a tie, the axis being resized
+     * decides: a preset in the direction of the drag wins (larger when growing, smaller when
+     * shrinking), then the one that changes the other axis least. Returns null when no preset
+     * fits.
      */
     fun snapToPreset(
         spanX: Int,
         spanY: Int,
         presets: List<Point>,
         range: SpanRange,
-        growingX: Boolean,
-        growingY: Boolean,
-    ): Point? = presets
-        .filter { range.contains(it.x, it.y) }
-        .minWithOrNull(
-            compareBy<Point> { abs(it.x - spanX) + abs(it.y - spanY) }
-                .thenBy { if (growingX) -it.x else it.x }
-                .thenBy { if (growingY) -it.y else it.y },
-        )
+        oldSpanX: Int,
+        oldSpanY: Int,
+    ): Point? {
+        val resizingX = spanX != oldSpanX
+        val resizingY = spanY != oldSpanY
+        // Signed so that "further in the drag direction" sorts first.
+        fun alongDrag(p: Point) =
+            (if (resizingX) (if (spanX > oldSpanX) -p.x else p.x) else 0) +
+                (if (resizingY) (if (spanY > oldSpanY) -p.y else p.y) else 0)
+        fun offOtherAxis(p: Point) =
+            (if (resizingX) 0 else abs(p.x - oldSpanX)) + (if (resizingY) 0 else abs(p.y - oldSpanY))
+        return presets
+            .filter { range.contains(it.x, it.y) }
+            .minWithOrNull(
+                compareBy<Point> { abs(it.x - spanX) + abs(it.y - spanY) }
+                    .thenBy(::alongDrag)
+                    .thenBy(::offOtherAxis),
+            )
+    }
 }
