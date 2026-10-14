@@ -56,14 +56,12 @@ import app.lawnchair.root.RootNotAvailableException
 import app.lawnchair.theme.ThemeProvider
 import app.lawnchair.ui.popup.LauncherOptionsPopup
 import app.lawnchair.ui.popup.LawnchairShortcut
-import app.lawnchair.util.MainThreadStallLogger
 import app.lawnchair.util.getThemedIconPacksInstalled
 import app.lawnchair.util.unsafeLazy
 import app.lawnchair.views.LawnchairFloatingSurfaceView
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.BaseActivity
 import com.android.launcher3.BubbleTextView
-import com.android.launcher3.BuildConfig
 import com.android.launcher3.GestureNavContract
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherState
@@ -180,7 +178,6 @@ class LawnchairLauncher : QuickstepLauncher() {
     val gestureController by unsafeLazy { GestureController(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (BuildConfig.DEBUG) MainThreadStallLogger.install()
         layoutInflater.factory2 = LawnchairLayoutFactory(this)
         super.onCreate(savedInstanceState)
 
@@ -507,7 +504,6 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun onStart() {
-        if (BuildConfig.DEBUG) MainThreadStallLogger.lastStartUptime = SystemClock.uptimeMillis()
         super.onStart()
         if (!LawnchairApp.isRecentsEnabled) {
             // Without our own recents animation the launch callback that releases the pressed
@@ -529,7 +525,6 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onResume() {
         super.onResume()
-        if (BuildConfig.DEBUG) MainThreadStallLogger.onResumed()
         restartIfPending()
         maybeStartAppReturnAnimation(lastIntentHadGestureNavContract && prefs.enableGnc.get())
         lastIntentHadGestureNavContract = false
@@ -597,14 +592,8 @@ class LawnchairLauncher : QuickstepLauncher() {
         super.onScreenOnChanged(isOn)
     }
 
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (BuildConfig.DEBUG) MainThreadStallLogger.onWindowFocusChanged(hasFocus)
-    }
-
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
-            if (BuildConfig.DEBUG) MainThreadStallLogger.onTouchDown(ev.eventTime)
             appReturnAnimator.finish()
         }
         return super.dispatchTouchEvent(ev)
