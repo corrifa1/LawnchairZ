@@ -2,7 +2,16 @@
   // Note: Comments are not supported in JSON schema, but android parser is lenient.
 
   // Maximum DB version supported by this schema
-  "version" : 32,
+  "version" : 33,
+  // LawnCher: widget stacks (itemType 100). Older builds do not know stacks, so keep each stack's
+  // visible child (rank in options bits 8-15, nearest rank wins) as a plain widget in the stack's
+  // cells, then drop the other children and the stacks. Freed widget ids are reclaimed by
+  // removeGhostWidgets on the next load.
+  "downgrade_to_32" : [
+    "UPDATE favorites SET screen = (SELECT s.screen FROM favorites s WHERE s._id = favorites.container), cellX = (SELECT s.cellX FROM favorites s WHERE s._id = favorites.container), cellY = (SELECT s.cellY FROM favorites s WHERE s._id = favorites.container), spanX = (SELECT s.spanX FROM favorites s WHERE s._id = favorites.container), spanY = (SELECT s.spanY FROM favorites s WHERE s._id = favorites.container), rank = 0, container = -100 WHERE _id IN (SELECT c._id FROM favorites c JOIN favorites s ON c.container = s._id WHERE s.itemType = 100 AND s.container = -100 AND NOT EXISTS (SELECT 1 FROM favorites o WHERE o.container = c.container AND (ABS(o.rank - ((s.options >> 8) & 255)) < ABS(c.rank - ((s.options >> 8) & 255)) OR (ABS(o.rank - ((s.options >> 8) & 255)) = ABS(c.rank - ((s.options >> 8) & 255)) AND (o.rank < c.rank OR (o.rank = c.rank AND o._id < c._id))))));",
+    "DELETE FROM favorites WHERE container IN (SELECT _id FROM favorites WHERE itemType = 100);",
+    "DELETE FROM favorites WHERE itemType = 100;"
+  ],
   "downgrade_to_31" : [
     "ALTER TABLE favorites ADD COLUMN iconPackage TEXT;",
     "ALTER TABLE favorites ADD COLUMN iconResource TEXT;"

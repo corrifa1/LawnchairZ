@@ -332,7 +332,9 @@ public class GridSizeMigrationDBController {
         dest.forEach(entry -> {
             if (entryCountDiff.get(entry) < 0) {
                 toBeRemoved.add(entry.id);
-                if (entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER) {
+                if (entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER
+                        // LawnCher: widget stacks
+                        || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK) {
                     entry.mFolderItems.values().forEach(ids -> ids.forEach(toBeRemoved::add));
                 }
                 entryCountDiff.put(entry, entryCountDiff.get(entry) + 1);
@@ -344,7 +346,9 @@ public class GridSizeMigrationDBController {
             String srcTableName, String destTableName, List<Integer> idsInUse) {
         int id = copyEntryAndUpdate(helper, entry, srcTableName, destTableName, idsInUse);
         if (entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER
-                || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_APP_PAIR) {
+                || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_APP_PAIR
+                // LawnCher: widget stacks carry their children like folders do
+                || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK) {
             for (Set<Integer> itemIds : entry.mFolderItems.values()) {
                 for (int itemId : itemIds) {
                     copyEntryAndUpdate(helper, itemId, id, srcTableName, destTableName, idsInUse);
@@ -647,6 +651,14 @@ public class GridSizeMigrationDBController {
                             int total = getFolderItemsCount(entry);
                             if (total != 2) {
                                 throw new Exception("App pair contains fewer or more than 2 items");
+                            }
+                            break;
+                        }
+                        // LawnCher: widget stacks
+                        case LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK: {
+                            if (!app.lawnchair.widgetstack.WidgetStackMigration.loadStackEntry(
+                                    entry, mDb, mTableName, widgetManagerHelper)) {
+                                throw new Exception("Widget stack is empty");
                             }
                             break;
                         }

@@ -119,6 +119,13 @@ class WorkspaceItemProcessor(
                 Favorites.ITEM_TYPE_APP_PAIR -> processFolderOrAppPair()
                 Favorites.ITEM_TYPE_APPWIDGET,
                 Favorites.ITEM_TYPE_CUSTOM_APPWIDGET -> processWidget()
+                // LawnCher: widget stacks
+                Favorites.ITEM_TYPE_WIDGET_STACK ->
+                    app.lawnchair.widgetstack.WidgetStackLoader.processStackRow(
+                        c,
+                        loadedItems,
+                        memoryLogger,
+                    )
             }
         } catch (e: Exception) {
             Log.e(TAG, "Desktop items loading interrupted", e)
@@ -559,7 +566,11 @@ class WorkspaceItemProcessor(
             )
             return
         }
-        if (!c.isOnWorkspaceOrHotseat) {
+        if (
+            !c.isOnWorkspaceOrHotseat &&
+                // LawnCher: widget stacks. Children of a stack have the stack id as container.
+                !app.lawnchair.widgetstack.WidgetStackLoader.isValidWidgetContainer(c.container)
+        ) {
             c.markDeleted(
                 "processWidget: invalid Widget container != CONTAINER_DESKTOP nor CONTAINER_HOTSEAT." +
                     " id=${c.id}," +
@@ -716,6 +727,8 @@ class WorkspaceItemProcessor(
 
         // Remove dead items
         val itemsDeleted = c.commitDeleted()
+        // LawnCher: widget stacks. Attach children to their stacks and repair leftovers.
+        app.lawnchair.widgetstack.WidgetStackLoaderRepair.repair(loadedItems, modelDbController)
 
         processFolderItems()
         // After all items have been processed and added to the BgDataModel, this method

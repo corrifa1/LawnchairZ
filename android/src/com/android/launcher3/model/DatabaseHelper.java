@@ -74,7 +74,8 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
      * Represents the schema of the database. Changes in scheme need not be backwards compatible.
      * When increasing the scheme version, ensure that downgrade_schema.json is updated
      */
-    public static final int SCHEMA_VERSION = 32;
+    // LawnCher: widget stacks. 33 adds ITEM_TYPE_WIDGET_STACK rows; downgrade_to_32 removes them.
+    public static final int SCHEMA_VERSION = 33;
     private static final String TAG = "DatabaseHelper";
     private static final boolean LOGD = false;
 
@@ -276,7 +277,10 @@ public class DatabaseHelper extends NoLocaleSQLiteHelper implements
                 LauncherDbUtils.migrateLegacyShortcuts(mContext, db);
             }
             // Fall through
-            case 32: {
+            case 32:
+                // LawnCher: widget stacks. Version 33 only adds a new item type that reuses the
+                // existing columns, so there is nothing to migrate.
+            case 33: {
                 // DB Upgraded successfully
                 return;
             }
