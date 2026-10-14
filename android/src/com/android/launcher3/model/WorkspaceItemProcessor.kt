@@ -555,6 +555,8 @@ class WorkspaceItemProcessor(
         appWidgetInfo.options = c.options
         appWidgetInfo.user = c.user
         appWidgetInfo.sourceContainer = c.appWidgetSource
+        // LawnCher: widget stacks order their widgets by rank.
+        appWidgetInfo.rank = c.rank
         appWidgetInfo.restoreStatus = c.restoreFlag
         if (appWidgetInfo.spanX <= 0 || appWidgetInfo.spanY <= 0) {
             c.markDeleted(

@@ -2280,6 +2280,10 @@ public class Launcher extends StatefulActivity<LauncherState>
             }
             if (enableWorkspaceInflation() && view instanceof LauncherAppWidgetHostView lv) {
                 view = getAppWidgetHolder().attachViewToHostAndGetAttachedView(lv);
+            } else if (enableWorkspaceInflation()
+                    && view instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
+                // LawnCher: widget stacks. Their widgets were inflated off the main thread too.
+                stack.attachPagesToHost(getAppWidgetHolder());
             }
             workspace.addInScreenFromBind(view, item);
             if (boundAnim != null) {

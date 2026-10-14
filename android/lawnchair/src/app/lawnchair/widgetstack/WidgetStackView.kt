@@ -43,6 +43,8 @@ import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.model.data.LauncherAppWidgetInfo
 import com.android.launcher3.util.LauncherBindableItemsContainer
 import com.android.launcher3.util.SafeCloseable
+import com.android.launcher3.widget.LauncherAppWidgetHostView
+import com.android.launcher3.widget.LauncherWidgetHolder
 import com.android.launcher3.widget.ListenableHostView
 import com.android.launcher3.widget.NavigableAppWidgetHostView
 import com.android.launcher3.widget.RoundedCornerEnforcement
@@ -175,6 +177,25 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
         updatePageVisibility()
         applyPosition(settledPage.toFloat())
         updateAccessibilityState()
+    }
+
+    /**
+     * Attaches widgets inflated off the main thread to the widget host so they receive updates,
+     * as Launcher does for top-level widgets. The host may hand back a different view.
+     */
+    fun attachPagesToHost(holder: LauncherWidgetHolder) {
+        val info = stackInfo ?: return
+        var changed = false
+        val attached = pages.map { page ->
+            if (page !is LauncherAppWidgetHostView) return@map page
+            holder.attachViewToHostAndGetAttachedView(page).also { view ->
+                if (view !== page) {
+                    changed = true
+                    if (view.tag == null) view.tag = page.tag
+                }
+            }
+        }
+        if (changed) bind(info, attached.filterIsInstance<AppWidgetHostView>())
     }
 
     /** The host view of the visible child, if any. */
