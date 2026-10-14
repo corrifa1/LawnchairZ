@@ -183,9 +183,6 @@ while hidden, there is no visible animation.
 - Accessibility resize actions are not offered for stacks.
 - Instrumented or screenshot tests for the view are not set up; `WidgetStackView` needs a launcher
   `ActivityContext`, which the existing Robolectric setup does not provide.
-- Pre-existing, not caused by stacks: Lawnchair's `VerticalSwipeTouchController` decides at
-  touch-down and can steal an item drag that moves downward, or fire its swipe-down action when
-  such a drag ends.
 
 ## Tests
 
