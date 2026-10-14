@@ -98,6 +98,13 @@ public abstract class BaseAccessibilityDelegate<T extends Context & ActivityCont
     }
 
     protected boolean itemSupportsAccessibleDrag(ItemInfo item) {
+        // LawnCher: widget stacks move as a whole; their widgets move out instead.
+        if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
+            return false;
+        }
+        if (item instanceof app.lawnchair.widgetstack.WidgetStackInfo) {
+            return true;
+        }
         if (item instanceof WorkspaceItemInfo) {
             // Support the action unless the item is in a context menu.
             return item.screenId >= 0

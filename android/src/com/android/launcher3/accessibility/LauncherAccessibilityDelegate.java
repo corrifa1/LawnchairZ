@@ -84,9 +84,13 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
     protected static final int RESIZE = R.id.action_resize;
     public static final int DEEP_SHORTCUTS = R.id.action_deep_shortcuts;
     public static final int CLOSE = R.id.action_close;
+    // LawnCher: widget stacks
+    protected static final int EDIT_WIDGET_STACK = R.id.action_edit_widget_stack;
 
     public LauncherAccessibilityDelegate(Launcher launcher) {
         super(launcher);
+        mActions.put(EDIT_WIDGET_STACK, new LauncherAction(
+                EDIT_WIDGET_STACK, R.string.widget_stack_edit, KeyEvent.KEYCODE_E));
 
         mActions.put(REMOVE, new LauncherAction(
                 REMOVE, R.string.remove_drop_target_label, KeyEvent.KEYCODE_X));
@@ -146,6 +150,13 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
 
         if (host instanceof AppWidgetResizeFrame) {
             out.add(mActions.get(CLOSE));
+        }
+
+        // LawnCher: widget stacks
+        if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
+            out.add(mActions.get(MOVE_TO_WORKSPACE));
+        } else if (item instanceof app.lawnchair.widgetstack.WidgetStackInfo) {
+            out.add(mActions.get(EDIT_WIDGET_STACK));
         }
 
         if (supportAddToWorkSpace(item)) {
@@ -225,6 +236,11 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
                     : (host instanceof BubbleTextHolder
                             ? ((BubbleTextHolder) host).getBubbleText() : null);
             return btv != null && PopupContainerWithArrow.showForIcon(btv) != null;
+        } else if (action == EDIT_WIDGET_STACK
+                && item instanceof app.lawnchair.widgetstack.WidgetStackInfo stack) {
+            // LawnCher: widget stacks
+            app.lawnchair.widgetstack.WidgetStackEditor.show(mContext, stack);
+            return true;
         } else if (action == CLOSE) {
             if (host instanceof AppWidgetResizeFrame) {
                 AbstractFloatingView.closeOpenViews(mContext, /* animate= */ false,
@@ -519,6 +535,13 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
      * @return true if the item could be successfully added
      */
     public boolean moveToWorkspace(ItemInfo item) {
+        // LawnCher: widget stacks. A stacked widget moves out of its stack, not a folder.
+        if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
+            boolean moved = app.lawnchair.widgetstack.WidgetStackController.moveChildToWorkspace(
+                    mContext, (LauncherAppWidgetInfo) item);
+            if (moved) announceConfirmation(R.string.item_moved);
+            return moved;
+        }
         Folder folder = Folder.getOpen(mContext);
         folder.close(true);
         WorkspaceItemInfo info = (WorkspaceItemInfo) item;

@@ -1,9 +1,11 @@
 package app.lawnchair.ui.preferences.destinations
 
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,6 +18,7 @@ import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
 import app.lawnchair.ui.preferences.components.WallpaperAccessPermissionDialog
 import app.lawnchair.ui.preferences.components.controls.ListPreference
+import app.lawnchair.ui.preferences.components.controls.ClickablePreference
 import app.lawnchair.ui.preferences.components.controls.ListPreferenceEntry
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
@@ -26,9 +29,11 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.util.FileAccessManager
 import app.lawnchair.util.FileAccessState
 import app.lawnchair.util.isGestureNavContractCompatible
+import app.lawnchair.widgetstack.WidgetStackUnstacker
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
 import com.google.android.msdl.data.model.FeedbackLevel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ExperimentalFeaturesPreferences(
@@ -88,6 +93,19 @@ fun ExperimentalFeaturesPreferences(
                     label = stringResource(R.string.widget_stack_preset_sizes_label),
                     description = stringResource(R.string.widget_stack_preset_sizes_description),
                 )
+            }
+            // Turning stacks off keeps existing ones; this separates them on request.
+            val unstackScope = rememberCoroutineScope()
+            val unstackedMessage = stringResource(R.string.widget_stacks_unstacked)
+            ClickablePreference(
+                label = stringResource(R.string.widget_stacks_unstack_all),
+                subtitle = stringResource(R.string.widget_stacks_unstack_all_description),
+                confirmationText = stringResource(R.string.widget_stacks_unstack_all_description),
+            ) {
+                unstackScope.launch {
+                    WidgetStackUnstacker.unstackAll(context)
+                    Toast.makeText(context, unstackedMessage, Toast.LENGTH_SHORT).show()
+                }
             }
             SwitchPreference(
                 checked = hasPermission && enableWallpaperBlur.state.value,

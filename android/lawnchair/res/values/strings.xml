@@ -1180,4 +1180,38 @@
     <string name="widget_stacks_description">Stack widgets in the same cells and swipe vertically between them.</string>
     <string name="widget_stack_preset_sizes_label">Preset stack sizes</string>
     <string name="widget_stack_preset_sizes_description">Developer comparison: snap stacks to fixed sizes instead of resizing freely.</string>
+    <string name="widget_stack_edit">Edit stack</string>
+    <string name="widget_stack_create">Create stack</string>
+    <string name="widget_stack_delete">Delete stack</string>
+    <string name="widget_stack_delete_title">Delete this stack?</string>
+    <plurals name="widget_stack_delete_message">
+        <item quantity="one">The widget in this stack will be removed from your home screen.</item>
+        <item quantity="other">All %1$d widgets in this stack will be removed from your home screen.</item>
+    </plurals>
+    <!-- Editor subtitle, e.g. "3 widgets · 4×2". -->
+    <plurals name="widget_stack_summary">
+        <item quantity="one">%1$d widget · %2$d×%3$d</item>
+        <item quantity="other">%1$d widgets · %2$d×%3$d</item>
+    </plurals>
+    <string name="widget_stack_done">Done</string>
+    <string name="widget_stack_smart_rotate">Smart Rotate</string>
+    <string name="widget_stack_smart_rotate_description">While you\'re away, show the widget that last updated</string>
+    <string name="widget_stack_reorder_hint">Touch and hold a widget, then drag to reorder</string>
+    <string name="widget_stack_move_up">Move up</string>
+    <string name="widget_stack_move_down">Move down</string>
+    <string name="widget_stack_remove_widget">Remove from stack</string>
+    <string name="widget_stack_widget_removed">Widget removed</string>
+    <string name="widget_stack_needs_setup">Needs setup</string>
+    <string name="widget_stack_showing">Showing</string>
+    <string name="widget_stack_add">Add widget</string>
+    <string name="widget_stack_full">A stack holds up to 10 widgets</string>
+    <string name="widget_stack_back">Back</string>
+    <string name="widget_stack_choose_widget">Add a widget</string>
+    <!-- Subtitle of the widget list for a stack, e.g. "Widgets that fit 4×2". -->
+    <string name="widget_stack_fits_size">Widgets that fit %1$d×%2$d</string>
+    <string name="widget_stack_no_fitting_widgets">No widgets fit this stack\'s size.</string>
+    <string name="widget_stack_created">Stack created</string>
+    <string name="widget_stacks_unstack_all">Unstack all</string>
+    <string name="widget_stacks_unstack_all_description">Turn every stack back into separate widgets</string>
+    <string name="widget_stacks_unstacked">Stacks separated</string>
 </resources>

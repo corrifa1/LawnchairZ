@@ -775,6 +775,8 @@ public class WidgetsFullSheet extends BaseWidgetSheet
                 activity.getDragLayer(),
                 false);
         sheet.attachToContainer();
+        // LawnCher: widget stacks. "Widget stack" entry under the title.
+        app.lawnchair.widgetstack.WidgetStackPickerEntry.attach(activity, sheet.mHeaderTitle);
         sheet.mIsOpen = true;
         sheet.open(animate);
         return sheet;

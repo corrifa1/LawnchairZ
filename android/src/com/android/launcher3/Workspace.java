@@ -297,6 +297,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private static final int DRAG_MODE_ADD_TO_FOLDER = 2;
     private static final int DRAG_MODE_REORDER = 3;
     protected int mDragMode = DRAG_MODE_NONE;
+    // LawnCher: widget stacks. Hover-to-stack state, like folder creation.
+    private final app.lawnchair.widgetstack.WidgetStackDropHelper mWidgetStackDrop =
+            new app.lawnchair.widgetstack.WidgetStackDropHelper();
     @Thunk
     int mLastReorderX = -1;
     @Thunk
@@ -577,6 +580,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (ENFORCE_DRAG_EVENT_ORDER) {
             enforceDragParity("onDragEnd", 0, 0);
         }
+        mWidgetStackDrop.reset(); // LawnCher: widget stacks
 
         updateChildrenLayersEnabled();
         StateManager<LauncherState, Launcher> stateManager = mLauncher.getStateManager();
@@ -1957,6 +1961,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             if (btv.isDisplaySearchResult()) {
                 dragOptions.preDragEndScale = (float) mAllAppsIconSize / btv.getIconSize();
             }
+        } else if (child instanceof app.lawnchair.widgetstack.WidgetStackView stack
+                && !dragOptions.isAccessibleDrag) {
+            // LawnCher: widget stacks get an Edit / Delete menu, like an app icon's.
+            dragOptions.preDragCondition =
+                    app.lawnchair.widgetstack.WidgetStackPopup.show(mLauncher, stack);
         }
 
         boolean lockHomeScreen = PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getLockHomeScreen());
@@ -2271,6 +2280,15 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 float distance = dropTargetLayout.getDistanceFromWorkspaceCellVisualCenter(
                         mDragViewVisualCenter[0], mDragViewVisualCenter[1], mTargetCell);
 
+                // LawnCher: widget stacks. A widget dropped onto a matching widget or a stack
+                // after hovering joins it.
+                if (mWidgetStackDrop.onDrop(mLauncher, cell, d)) {
+                    if (!mLauncher.isInState(EDIT_MODE)) {
+                        mLauncher.getStateManager().goToState(NORMAL, SPRING_LOADED_EXIT_DELAY);
+                    }
+                    return;
+                }
+
                 // If the item being dropped is a shortcut and the nearest drop
                 // cell also contains a shortcut, then create a folder with the two shortcuts.
                 if (createUserFolderIfNecessary(cell, container, dropTargetLayout, mTargetCell,
@@ -2533,6 +2551,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         mCreateUserFolderOnDrop = false;
         mAddToExistingFolderOnDrop = false;
+        mWidgetStackDrop.reset(); // LawnCher: widget stacks
 
         mDropToLayout = null;
         mDragViewVisualCenter = d.getVisualCenter(mDragViewVisualCenter);
@@ -2544,6 +2563,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (ENFORCE_DRAG_EVENT_ORDER) {
             enforceDragParity("onDragExit", -1, 0);
         }
+        // LawnCher: widget stacks. Keep an armed target for the drop, which follows the exit.
+        mWidgetStackDrop.onDragExit();
 
         // Here we store the final page that will be dropped to, if the workspace in fact
         // receives the drop
@@ -2741,6 +2762,15 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                     mDragViewVisualCenter[0], mDragViewVisualCenter[1], mTargetCell);
 
             manageFolderFeedback(targetCellDistance, d);
+
+            // LawnCher: widget stacks. Hovering the middle of a matching widget or a stack
+            // offers to stack instead of reordering.
+            if (mWidgetStackDrop.onDragOver(mLauncher, mDragTargetLayout, d,
+                    mDragViewVisualCenter)) {
+                mDragTargetLayout.revertTempState();
+                mDragTargetLayout.clearDragOutlines();
+                return;
+            }
 
             boolean nearestDropOccupied = mDragTargetLayout.isNearestDropLocationOccupied((int)
                             mDragViewVisualCenter[0], (int) mDragViewVisualCenter[1], item.spanX,

@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import android.view.accessibility.AccessibilityNodeInfo
 import android.view.accessibility.AccessibilityNodeInfo.AccessibilityAction
+import android.view.animation.OvershootInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.dynamicanimation.animation.FloatPropertyCompat
@@ -141,6 +142,8 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
         clipToOutline = true
         setWillNotDraw(false)
         importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_YES
+        // Move, remove and edit actions, as for other workspace items.
+        accessibilityDelegate = mActivity.accessibilityDelegate
     }
 
     /** Attaches [info] and its children's host views, in rank order. */
@@ -200,6 +203,20 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
         updateAccessibilityState()
     }
 
+    /**
+     * Re-orders the existing pages to match the info's contents after a reorder, without
+     * re-inflating any widget, and shows the info's visible child.
+     */
+    fun syncPagesToInfo() {
+        val info = stackInfo ?: return
+        spring.cancel()
+        pages.sortBy { page -> info.contents.indexOfFirst { it === page.tag }.let { if (it < 0) Int.MAX_VALUE else it } }
+        settledPage = info.activeRank.coerceIn(0, (pages.size - 1).coerceAtLeast(0))
+        updatePageVisibility()
+        applyPosition(settledPage.toFloat())
+        updateAccessibilityState()
+    }
+
     /** Applies [op] to each child, stopping at the first match, like Workspace.mapOverItems. */
     fun mapOverPages(op: LauncherBindableItemsContainer.ItemOperator): View? =
         pages.firstOrNull { op.evaluate(it.tag as? ItemInfo, it) }
@@ -225,6 +242,19 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
     }
 
     override fun shouldAllowDirectClick() = false
+
+    /** A short settle-in pulse for a stack that was just created or grew. */
+    fun playCreateAnimation() {
+        if (!ValueAnimator.areAnimatorsEnabled()) return
+        showIndicator()
+        ValueAnimator.ofFloat(0.9f, 1f).apply {
+            duration = CREATE_ANIM_MS
+            interpolator = OvershootInterpolator(1.5f)
+            addUpdateListener { reorderBounceScale = it.animatedValue as Float }
+            start()
+        }
+        scheduleIndicatorHide()
+    }
 
     // ---------------------------------------------------------------------------------------
     // Layout and sizing
@@ -610,6 +640,7 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
         private const val INDICATOR_FADE_MS = 200L
         private const val INDICATOR_HIDE_DELAY_MS = 1000L
         private const val SMART_ROTATE_SETTLE_MS = 3000L
+        private const val CREATE_ANIM_MS = 320L
 
         /** The scroll offset in pixels; the spring animates this. */
         private val OFFSET_PX = object : FloatPropertyCompat<WidgetStackView>("stackOffset") {

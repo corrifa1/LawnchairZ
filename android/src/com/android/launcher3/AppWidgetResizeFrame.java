@@ -380,6 +380,9 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             }
         }
 
+        // LawnCher: widget stacks. "Edit stack" on stacks, "Create stack" on widgets.
+        app.lawnchair.widgetstack.WidgetStackResize.attachFrameButton(this, mWidgetView, mLauncher);
+
         if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
                 && mWidgetView instanceof LauncherAppWidgetHostView lahv) {
             lahv.setCellChildViewPreLayoutListener(mCellChildViewPreLayoutListener);

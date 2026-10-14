@@ -1005,6 +1005,9 @@ public class Launcher extends StatefulActivity<LauncherState>
         } else if (resultCode == RESULT_CANCELED) {
             mAppWidgetHolder.deleteAppWidgetId(appWidgetId);
             animationType = Workspace.CANCEL_TWO_STAGE_WIDGET_DROP_ANIMATION;
+            // LawnCher: widget stacks. Drop a stacked widget whose setup was canceled.
+            app.lawnchair.widgetstack.WidgetStackController.onAddCanceled(
+                    this, appWidgetId, requestArgs);
         }
         if (mDragLayer.getAnimatedView() != null) {
             mWorkspace.animateWidgetDrop(requestArgs, cellLayout,
@@ -1505,6 +1508,11 @@ public class Launcher extends StatefulActivity<LauncherState>
         launcherInfo.minSpanX = itemInfo.minSpanX;
         launcherInfo.minSpanY = itemInfo.minSpanY;
         launcherInfo.user = appWidgetInfo.getProfile();
+        // LawnCher: widget stacks. A widget added for a stack joins it instead of taking cells.
+        if (app.lawnchair.widgetstack.WidgetStackController.completeAddToStack(
+                this, launcherInfo, itemInfo, showPendingWidget)) {
+            return;
+        }
         CellPos presenterPos = getCellPosMapper().mapModelToPresenter(itemInfo);
         if (showPendingWidget) {
             launcherInfo.restoreStatus = LauncherAppWidgetInfo.FLAG_UI_NOT_READY;
@@ -2082,6 +2090,10 @@ public class Launcher extends StatefulActivity<LauncherState>
                 && app.lawnchair.widgetstack.WidgetStackController.isStackChild(itemInfo)) {
             app.lawnchair.widgetstack.WidgetStackController.removeChild(
                     this, v, (LauncherAppWidgetInfo) itemInfo, deleteFromDb);
+        } else if (itemInfo instanceof app.lawnchair.widgetstack.WidgetStackInfo stack) {
+            // LawnCher: widget stacks. Removing a stack removes every widget in it.
+            app.lawnchair.widgetstack.WidgetStackController.removeStack(
+                    this, v, stack, deleteFromDb);
         } else if (itemInfo instanceof LauncherAppWidgetInfo) {
             final LauncherAppWidgetInfo widgetInfo = (LauncherAppWidgetInfo) itemInfo;
             mWorkspace.removeWorkspaceItem(v);

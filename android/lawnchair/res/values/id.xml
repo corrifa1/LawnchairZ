@@ -27,4 +27,7 @@
     <item type="id" name="qsbIconTintSecondary" />
     <item type="id" name="qsbIconTintTertiary" />
     <item type="id" name="qsbIconTintQuaternary" />
+
+    <!-- LawnCher: widget stacks -->
+    <item type="id" name="action_edit_widget_stack" />
 </resources>
