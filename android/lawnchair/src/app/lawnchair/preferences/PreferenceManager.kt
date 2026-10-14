@@ -188,6 +188,9 @@ class PreferenceManager @Inject constructor(
 
     // Launcher-side return-home animation, for devices that never send a GestureNavContract.
     val appReturnAnimation = BoolPref("pref_appReturnAnimation", !isGestureNavContractCompatible)
+
+    // Keeps launcher animations at 1x when the system animator duration scale is turned down.
+    val normalLauncherAnimationSpeed = BoolPref("pref_normalLauncherAnimationSpeed", false)
     val hasOpenedSettings = BoolPref("pref_hasOpenedSettings", false)
 
     val lawnchairMajorVersion = IntPref(

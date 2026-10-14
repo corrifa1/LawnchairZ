@@ -40,6 +40,7 @@ import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
 import app.lawnchair.animation.AppReturnAnimator
 import app.lawnchair.animation.AppReturnConditions
 import app.lawnchair.animation.AppReturnTracker
+import app.lawnchair.animation.LauncherAnimationSpeed
 import app.lawnchair.animation.shouldAnimateReturn
 import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.data.AppDatabase
@@ -240,6 +241,9 @@ class LawnchairLauncher : QuickstepLauncher() {
         }
         prefs.windowCornerRadius.subscribeValues(this) {
             QuickStepContract.sCustomCornerRadius = it.toFloat()
+        }
+        prefs.normalLauncherAnimationSpeed.subscribeValues(this) {
+            LauncherAnimationSpeed.setEnabled(this, it)
         }
         preferenceManager2.roundedWidgets.onEach(launchIn = lifecycleScope) {
             RoundedCornerEnforcement.sRoundedCornerEnabled = it
@@ -525,6 +529,8 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     override fun onResume() {
         super.onResume()
+        // The system resets the process animator scale when the global setting changes.
+        LauncherAnimationSpeed.reapply()
         restartIfPending()
         maybeStartAppReturnAnimation(lastIntentHadGestureNavContract && prefs.enableGnc.get())
         lastIntentHadGestureNavContract = false

@@ -153,6 +153,11 @@ fun ExperimentalFeaturesPreferences(
                 label = stringResource(id = R.string.app_return_animation_label),
                 description = stringResource(id = R.string.app_return_animation_description),
             )
+            SwitchPreference(
+                adapter = prefs.normalLauncherAnimationSpeed.getAdapter(),
+                label = stringResource(id = R.string.normal_launcher_animation_speed_label),
+                description = stringResource(id = R.string.normal_launcher_animation_speed_description),
+            )
             ListPreference(
                 adapter = vibrationFeedbackLevelAdapter,
                 entries = listOf(
