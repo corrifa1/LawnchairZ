@@ -68,6 +68,11 @@ class VerticalSwipeTouchController(
         if (noIntercept) {
             return false
         }
+        // A launcher drag (e.g. a long-pressed widget or icon) owns the rest of this gesture
+        if (launcher.dragController.isDragging) {
+            noIntercept = true
+            return false
+        }
         onControllerTouchEvent(ev)
         return detector.isDraggingOrSettling
     }
