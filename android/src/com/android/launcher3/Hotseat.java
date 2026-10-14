@@ -46,6 +46,8 @@ import androidx.annotation.Nullable;
 
 import com.android.launcher3.accessibility.DragAndDropAccessibilityDelegate;
 import com.android.launcher3.celllayout.CellLayoutLayoutParams;
+import com.android.launcher3.dragndrop.DragController;
+import com.android.launcher3.model.data.ItemInfo;
 import com.android.launcher3.pageindicators.PageIndicatorDots;
 import com.android.launcher3.util.HorizontalInsettableView;
 import com.android.launcher3.util.MultiPropertyFactory;
@@ -57,6 +59,7 @@ import com.android.launcher3.views.ActivityContext;
 import java.io.PrintWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
 import app.lawnchair.hotseat.DisabledHotseat;
 import app.lawnchair.hotseat.HotseatMode;
@@ -116,6 +119,11 @@ public class Hotseat extends FrameLayout implements Insettable {
     private final int mPageIndicatorHeight;
 
     private final ActivityContext mActivity;
+
+    // Expressive modification: dock items whose rank doesn't fit the current grid (e.g. the
+    // unfolded-only slots while folded). They are kept as views instead of being stacked onto
+    // the first page, so unfolding can show them without waiting for a model rebind.
+    private final ArrayList<View> mOverflowItems = new ArrayList<>();
 
     PreferenceManager2 preferenceManager2;
     PreferenceManager preferenceManager;
@@ -319,7 +327,76 @@ public class Hotseat extends FrameLayout implements Insettable {
         return mHasVerticalHotseat;
     }
 
+    /** Returns the number of dock pages. */
+    public int getPageCount() {
+        return mPagedView.getPageCount();
+    }
+
+    /**
+     * Expressive modification: keeps a dock item whose rank is outside the current grid hidden,
+     * so it can be shown again when the grid grows (see {@link #relayoutForDeviceProfile()}).
+     */
+    public void addOverflowItem(View child) {
+        if (child.getParent() instanceof ViewGroup parent) {
+            parent.removeView(child);
+        }
+        if (!mOverflowItems.contains(child)) {
+            mOverflowItems.add(child);
+        }
+    }
+
+    /**
+     * Expressive modification: when the dock grid changes (e.g. folding or unfolding), lays the
+     * existing dock views out again for the new grid right away. Launcher still rebinds the model
+     * afterwards, but that is asynchronous: without this, unfolded-only icons only appeared once
+     * the rebind finished, and icons that no longer fit stayed visible until then.
+     */
+    public void relayoutForDeviceProfile() {
+        if (mWorkspace == null || !gridDiffersFromDeviceProfile()) {
+            return;
+        }
+        ArrayList<View> items = new ArrayList<>(mOverflowItems);
+        for (CellLayout page : getPageLayouts()) {
+            ShortcutAndWidgetContainer icons = page.getShortcutsAndWidgets();
+            for (int i = 0; i < icons.getChildCount(); i++) {
+                items.add(icons.getChildAt(i));
+            }
+        }
+        resetLayout(mActivity.getDeviceProfile().isVerticalBarLayout());
+        DragController<?> dragController = mActivity.getDragController();
+        for (View child : items) {
+            if (child.getParent() instanceof ViewGroup parent) {
+                parent.removeView(child);
+            }
+            // addInScreen registers folder icons as drop targets again.
+            if (child instanceof DropTarget target && dragController != null) {
+                dragController.removeDropTarget(target);
+            }
+            if (child.getTag() instanceof ItemInfo info) {
+                mWorkspace.addInScreenFromBind(child, info);
+            }
+        }
+    }
+
+    private boolean gridDiffersFromDeviceProfile() {
+        DeviceProfile dp = mActivity.getDeviceProfile();
+        boolean vertical = dp.isVerticalBarLayout();
+        CellLayout firstPage = getPageAt(0);
+        if (firstPage == null || vertical != mHasVerticalHotseat) {
+            return true;
+        }
+        int expectedPages = vertical ? 1 : Math.max(1, dp.numHotseatPages);
+        int expectedCountX = vertical ? 1 : dp.numShownHotseatIcons;
+        int expectedCountY = vertical ? dp.numShownHotseatIcons : dp.numHotseatRows;
+        return getPageCount() != expectedPages
+                || firstPage.getCountX() != expectedCountX
+                || firstPage.getCountY() != expectedCountY;
+    }
+
     public void resetLayout(boolean hasVerticalHotseat) {
+        // Expressive modification: a reset is followed by a full (re)bind or a relayout, which
+        // decide again which items overflow.
+        mOverflowItems.clear();
         ActivityContext activityContext = ActivityContext.lookupContext(getContext());
         boolean bubbleBarEnabled = activityContext.isBubbleBarEnabled();
         boolean hasBubbles = activityContext.hasBubbles();

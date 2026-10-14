@@ -64,6 +64,13 @@ public interface WorkspaceLayoutManager {
             screenId = getHotseat().getPageFromOrder(rank);
             Log.d(TAG, "addInScreenFromBind: hotseat inflation with x = " + x
                     + " and y = " + y + " page = " + screenId);
+            // Expressive modification: a rank beyond the current dock (e.g. an unfolded-only
+            // slot while folded) used to fall back to the current page and draw on top of the
+            // first icons. Keep it hidden until the dock grows again instead.
+            if (screenId >= getHotseat().getPageCount()) {
+                getHotseat().addOverflowItem(child);
+                return;
+            }
         }
         addInScreen(child, info.container, screenId, x, y, info.spanX, info.spanY);
     }

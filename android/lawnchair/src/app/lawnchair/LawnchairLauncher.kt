@@ -587,6 +587,9 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun dispatchDeviceProfileChanged() {
         appReturnAnimator.finish()
         super.dispatchDeviceProfileChanged()
+        // Show the right dock icons for the new grid (fold/unfold) without waiting for the
+        // asynchronous model rebind that follows.
+        hotseat?.relayoutForDeviceProfile()
     }
 
     override fun onScreenOnChanged(isOn: Boolean) {
