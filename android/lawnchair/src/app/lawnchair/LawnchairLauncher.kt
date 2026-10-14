@@ -167,7 +167,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     private val appReturnTracker = AppReturnTracker(clock = SystemClock::elapsedRealtime)
     private val appReturnAnimator by unsafeLazy { AppReturnAnimator(this) }
     private var hasStartedSinceCreate = false
-    private var appReturnCheckPending = false
+    private var pendingAppReturn: AppReturnTracker.PendingReturn? = null
     private var lastIntentHadGestureNavContract = false
     private var configurationChangedSinceStop = false
 
@@ -272,8 +272,13 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        appReturnAnimator.finish()
-        lastIntentHadGestureNavContract = intent != null && GestureNavContract.canBuildFromIntent(intent)
+        val hasGestureNavContract = intent != null && GestureNavContract.canBuildFromIntent(intent)
+        lastIntentHadGestureNavContract = hasGestureNavContract
+        // The home intent that brings us back arrives after onStart, where the animation may
+        // already be playing; only a real contract or an intent once we're home ends it.
+        if (hasBeenResumed() || (hasGestureNavContract && prefs.enableGnc.get())) {
+            appReturnAnimator.finish()
+        }
 
         if (intent != null && intent.action == LawnchairShortcutActivity.START_ACTION) {
             val handlerString = intent.getStringExtra(LawnchairShortcutActivity.EXTRA_HANDLER)
@@ -497,14 +502,20 @@ class LawnchairLauncher : QuickstepLauncher() {
     override fun onStart() {
         super.onStart()
         // The first start after creation (including recreation) is never a return from an app.
-        appReturnCheckPending = hasStartedSinceCreate
+        val isReturn = hasStartedSinceCreate
         hasStartedSinceCreate = true
+        // Always consume, so a skipped return can't be animated later.
+        pendingAppReturn = if (isReturn) appReturnTracker.consumeReturn() else null
+        if (pendingAppReturn != null && isInState(LauncherState.NORMAL)) {
+            maybeStartAppReturnAnimation(gestureNavContractHandled = false)
+        }
     }
 
     override fun onResume() {
         super.onResume()
         restartIfPending()
-        maybeStartAppReturnAnimation()
+        maybeStartAppReturnAnimation(lastIntentHadGestureNavContract && prefs.enableGnc.get())
+        lastIntentHadGestureNavContract = false
 
         dragLayer.viewTreeObserver.addOnDrawListener(
             object : ViewTreeObserver.OnDrawListener {
@@ -539,7 +550,7 @@ class LawnchairLauncher : QuickstepLauncher() {
         } else {
             appReturnTracker.onLauncherStopped()
         }
-        appReturnCheckPending = false
+        pendingAppReturn = null
         lastIntentHadGestureNavContract = false
         configurationChangedSinceStop = false
     }
@@ -610,32 +621,28 @@ class LawnchairLauncher : QuickstepLauncher() {
      * Plays [AppReturnAnimator] when we come back home from an app we launched, on devices where
      * no GestureNavContract arrives (e.g. Samsung One UI).
      *
-     * This is the single, deduplicated entry point for both ways back home: swipe-home / home
-     * button (onNewIntent with ACTION_MAIN, then onResume) and back from the app's root activity
-     * (no intent, just onStart/onResume). It only runs after a real stop, once per start, and
-     * after intent handling so the state checks see the final launcher state.
+     * One pending return is taken per start and played at most once, covering both ways back
+     * home: swipe-home / home button (onStart, onNewIntent with ACTION_MAIN, onResume) and back
+     * from the app's root activity (onStart, onResume).
      *
-     * Timing: the initial (scaled-down, dimmed) state is applied here, synchronously, before the
-     * first traversal after restart, and the animation starts on the first pre-draw. That way the
-     * first launcher frame the system reveals under its own app-close animation is already part
-     * of ours, and there is no flash of the final layout. onEnterAnimationComplete() was not used:
-     * it only fires after the system's window animation has finished, so the home screen would
-     * sit still (and visibly scaled down) for the whole close animation before reacting.
+     * Timing: we try in onStart first. With gesture navigation the system shows home while the
+     * app shrinks, and onResume only arrives once that transition has finished, so starting in
+     * onResume made the home screen dip and animate after the user had already landed, which read
+     * as lag. From onStart, the initial (scaled-down, dimmed) state is applied before the first
+     * traversal after restart and the animation starts on the first pre-draw, so it plays during
+     * the system transition. If the launcher isn't in NORMAL yet at onStart (e.g. the app was
+     * opened from All Apps and the home intent will reset the state), we decide again in onResume
+     * after intent handling. onEnterAnimationComplete() was not used: it fires even later.
      */
-    private fun maybeStartAppReturnAnimation() {
-        val hadGestureNavContract = lastIntentHadGestureNavContract
-        lastIntentHadGestureNavContract = false
-        if (!appReturnCheckPending) return
-        appReturnCheckPending = false
-
-        // Always consume, so a skipped return can't be animated later.
-        val pending = appReturnTracker.consumeReturn() ?: return
+    private fun maybeStartAppReturnAnimation(gestureNavContractHandled: Boolean) {
+        val pending = pendingAppReturn ?: return
+        pendingAppReturn = null
 
         val topView = AbstractFloatingView.getTopOpenView(this)
         val conditions = AppReturnConditions(
             featureEnabled = prefs.appReturnAnimation.get(),
             isRecentsProvider = LawnchairApp.isRecentsEnabled,
-            gestureNavContractHandled = hadGestureNavContract && prefs.enableGnc.get(),
+            gestureNavContractHandled = gestureNavContractHandled,
             iconSurfaceOpen = AbstractFloatingView.getOpenView<AbstractFloatingView>(
                 this,
                 AbstractFloatingView.TYPE_ICON_SURFACE,

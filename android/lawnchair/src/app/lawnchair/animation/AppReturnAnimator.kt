@@ -63,7 +63,7 @@ class AppReturnAnimator(private val launcher: Launcher) {
      * part of the animation, and starts animating on the next pre-draw.
      *
      * Must be called before the launcher draws its first frame after returning (we call it from
-     * onResume, before the first traversal after restart).
+     * onStart, before the first traversal after restart).
      */
     fun prepareAndStart(pending: PendingReturn) {
         finish()
@@ -85,8 +85,9 @@ class AppReturnAnimator(private val launcher: Launcher) {
         val session = Session(workspace, hotseat, icon)
         this.session = session
 
-        launcher.pauseExpensiveViewUpdates()
-        session.expensiveUpdatesPaused = true
+        // Widget updates are deliberately not paused (unlike the GNC animation): widgets tend to
+        // refresh right as we return home, and resuming deferred updates applies them all
+        // synchronously, which made the first tap after landing (it ends the animation) stall.
 
         workspace.setPivotToScaleWithSelf(hotseat)
         applyReveal(session, 0f)
@@ -143,11 +144,6 @@ class AppReturnAnimator(private val launcher: Launcher) {
         session.workspace.alpha = session.workspaceAlpha
         session.hotseat.alpha = session.hotseatAlpha
         session.icon?.restore()
-
-        if (session.expensiveUpdatesPaused) {
-            session.expensiveUpdatesPaused = false
-            launcher.resumeExpensiveViewUpdates()
-        }
     }
 
     private fun startAnimations(session: Session) {
@@ -258,7 +254,6 @@ class AppReturnAnimator(private val launcher: Launcher) {
         var preDrawListener: ViewTreeObserver.OnPreDrawListener? = null
         var stateListener: StateManager.StateListener<LauncherState>? = null
         var watchdog: Runnable? = null
-        var expensiveUpdatesPaused = false
         var revealDone = false
         var iconDone = false
     }
