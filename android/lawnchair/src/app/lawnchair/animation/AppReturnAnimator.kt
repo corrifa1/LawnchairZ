@@ -22,6 +22,11 @@ import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import app.lawnchair.animation.AppReturnTracker.PendingReturn
 import app.lawnchair.animation.AppReturnTracker.Source
+import app.lawnchair.preferences2.PreferenceManager2
+import app.lawnchair.preferences2.firstCached
+import app.lawnchair.views.FullScreenOverlayView
+import app.lawnchair.views.overlay.FullScreenOverlayMode
+import app.lawnchair.views.showFullScreenOverlay
 import com.android.app.animation.Interpolators
 import com.android.launcher3.BubbleTextView
 import com.android.launcher3.Hotseat
@@ -93,6 +98,18 @@ class AppReturnAnimator(private val launcher: Launcher) {
         applyReveal(session, 0f)
         icon?.apply(0f)
 
+        // The "App closing animation" overlay normally only plays with a GestureNavContract.
+        // Here it stands in for the app window we never get: added before the first frame, and
+        // with Suck-in the icon lands once the card has shrunk into it.
+        val overlayMode = PreferenceManager2.getInstance(launcher).closingAppOverlay.firstCached()
+        if (overlayMode != FullScreenOverlayMode.NONE) {
+            session.overlayDone = false
+            session.iconWaitsForOverlay = icon != null && overlayMode == FullScreenOverlayMode.SUCK_IN
+            session.overlay = launcher.showFullScreenOverlay(endView = icon?.view ?: dragLayer) {
+                onOverlayDone(session)
+            }
+        }
+
         session.stateListener = object : StateManager.StateListener<LauncherState> {
             override fun onStateTransitionStart(toState: LauncherState) {
                 finish()
@@ -138,6 +155,8 @@ class AppReturnAnimator(private val launcher: Launcher) {
             if (it.isRunning) it.cancel()
         }
         session.spring = null
+        session.overlay?.dismiss()
+        session.overlay = null
 
         WORKSPACE_SCALE.set(session.workspace, 1f)
         HOTSEAT_SCALE.set(session.hotseat, 1f)
@@ -165,6 +184,9 @@ class AppReturnAnimator(private val launcher: Launcher) {
         val icon = session.icon
         if (icon == null) {
             session.iconDone = true
+        } else if (session.iconWaitsForOverlay) {
+            // Started from onOverlayDone.
+            if (session.overlayDone) startIconSpring(session, icon)
         } else {
             // A zero-length animator gives us a start delay that follows the system animator
             // duration scale, like the reveal itself.
@@ -204,8 +226,20 @@ class AppReturnAnimator(private val launcher: Launcher) {
         spring.start()
     }
 
+    private fun onOverlayDone(session: Session) {
+        if (this.session !== session) return
+        session.overlay = null
+        session.overlayDone = true
+        val icon = session.icon
+        // If the overlay ends before the first pre-draw, startAnimations starts the spring.
+        if (icon != null && session.iconWaitsForOverlay && session.preDrawListener == null) {
+            startIconSpring(session, icon)
+        }
+        maybeFinish(session)
+    }
+
     private fun maybeFinish(session: Session) {
-        if (this.session === session && session.revealDone && session.iconDone) {
+        if (this.session === session && session.revealDone && session.iconDone && session.overlayDone) {
             finish()
         }
     }
@@ -256,17 +290,21 @@ class AppReturnAnimator(private val launcher: Launcher) {
         var watchdog: Runnable? = null
         var revealDone = false
         var iconDone = false
+        var overlay: FullScreenOverlayView? = null
+        var overlayDone = true
+        var iconWaitsForOverlay = false
     }
 
     /** The view that "receives" the app. `progress` goes 0 → 1 and may overshoot. */
     internal interface IconTarget {
+        val view: View
         fun apply(progress: Float)
         fun restore()
     }
 
     /** Animates only the icon drawable of a [BubbleTextView], leaving the label alone. */
     internal class BubbleIconTarget(
-        private val view: BubbleTextView,
+        override val view: BubbleTextView,
         private val drawable: FastBitmapDrawable,
     ) : IconTarget {
         private val originalAlpha = drawable.alpha
@@ -289,7 +327,7 @@ class AppReturnAnimator(private val launcher: Launcher) {
     }
 
     /** Animates a whole view (folder icons) around its icon area. */
-    internal class ViewIconTarget(private val view: View) : IconTarget {
+    internal class ViewIconTarget(override val view: View) : IconTarget {
         private val originalAlpha = view.alpha
         private val originalScaleX = view.scaleX
         private val originalScaleY = view.scaleY
@@ -336,7 +374,7 @@ class AppReturnAnimator(private val launcher: Launcher) {
 
         /** Fraction of the spring progress over which the icon fades fully in. */
         private const val ICON_FADE_FRACTION = 0.5f
-        private const val WATCHDOG_MS = 2000L
+        private const val WATCHDOG_MS = 3000L
 
         private val ICON_SOURCES = setOf(Source.WORKSPACE, Source.HOTSEAT, Source.FOLDER)
 
