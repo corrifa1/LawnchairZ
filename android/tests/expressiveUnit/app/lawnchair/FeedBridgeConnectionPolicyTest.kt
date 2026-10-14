@@ -63,8 +63,8 @@ class FeedBridgeConnectionPolicyTest {
     @Test
     fun firstPartyContract_matchesCompanionManifest() {
         assertThat(FeedBridge.FIRST_PARTY_FEED_PACKAGE)
-            .isEqualTo("dev.launcher.expressive.feed")
+            .isEqualTo("dev.launcher.lawnchairz.feed")
         assertThat(FeedBridge.FIRST_PARTY_CONNECT_PERMISSION)
-            .isEqualTo("dev.launcher.expressive.feed.permission.CONNECT")
+            .isEqualTo("dev.launcher.lawnchairz.feed.permission.CONNECT")
     }
 }

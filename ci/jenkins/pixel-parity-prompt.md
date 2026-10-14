@@ -1,5 +1,5 @@
-Improve Expressive Launcher toward the latest Pixel Launcher behavior, one focused, high-quality,
-user-visible improvement per run. Operate only in the saved Expressive Launcher project on
+Improve LawnchairZ toward the latest Pixel Launcher behavior, one focused, high-quality,
+user-visible improvement per run. Operate only in the saved LawnchairZ project on
 `codex/pixel-parity`. Before editing, require exactly that branch and a clean checkout. Preserve
 pre-existing work. Do not switch branches, modify main, merge, rebase, push, force-update refs,
 or overwrite user work. If this guard fails, make no changes and report the concrete blocker.
@@ -37,7 +37,7 @@ before using a new expected build; do not silently let the pipeline test an olde
 Only after Jenkins reports SUCCESS and a sealed QA candidate exists, submit its actual release ID:
 `python3 ci/jenkins/control.py run --job publish --release-id qa-VERSION-CODE-build-NUMBER --promote`.
 The user authorized automatic publication of future passing QA builds to
-https://github.com/denson9874/ExpressiveLauncher so the app can notify users of available updates.
+https://github.com/corrifa1/LawnchairZ so the app can notify users of available updates.
 Publish only after all Jenkins build, signing, upgrade and seal gates pass. The versioned GitHub
 QA prerelease and its assets must pass authenticated and anonymous byte/hash verification before
 advancing updates:qa/latest.json. Keep stable releases, production manifests and the release package

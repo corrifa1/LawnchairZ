@@ -32,9 +32,9 @@ class AboutOwnershipTest {
             R.string.donate,
         ).inOrder()
         assertThat(links.map { it.url }).containsExactly(
-            "https://github.com/denson9874/ExpressiveLauncher/releases",
-            "https://github.com/denson9874/ExpressiveLauncher/issues",
-            "https://github.com/denson9874/ExpressiveLauncher",
+            "https://github.com/corrifa1/LawnchairZ/releases",
+            "https://github.com/corrifa1/LawnchairZ/issues",
+            "https://github.com/corrifa1/LawnchairZ",
             "https://www.paypal.com/ncp/payment/9RB3TYYQ6FWE2",
         ).inOrder()
     }
@@ -42,7 +42,7 @@ class AboutOwnershipTest {
     @Test
     fun newsDestination_usesOwnedGitHubReleases() {
         assertThat(AboutDestinations.RELEASE_BUILDS_URL)
-            .isEqualTo("https://github.com/denson9874/ExpressiveLauncher/releases")
+            .isEqualTo("https://github.com/corrifa1/LawnchairZ/releases")
     }
 
     @Test

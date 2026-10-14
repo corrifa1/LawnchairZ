@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <permission
-        android:name="dev.launcher.expressive.feed.permission.CONNECT"
+        android:name="dev.launcher.lawnchairz.feed.permission.CONNECT"
         android:label="@string/connect_permission_label"
         android:protectionLevel="signature" />
 
@@ -25,7 +25,7 @@
             android:name=".ExpressiveFeedBridgeService"
             android:enabled="true"
             android:exported="true"
-            android:permission="dev.launcher.expressive.feed.permission.CONNECT">
+            android:permission="dev.launcher.lawnchairz.feed.permission.CONNECT">
             <intent-filter>
                 <action android:name="com.android.launcher3.WINDOW_OVERLAY" />
                 <data android:scheme="app" />

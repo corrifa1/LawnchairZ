@@ -33,11 +33,11 @@ August 25 physical-device and bundle checks remain recorded below.
   and a public HTTPS privacy-policy URL. That August 25 QA bundle predates the final widget fixes
   and is retained only as pipeline evidence, not as an upload candidate.
 - Bundletool 1.18.3 validated the AAB. The manifest reports package
-  `dev.launcher.expressive.l3`, version `1.0.0` (`versionCode` 1), and min/target SDK 37.
+  `dev.launcher.lawnchairz.l3`, version `1.0.0` (`versionCode` 1), and min/target SDK 37.
 - A universal APK generated from that exact AAB installed and cold-launched in 536 ms. No fatal
   exception, ANR, or activity-not-found event appeared in the focused logcat capture.
 - First-run defaults rendered the Google folder, Camera, Play Store, and the Pixel-style Phone,
-  Messages, Contacts, and Chrome dock. Settings displayed `Expressive Launcher L3 1.0.0`.
+  Messages, Contacts, and Chrome dock. Settings displayed `LawnchairZ L3 1.0.0`.
 - Store icon, feature graphic, and two phone screenshots were visually inspected. Screenshots are
   1080 by 2160 JPEGs without an alpha channel.
 

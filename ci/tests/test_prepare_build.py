@@ -14,16 +14,16 @@ spec.loader.exec_module(prepare)
 class BaselineSourceTests(unittest.TestCase):
     def test_owned_manifest_and_versioned_qa_apk_are_accepted(self):
         prepare.validate_download_url(prepare.FEED)
-        prepare.validate_download_url('https://github.com/denson9874/ExpressiveLauncher/releases/download/qa-v1.0.11-12/launcher.apk')
+        prepare.validate_download_url('https://github.com/corrifa1/LawnchairZ/releases/download/qa-v1.0.11-12/launcher.apk')
 
     def test_other_repo_channel_and_legacy_drive_are_rejected(self):
         for url in (
             'https://github.com/another/ExpressiveLauncher/releases/download/qa-v1.0.11-12/launcher.apk',
-            'https://github.com/denson9874/ExpressiveLauncher/releases/download/v1.0.11-12/launcher.apk',
-            'https://raw.githubusercontent.com/denson9874/ExpressiveLauncher/updates/release/latest.json',
+            'https://github.com/corrifa1/LawnchairZ/releases/download/v1.0.11-12/launcher.apk',
+            'https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/release/latest.json',
             'https://drive.google.com/example.apk',
-            'http://github.com/denson9874/ExpressiveLauncher/releases/download/qa-v1.0.11-12/launcher.apk',
-            'https://user:secret@github.com/denson9874/ExpressiveLauncher/releases/download/qa-v1.0.11-12/launcher.apk',
+            'http://github.com/corrifa1/LawnchairZ/releases/download/qa-v1.0.11-12/launcher.apk',
+            'https://user:secret@github.com/corrifa1/LawnchairZ/releases/download/qa-v1.0.11-12/launcher.apk',
         ):
             with self.subTest(url=url), self.assertRaises(ValueError):
                 prepare.validate_download_url(url)
@@ -84,7 +84,7 @@ class SealedBaselineTests(unittest.TestCase):
                 path.write_bytes(original)
 
     def test_signed_production_and_debug_builds_cannot_bootstrap_qa(self):
-        for key, value in [('packageName', 'dev.launcher.expressive.l3'), ('channel', 'release'),
+        for key, value in [('packageName', 'dev.launcher.lawnchairz.l3'), ('channel', 'release'),
                            ('signatureVerified', False), ('debuggable', True)]:
             with self.subTest(key=key):
                 prior = self.metadata[key]

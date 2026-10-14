@@ -1,6 +1,6 @@
 # Android source
 
-This folder contains the Expressive Launcher application, its Android libraries,
+This folder contains the LawnchairZ application, its Android libraries,
 resources, and tests. The inherited Launcher3 and Lawnchair source-set names stay
 together so upstream changes can still be compared and imported.
 

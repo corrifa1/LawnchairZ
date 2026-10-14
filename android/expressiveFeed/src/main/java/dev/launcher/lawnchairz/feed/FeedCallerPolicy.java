@@ -1,4 +1,4 @@
-package dev.launcher.expressive.feed;
+package dev.launcher.lawnchairz.feed;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -7,8 +7,8 @@ import java.util.Arrays;
 
 /** Security and flag policy kept separate so its failure cases remain unit-testable. */
 final class FeedCallerPolicy {
-    static final String LAUNCHER_PACKAGE = "dev.launcher.expressive.l3";
-    static final String DEBUG_LAUNCHER_PACKAGE = "dev.launcher.expressive.l3.debug";
+    static final String LAUNCHER_PACKAGE = "dev.launcher.lawnchairz.l3";
+    static final String DEBUG_LAUNCHER_PACKAGE = "dev.launcher.lawnchairz.l3.debug";
 
     private static final int FORWARDED_BIND_FLAGS =
             Context.BIND_IMPORTANT | Context.BIND_WAIVE_PRIORITY | Context.BIND_NOT_FOREGROUND;

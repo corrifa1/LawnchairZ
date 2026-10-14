@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 # SPDX-License-Identifier: Apache-2.0
-# https://github.com/denson9874/ExpressiveLauncher
+# https://github.com/corrifa1/LawnchairZ
 
 """Check that repository attribution and retained license texts stay intact."""
 
@@ -18,8 +18,8 @@ REQUIRED_FILES = (
     "docs/THIRD_PARTY_NOTICES.md",
 )
 NOTICE_MARKERS = (
-    "Expressive Launcher",
-    "https://github.com/denson9874/ExpressiveLauncher",
+    "LawnchairZ",
+    "https://github.com/corrifa1/LawnchairZ",
     "Copyright 2026 Daryl Denson and Expressive Launcher contributors.",
     "The Android Open Source Project",
     "Lawnchair",
@@ -42,9 +42,9 @@ ATTRIBUTED_SOURCES = (
     "android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotificationControl.kt",
 )
 SOURCE_MARKERS = (
-    "Expressive Launcher",
+    "LawnchairZ",
     "Copyright 2026 Daryl Denson and Expressive Launcher contributors.",
-    "https://github.com/denson9874/ExpressiveLauncher",
+    "https://github.com/corrifa1/LawnchairZ",
     "SPDX-License-Identifier: Apache-2.0",
 )
 

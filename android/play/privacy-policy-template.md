@@ -1,13 +1,13 @@
-# Privacy Policy for Expressive Launcher L3
+# Privacy Policy for LawnchairZ L3
 
 Effective date: [EFFECTIVE DATE]
 
-[DEVELOPER LEGAL NAME] ("we", "us", or "our") provides Expressive Launcher L3, an Android Home
+[DEVELOPER LEGAL NAME] ("we", "us", or "our") provides LawnchairZ L3, an Android Home
 application. Privacy questions may be sent to [PRIVACY CONTACT EMAIL OR WEB FORM].
 
 ## Information used by the app
 
-Expressive Launcher L3 stores launcher preferences, Home-screen layout, folders, hidden-app
+LawnchairZ L3 stores launcher preferences, Home-screen layout, folders, hidden-app
 settings, icon choices, and related configuration on your device. Eligible app data may be
 included in Android's backup system according to your device and Google account settings.
 

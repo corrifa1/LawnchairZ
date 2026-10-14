@@ -1,6 +1,6 @@
 # Third-party notices
 
-Expressive Launcher builds on AOSP Launcher3 and Lawnchair. Their copyright headers,
+LawnchairZ builds on AOSP Launcher3 and Lawnchair. Their copyright headers,
 source notices, component licenses, and prebuilt library provenance remain in this
 source snapshot. This page provides a readable index; each component keeps its
 own applicable license.

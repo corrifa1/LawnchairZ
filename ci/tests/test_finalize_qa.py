@@ -29,7 +29,7 @@ class FinalizeQaTests(unittest.TestCase):
         (self.artifact / "Expressive-QA.apk").write_bytes(APK)
         self.write("metadata.json", {
             "fileName": "Expressive-QA.apk", "sha256": sha, "versionName": "2.0.9", "versionCode": 27,
-            "packageName": "dev.launcher.expressive.l3.qa", "sizeBytes": len(APK), "certificateSha256": "c" * 64,
+            "packageName": "dev.launcher.lawnchairz.l3.qa", "sizeBytes": len(APK), "certificateSha256": "c" * 64,
         })
         self.write("source.json", {"sourceRevision": REVISION})
         self.write("qa-result.json", {"passed": True, "sha256": sha, "sourceRevision": REVISION})

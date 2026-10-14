@@ -1,4 +1,4 @@
-package dev.launcher.expressive.feed;
+package dev.launcher.lawnchairz.feed;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -21,7 +21,7 @@ import amirz.aidlbridge.IBridge;
 import amirz.aidlbridge.IBridgeCallback;
 
 /**
- * Minimal bridge between Expressive Launcher and Google's legacy Discover
+ * Minimal bridge between LawnchairZ and Google's legacy Discover
  * overlay. The separate process is intentionally debuggable because Google refuses ordinary
  * third-party release clients; the exported entry point remains protected by a signature
  * permission and a second same-certificate Binder check.
@@ -96,7 +96,7 @@ public final class ExpressiveFeedBridgeService extends Service {
         public void bindService(IBridgeCallback callback, int requestedFlags) {
             final int binderUid = Binder.getCallingUid();
             if (callback == null || !isTrustedLauncher(caller, binderUid)) {
-                throw new SecurityException("Only the same-signed Expressive Launcher may connect");
+                throw new SecurityException("Only the same-signed LawnchairZ may connect");
             }
 
             final UpstreamConnection connection = new UpstreamConnection(

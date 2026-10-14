@@ -34,7 +34,7 @@ def main():
         raise SystemExit('A complete passing, unskipped unit test suite is required')
     metadata.update(sourceRevision=source['sourceRevision'], buildUrl=args.build_url, unitTests=totals)
     (root / 'metadata.json').write_text(json.dumps(metadata, indent=2) + '\n')
-    report = f'''# Expressive Launcher {metadata['versionName']} — Jenkins QA release
+    report = f'''# LawnchairZ {metadata['versionName']} — Jenkins QA release
 
 This report describes the exact APK built and tested by Jenkins. Publication status is recorded separately in the publication receipt.
 

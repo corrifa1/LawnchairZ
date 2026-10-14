@@ -1,6 +1,6 @@
 # Expressive, Lawnchair and Launcher3
 
-Expressive Launcher builds on two substantial upstream projects. Launcher3 supplies
+LawnchairZ builds on two substantial upstream projects. Launcher3 supplies
 the Home application foundation; Lawnchair adds extensive customization and
 Pixel-inspired features. Expressive combines that work with a focused settings
 experience, its own Discover setup, targeted behavior fixes and verified GitHub
@@ -93,7 +93,7 @@ lineage before Android's installer is offered. Sources:
 - **Updates remain user-controlled.** Notification permission enables alerts, and
   Android schedules background work. Downloads and installation require user
   action. Separate stable support does not imply a stable build is already
-  published; check [available releases](https://github.com/denson9874/ExpressiveLauncher/releases).
+  published; check [available releases](https://github.com/corrifa1/LawnchairZ/releases).
 - **No root is required for the Home app.** Expressive does not replace SystemUI's
   Recents or system navigation. The [product manifest](../android/expressive/AndroidManifest-launcher.xml)
   implements that boundary. Performance superiority, complete Pixel feature

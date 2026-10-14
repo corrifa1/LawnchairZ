@@ -6,7 +6,7 @@ upstream Lawnchair `play` flavor.
 ## 1. Lock the permanent product identity
 
 Before creating the app in Play Console, choose the final application ID. The current default is
-`dev.launcher.expressive.l3`. Google Play does not allow an application ID to be changed after the
+`dev.launcher.lawnchairz.l3`. Google Play does not allow an application ID to be changed after the
 first artifact is uploaded.
 
 This package has already been installed on a certified test device with an Android debug

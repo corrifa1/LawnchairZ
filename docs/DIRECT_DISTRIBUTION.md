@@ -1,9 +1,9 @@
-# Expressive Launcher direct distribution
+# LawnchairZ direct distribution
 
-Expressive Launcher uses two independent update channels:
+LawnchairZ uses two independent update channels:
 
-- `qa`: `dev.launcher.expressive.l3.debug`, served by GitHub QA prereleases and `updates:qa/latest.json`.
-- `release`: `dev.launcher.expressive.l3`, served by separate GitHub stable releases and `updates:release/latest.json`.
+- `qa`: `dev.launcher.lawnchairz.l3.debug`, served by GitHub QA prereleases and `updates:qa/latest.json`.
+- `release`: `dev.launcher.lawnchairz.l3`, served by separate GitHub stable releases and `updates:release/latest.json`.
 
 Both APKs are signed by the same durable Expressive release key. The separate application IDs let
 QA and release coexist on one device, while Android's same-signer rule protects each channel from
@@ -18,8 +18,8 @@ QA build in place, even though its application ID is also suffixed `.debug`.
 
 Run `scripts/configure-expressive-release-signing.sh` once on the signing Mac. It creates:
 
-- `/path/to/maintainer-home/Documents/Expressive Launcher Signing/expressive-launcher-release.jks`
-- `/path/to/maintainer-home/Documents/Expressive Launcher Signing/release-credentials.properties`
+- `/path/to/maintainer-home/Documents/LawnchairZ Signing/expressive-launcher-release.jks`
+- `/path/to/maintainer-home/Documents/LawnchairZ Signing/release-credentials.properties`
 - the ignored checkout file `keystore.properties`
 
 The keystore and credential backup are the permanent update identity. Store encrypted offline
@@ -41,7 +41,7 @@ remains the distribution policy enforced by those jobs.
    `assembleLawnWithQuickstepExpressiveRelease`. These tasks fail when release signing is absent.
 3. Verify the APK signer, package name, version code, byte size, and SHA-256 digest.
    Compare the certificate against the prior delivered artifact, not just a successful signature check.
-4. Stage a new versioned GitHub release in https://github.com/denson9874/ExpressiveLauncher and retain
+4. Stage a new versioned GitHub release in https://github.com/corrifa1/LawnchairZ and retain
    its APK, QA report, metadata and device results. QA uses prerelease tags `qa-vVERSION-CODE`.
    Do not overwrite older releases or conflicting assets.
 5. After verification, publish the requested channel's release and validate a complete public APK
@@ -73,8 +73,8 @@ user delivery. Do not add app resource/class-loader workarounds for a pre-Applic
 
 The installed build selects its update source; users cannot accidentally cross channels:
 
-- QA builds check only `https://raw.githubusercontent.com/denson9874/ExpressiveLauncher/updates/qa/latest.json`.
-- Release builds check only `https://raw.githubusercontent.com/denson9874/ExpressiveLauncher/updates/release/latest.json`.
+- QA builds check only `https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/qa/latest.json`.
+- Release builds check only `https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/release/latest.json`.
 - An alert is eligible only when the matching manifest's `versionCode` is greater than the
   installed build's `versionCode`.
 

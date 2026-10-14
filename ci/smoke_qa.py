@@ -20,7 +20,7 @@ import time
 import uuid
 import xml.etree.ElementTree as ET
 
-PACKAGE = "dev.launcher.expressive.l3.debug"
+PACKAGE = "dev.launcher.lawnchairz.l3.debug"
 ROLE = "android.app.role.HOME"
 REQUIRED_FLOWS = {
     "guest_identity", "baseline_install", "seed_preference", "same_signer_upgrade",

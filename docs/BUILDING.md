@@ -1,8 +1,8 @@
-# Build Expressive Launcher
+# Build LawnchairZ
 
-This guide covers the public source for **Expressive Launcher 1.0.12 / version code 13**,
+This guide covers the public source for **LawnchairZ 1.0.12 / version code 13**,
 exported from product revision `ad7a5c336423df6edb198a700a050117808c96f6`.
-Use the [GitHub releases](https://github.com/denson9874/ExpressiveLauncher/releases)
+Use the [GitHub releases](https://github.com/corrifa1/LawnchairZ/releases)
 for official signed APKs. A local build is useful for development and testing.
 
 ## Requirements
@@ -33,7 +33,7 @@ See the [Android source guide](../android/README.md) for the folder map.
 ## Get the source and its submodule
 
 ```sh
-git clone --recurse-submodules https://github.com/denson9874/ExpressiveLauncher.git
+git clone --recurse-submodules https://github.com/corrifa1/LawnchairZ.git
 cd ExpressiveLauncher
 ```
 
@@ -74,7 +74,7 @@ classes. Expressive's installable product is a standard Home app: Android System
 continues to provide system gesture navigation and Recents. Root and QuickSwitch
 are not required.
 
-The default developer application ID is `dev.launcher.expressive.l3.debug`.
+The default developer application ID is `dev.launcher.lawnchairz.l3.debug`.
 Official QA APKs use that same ID with a different, durable signing certificate.
 **A locally debug-signed APK cannot update an official signed QA installation.**
 Use a separate development emulator for the default developer build so that your

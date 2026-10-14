@@ -204,14 +204,14 @@
     <string name="backup_and_restore_description">Save current setup, restore backups</string>
 
     <string name="about_label">About</string>
-    <string name="about_easter_egg_tap_label" translatable="false">Tap the Expressive Launcher logo</string>
+    <string name="about_easter_egg_tap_label" translatable="false">Tap the LawnchairZ logo</string>
     <string name="about_easter_egg_hint_1" translatable="false">Oh, hello. Maybe don’t tap that again.</string>
     <string name="about_easter_egg_hint_2" translatable="false">You tapped it again. Bold choice. Three left.</string>
     <string name="about_easter_egg_hint_3" translatable="false">Persistent, aren’t we? Two more.</string>
     <string name="about_easter_egg_hint_4" translatable="false">Last warning. Seriously. Do not tap again.</string>
     <string name="about_easter_egg_hint_5" translatable="false">Okay, you win. You delightful troublemaker. 💜</string>
     <string name="about_easter_egg_title" translatable="false">You found the secret!</string>
-    <string name="about_easter_egg_thank_you" translatable="false">Thank you for making Expressive Launcher part of your home.</string>
+    <string name="about_easter_egg_thank_you" translatable="false">Thank you for making LawnchairZ part of your home.</string>
     <string name="about_easter_egg_dismiss" translatable="false">Dismiss celebration</string>
     <string name="about_daily_spark_title" translatable="false">Daily spark</string>
     <string name="about_daily_spark_subtitle" translatable="false">Fresh mischief and inspiration every day</string>
@@ -219,7 +219,7 @@
     <string name="about_daily_riddle_reveal_answer" translatable="false">Reveal answer</string>
     <string name="about_daily_riddle_hide_answer" translatable="false">Hide answer</string>
     <string name="about_daily_riddle_answer_format" translatable="false">Answer: %1$s</string>
-    <string name="about_daily_quote_attribution" translatable="false">Expressive Launcher</string>
+    <string name="about_daily_quote_attribution" translatable="false">LawnchairZ</string>
     <string name="about_daily_quote_attribution_format" translatable="false">— %1$s</string>
 
     <string name="about_daily_snark_2_1" translatable="false">A tap. Harmless. Probably.</string>
@@ -778,8 +778,8 @@
     <string name="expressive_update_channel_qa">QA</string>
     <string name="expressive_update_channel_release">Release</string>
     <string name="expressive_update_notification_channel">Launcher updates</string>
-    <string name="expressive_update_notification_channel_description">New Expressive Launcher builds for this installation channel</string>
-    <string name="expressive_update_notification_title">Expressive Launcher %1$s is available</string>
+    <string name="expressive_update_notification_channel_description">New LawnchairZ builds for this installation channel</string>
+    <string name="expressive_update_notification_title">LawnchairZ %1$s is available</string>
     <string name="expressive_update_notification_text">A new %1$s build is ready to download and install</string>
     <string name="expressive_update_notifications_enable">Enable %1$s build notifications</string>
     <string name="expressive_update_notifications_enabled">%1$s build notifications are enabled</string>

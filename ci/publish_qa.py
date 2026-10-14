@@ -27,12 +27,12 @@ import urllib.parse
 import urllib.request
 
 
-GITHUB_REPOSITORY = "denson9874/ExpressiveLauncher"
+GITHUB_REPOSITORY = "corrifa1/LawnchairZ"
 UPDATES_BRANCH = "updates"
 QA_FEED_PATH = "qa/latest.json"
 QA_FEED_URL = f"https://raw.githubusercontent.com/{GITHUB_REPOSITORY}/{UPDATES_BRANCH}/{QA_FEED_PATH}"
 API_VERSION = "2026-03-10"
-QA_PACKAGE = "dev.launcher.expressive.l3.debug"
+QA_PACKAGE = "dev.launcher.lawnchairz.l3.debug"
 QA_CERTIFICATE = "c14160306d5c059b3d119f15fb74e08c57cc272316e80b36e192c71dc9e4d0d2"
 FEED_FIELDS = ("schemaVersion", "channel", "packageName", "versionCode", "versionName",
                "apkUrl", "sha256", "sizeBytes", "releaseNotes")
@@ -174,7 +174,7 @@ def candidate_feed(metadata, apk_url):
     feed = {key: metadata[key] for key in FEED_FIELDS if key in metadata}
     feed["apkUrl"] = apk_url
     feed["releaseNotes"] = metadata.get("releaseNotes") or (
-        f"Expressive Launcher {metadata['versionName']} QA build. "
+        f"LawnchairZ {metadata['versionName']} QA build. "
         "The exact APK passed the retained automated and emulator QA gates.")
     validate_feed(feed)
     return feed
@@ -325,7 +325,7 @@ class GitHub:
         tag = release_tag(metadata)
         release = self.find_release(tag)
         if release is None:
-            body = (f"Expressive Launcher {metadata['versionName']} QA\n\n"
+            body = (f"LawnchairZ {metadata['versionName']} QA\n\n"
                     f"Source revision: `{metadata['sourceRevision']}`\n\n"
                     f"APK SHA-256: `{metadata['sha256']}`\n\n"
                     "Release-signed, minified QA package. Automated tests and isolated "
@@ -334,7 +334,7 @@ class GitHub:
                     "license and upstream notices.\n\n" + release_identity(metadata))
             release = self.api(f"{self.root}/releases", method="POST", body={
                 "tag_name": tag, "target_commitish": target_revision,
-                "name": f"Expressive Launcher {metadata['versionName']} QA ({metadata['versionCode']})",
+                "name": f"LawnchairZ {metadata['versionName']} QA ({metadata['versionCode']})",
                 "body": body, "draft": True, "prerelease": True, "make_latest": "false"})
         self.validate_release(release, metadata)
         return release

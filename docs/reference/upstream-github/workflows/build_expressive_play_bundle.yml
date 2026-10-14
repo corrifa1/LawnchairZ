@@ -14,10 +14,10 @@ on:
       application_id:
         description: Permanent Play package ID
         required: true
-        default: dev.launcher.expressive.l3
+        default: dev.launcher.lawnchairz.l3
         type: string
       privacy_policy_url:
-        description: Public HTTPS privacy policy for Expressive Launcher L3
+        description: Public HTTPS privacy policy for LawnchairZ L3
         required: true
         type: string
 

@@ -152,7 +152,7 @@ final def majorVersion = versionDisplayName.split("\\.")[0]
 // The direct-distribution identity is intentionally explicit. Android accepts an in-place update
 // only when the application ID and signing lineage match the installed build.
 final def expressiveApplicationId = providers.gradleProperty("expressiveApplicationId")
-        .orElse("dev.launcher.expressive.l3")
+        .orElse("dev.launcher.lawnchairz.l3")
         .get()
 final def expressiveVersionCodeText = providers.gradleProperty("expressiveVersionCode")
         .orElse("13")
@@ -164,10 +164,10 @@ final def expressivePrivacyPolicyUrl = providers.gradleProperty("expressivePriva
         .orElse("")
         .get()
 final def expressiveQaUpdateManifestUrl = providers.gradleProperty("expressiveQaUpdateManifestUrl")
-        .orElse("https://raw.githubusercontent.com/denson9874/ExpressiveLauncher/updates/qa/latest.json")
+        .orElse("https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/qa/latest.json")
         .get()
 final def expressiveReleaseUpdateManifestUrl = providers.gradleProperty("expressiveReleaseUpdateManifestUrl")
-        .orElse("https://raw.githubusercontent.com/denson9874/ExpressiveLauncher/updates/release/latest.json")
+        .orElse("https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/release/latest.json")
         .get()
 final def expressiveVersionCode = expressiveVersionCodeText.isInteger()
         ? expressiveVersionCodeText.toInteger()
@@ -420,7 +420,7 @@ android {
             buildConfigField "String", "EXPRESSIVE_QA_UPDATE_MANIFEST_URL", "\"${expressiveQaUpdateManifestUrl}\""
             buildConfigField "String", "EXPRESSIVE_RELEASE_UPDATE_MANIFEST_URL", "\"${expressiveReleaseUpdateManifestUrl}\""
             buildConfigField "String", "PRIVACY_POLICY_URL", "\"${expressivePrivacyPolicyUrl}\""
-            resValue("string", "derived_app_name", "Expressive Launcher L3")
+            resValue("string", "derived_app_name", "LawnchairZ L3")
         }
 
     }
@@ -532,7 +532,7 @@ def verifyExpressivePlayRelease = tasks.register("verifyExpressivePlayRelease") 
             )
         }
         if (expressivePrivacyPolicyUrl.contains("lawnchair.app")) {
-            throw new GradleException("Expressive Launcher must not publish with Lawnchair's privacy policy URL")
+            throw new GradleException("LawnchairZ must not publish with Lawnchair's privacy policy URL")
         }
         if (expressiveVersionName.toLowerCase(java.util.Locale.ROOT).contains("dev")) {
             throw new GradleException("expressiveVersionName must be a user-facing release version, not a development label")

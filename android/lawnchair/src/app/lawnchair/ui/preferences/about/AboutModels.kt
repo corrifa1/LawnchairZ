@@ -39,7 +39,7 @@ data class AboutUiState(
  * @param name The name of the team member.
  * @param role The [Role] of the team member within the project.
  * @param photoUrl The remote profile photo used by inherited Lawnchair product variants.
- * @param photoResId The optional bundled profile photo used by Expressive Launcher.
+ * @param photoResId The optional bundled profile photo used by LawnchairZ.
  * @param socialUrl The URL to the team member's primary profile or website.
  * @param githubUsername The team member's GitHub username, when activity is tracked.
  * @param status The current contribution status.

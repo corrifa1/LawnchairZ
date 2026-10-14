@@ -2,12 +2,12 @@
 
 ## Reporting a vulnerability
 
-Please report suspected security vulnerabilities in Expressive Launcher privately through
-[GitHub's Report a vulnerability form](https://github.com/denson9874/ExpressiveLauncher/security/advisories/new).
+Please report suspected security vulnerabilities in LawnchairZ privately through
+[GitHub's Report a vulnerability form](https://github.com/corrifa1/LawnchairZ/security/advisories/new).
 You can also find it under **Security and quality → Advisories → Report a vulnerability**.
 
 **Do not post vulnerability details, exploit code, credentials, or private user data in public issues, pull requests, or discussions.**
-Use [ordinary issues](https://github.com/denson9874/ExpressiveLauncher/issues) for bugs and feature requests without a security impact.
+Use [ordinary issues](https://github.com/corrifa1/LawnchairZ/issues) for bugs and feature requests without a security impact.
 
 Include as much of the following as you can:
 
@@ -22,7 +22,7 @@ A complete exploit is not required to report a credible concern. Never include l
 ## Supported versions
 
 Security fixes focus on the current official releases published in
-[this repository's Releases](https://github.com/denson9874/ExpressiveLauncher/releases).
+[this repository's Releases](https://github.com/corrifa1/LawnchairZ/releases).
 
 | Release | Security maintenance |
 | --- | --- |
@@ -38,7 +38,7 @@ See [source provenance](docs/SOURCE_PROVENANCE.md), identify the exact source re
 
 ## Response and coordinated disclosure
 
-Reports are handled by the Expressive Launcher maintainer on a best-effort basis.
+Reports are handled by the LawnchairZ maintainer on a best-effort basis.
 There is no guaranteed response or fix deadline.
 
 The maintainer will use the private report to acknowledge receipt, request any needed information, and communicate assessment and progress. Confirmed issues are prioritized according to impact, exploitability, and exposure. If a report is declined or cannot be reproduced, the response should explain why and what additional evidence would help.
@@ -48,7 +48,7 @@ Any disclosure date and researcher credit should be agreed in the private report
 
 ## System and security boundaries
 
-Expressive Launcher is an Android Home application built on Launcher3 and Lawnchair.
+LawnchairZ is an Android Home application built on Launcher3 and Lawnchair.
 This policy covers Expressive's app behavior, its bundled Feed integration, updater, and repository build and release tooling. Relevant areas include `android/lawnchair/`, `android/src/`, `android/quickstep/`, `android/expressive/`, `android/expressiveFeed/`, `ci/`, and `scripts/`.
 
 Android provides the app sandbox, permissions, profile authentication, and package installation.

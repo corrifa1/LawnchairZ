@@ -257,13 +257,13 @@ class FileAccessPolicyTest {
 
     @Test
     fun manageAllFilesIntent_prefersAppPageAndProvidesOemFallback() {
-        val intents = manageAllFilesAccessIntents("dev.launcher.expressive.l3")
+        val intents = manageAllFilesAccessIntents("dev.launcher.lawnchairz.l3")
 
         assertThat(intents).hasSize(2)
         assertThat(intents[0].action)
             .isEqualTo(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
         assertThat(intents[0].data?.schemeSpecificPart)
-            .isEqualTo("dev.launcher.expressive.l3")
+            .isEqualTo("dev.launcher.lawnchairz.l3")
         assertThat(intents[1].action)
             .isEqualTo(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
         assertThat(intents[1].data).isNull()

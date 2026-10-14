@@ -63,7 +63,7 @@ class PublishPolicyTest(unittest.TestCase):
             publisher.load_artifacts(self.directory)
 
     def test_production_wrong_signer_and_debug_variants_are_rejected(self):
-        for field, invalid in (("packageName", "dev.launcher.expressive.l3"),
+        for field, invalid in (("packageName", "dev.launcher.lawnchairz.l3"),
                                ("channel", "release"), ("certificateSha256", "b" * 64),
                                ("debuggable", True), ("signatureVerified", False),
                                ("versionCode", True)):
@@ -170,7 +170,7 @@ class PublishPolicyTest(unittest.TestCase):
                     publisher.validate_transition(candidate, conflicting)
 
     def test_feed_rejects_other_channel_package_or_schema(self):
-        for key, value in (("channel", "release"), ("packageName", "dev.launcher.expressive.l3"),
+        for key, value in (("channel", "release"), ("packageName", "dev.launcher.lawnchairz.l3"),
                            ("schemaVersion", 2)):
             with self.subTest(key=key):
                 current = self.feed()

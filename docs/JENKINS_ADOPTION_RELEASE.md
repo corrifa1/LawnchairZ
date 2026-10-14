@@ -1,6 +1,6 @@
 # Jenkins adoption and QA 1.0.8 release
 
-On September 6, 2026, Jenkins built and released Expressive Launcher **1.0.8 / versionCode 9**
+On September 6, 2026, Jenkins built and released LawnchairZ **1.0.8 / versionCode 9**
 on the existing QA channel. This release includes the retained Smartspace date and swipe-release
 repairs. The user's request to adopt a CI solution and release the next build superseded the earlier
 publication hold for this candidate.
@@ -9,7 +9,7 @@ publication hold for this candidate.
 
 - Source commit: `92ea47b6e2d159d87fce1ec2bbbbad7d258ff4cb` on `codex/pixel-parity`.
 - SystemUI submodule: `e12acf0978875fc4adcebf46207b766106ffc92b`.
-- Package: `dev.launcher.expressive.l3.debug`, minified, non-debuggable, durable-release-signed `Qa`.
+- Package: `dev.launcher.lawnchairz.l3.debug`, minified, non-debuggable, durable-release-signed `Qa`.
 - APK: `ExpressiveLauncherL3-1.0.8-Android17-QPR2-Beta4-Jenkins-QA-release-signed.apk`.
 - Size: **21,748,543 bytes**.
 - SHA-256: `f4b730064dc69d503ddaeb6652f3b86225f680b9f520991bfb80f46ba30aea66`.

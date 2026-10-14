@@ -217,9 +217,9 @@ class FeedBridge(private val context: Context) {
         private const val TAG = "FeedBridge"
         const val OVERLAY_ACTION = "com.android.launcher3.WINDOW_OVERLAY"
         const val GOOGLE_APP_PACKAGE = "com.google.android.googlequicksearchbox"
-        const val FIRST_PARTY_FEED_PACKAGE = "dev.launcher.expressive.feed"
+        const val FIRST_PARTY_FEED_PACKAGE = "dev.launcher.lawnchairz.feed"
         const val FIRST_PARTY_CONNECT_PERMISSION =
-            "dev.launcher.expressive.feed.permission.CONNECT"
+            "dev.launcher.lawnchairz.feed.permission.CONNECT"
 
         private val expressiveIncompatibleProviders = setOf(
             "app.lawnchair.lawnfeed",

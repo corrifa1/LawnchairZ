@@ -22,7 +22,7 @@ def badging(code=9, version="1.0.8", package=verify.QA_PACKAGE, debug=False):
     return (
         f"package: name='{package}' versionCode='{code}' versionName='{version}' compileSdkVersion='37'\n"
         "minSdkVersion:'37'\ntargetSdkVersion:'37'\n"
-        "application: label='Expressive Launcher L3' icon='res/s31.xml'\n"
+        "application: label='LawnchairZ L3' icon='res/s31.xml'\n"
         + ("application-debuggable\n" if debug else "")
     )
 
@@ -129,7 +129,7 @@ class ReleaseContractTests(unittest.TestCase):
 
     def test_wrong_candidate_or_baseline_package_rejected(self):
         for path in (self.apk, self.baseline):
-            with self.subTest(path=path), patch.dict(self.responses, {("aapt2", path.name): badging(package="dev.launcher.expressive.l3")}):
+            with self.subTest(path=path), patch.dict(self.responses, {("aapt2", path.name): badging(package="dev.launcher.lawnchairz.l3")}):
                 with self.assertRaisesRegex(verify.VerificationError, "package must be"):
                     self.verify_candidate()
 

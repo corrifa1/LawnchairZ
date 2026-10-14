@@ -104,7 +104,7 @@ Each gate must compile and have its focused tests passing before the next begins
 
 ## Standard-Home product policy
 
-Expressive Launcher L3 is an ordinary Home-role APK. SystemUI owns Recents and system
+LawnchairZ L3 is an ordinary Home-role APK. SystemUI owns Recents and system
 gesture navigation. The standard release must not depend on root, QuickSwitch, being a
 privileged/system app, or being selected as the system Recents component.
 

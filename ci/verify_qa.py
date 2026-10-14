@@ -18,7 +18,7 @@ import tempfile
 import zipfile
 
 
-QA_PACKAGE = "dev.launcher.expressive.l3.debug"
+QA_PACKAGE = "dev.launcher.lawnchairz.l3.debug"
 EXPECTED_CERTIFICATE_SHA256 = (
     "c14160306d5c059b3d119f15fb74e08c57cc272316e80b36e192c71dc9e4d0d2"
 )
@@ -147,7 +147,7 @@ def verify_feed_bundle(apk, candidate, build_tools):
     if not isinstance(metadata, dict) or set(metadata) != required:
         raise VerificationError("Bundled Discover metadata has unexpected fields")
     expected = {
-        "schemaVersion": 1, "packageName": "dev.launcher.expressive.feed",
+        "schemaVersion": 1, "packageName": "dev.launcher.lawnchairz.feed",
         "versionCode": candidate["versionCode"], "versionName": candidate["versionName"],
         "sizeBytes": len(helper_bytes), "sha256": hashlib.sha256(helper_bytes).hexdigest(),
         "fileName": "ExpressiveFeed.apk",

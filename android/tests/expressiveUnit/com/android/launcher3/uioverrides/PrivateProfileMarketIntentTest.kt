@@ -25,7 +25,7 @@ class PrivateProfileMarketIntentTest {
 
         val actual =
             resolvePrivateProfileMarketIntentSender(
-                "dev.launcher.expressive.l3",
+                "dev.launcher.lawnchairz.l3",
                 privateUser,
             ) { packageName, user ->
                 requests += packageName to user
@@ -34,7 +34,7 @@ class PrivateProfileMarketIntentTest {
 
         assertThat(actual).isSameInstanceAs(expected)
         assertThat(requests)
-            .containsExactly("dev.launcher.expressive.l3" to privateUser)
+            .containsExactly("dev.launcher.lawnchairz.l3" to privateUser)
             .inOrder()
     }
 
@@ -45,7 +45,7 @@ class PrivateProfileMarketIntentTest {
 
         val actual =
             resolvePrivateProfileMarketIntentSender(
-                "dev.launcher.expressive.l3",
+                "dev.launcher.lawnchairz.l3",
                 privateUser,
             ) { packageName, user ->
                 requests += packageName to user
@@ -55,7 +55,7 @@ class PrivateProfileMarketIntentTest {
         assertThat(actual).isSameInstanceAs(expected)
         assertThat(requests)
             .containsExactly(
-                "dev.launcher.expressive.l3" to privateUser,
+                "dev.launcher.lawnchairz.l3" to privateUser,
                 null to privateUser,
             )
             .inOrder()
@@ -68,7 +68,7 @@ class PrivateProfileMarketIntentTest {
 
         val actual =
             resolvePrivateProfileMarketIntentSender(
-                "dev.launcher.expressive.l3",
+                "dev.launcher.lawnchairz.l3",
                 privateUser,
             ) { packageName, user ->
                 requests += packageName to user
@@ -78,7 +78,7 @@ class PrivateProfileMarketIntentTest {
         assertThat(actual).isSameInstanceAs(expected)
         assertThat(requests)
             .containsExactly(
-                "dev.launcher.expressive.l3" to privateUser,
+                "dev.launcher.lawnchairz.l3" to privateUser,
                 null to privateUser,
             )
             .inOrder()
@@ -90,7 +90,7 @@ class PrivateProfileMarketIntentTest {
 
         val actual =
             resolvePrivateProfileMarketIntentSender(
-                "dev.launcher.expressive.l3",
+                "dev.launcher.lawnchairz.l3",
                 privateUser,
             ) { packageName, user ->
                 requests += packageName to user
@@ -100,7 +100,7 @@ class PrivateProfileMarketIntentTest {
         assertThat(actual).isNull()
         assertThat(requests)
             .containsExactly(
-                "dev.launcher.expressive.l3" to privateUser,
+                "dev.launcher.lawnchairz.l3" to privateUser,
                 null to privateUser,
             )
             .inOrder()

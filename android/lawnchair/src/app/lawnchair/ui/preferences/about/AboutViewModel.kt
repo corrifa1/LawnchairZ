@@ -19,7 +19,7 @@ import retrofit2.create
 /** Product-owned destinations shown by the About screen. */
 internal object AboutDestinations {
     const val GITHUB_PROFILE_URL = "https://github.com/denson9874"
-    const val GITHUB_REPOSITORY_URL = "https://github.com/denson9874/ExpressiveLauncher"
+    const val GITHUB_REPOSITORY_URL = "https://github.com/corrifa1/LawnchairZ"
     const val PAYPAL_PAYMENT_URL = "https://www.paypal.com/ncp/payment/9RB3TYYQ6FWE2"
     const val RELEASE_BUILDS_URL = "$GITHUB_REPOSITORY_URL/releases"
 }

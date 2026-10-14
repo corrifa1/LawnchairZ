@@ -34,7 +34,7 @@ class Client:
 
 def configure(client, kind):
     job = ET.Element('flow-definition', {'plugin': 'workflow-job'})
-    ET.SubElement(job, 'description').text = 'Expressive Launcher QA: versioned Jenkins pipeline, retained artifacts, isolated production channel.'
+    ET.SubElement(job, 'description').text = 'LawnchairZ QA: versioned Jenkins pipeline, retained artifacts, isolated production channel.'
     ET.SubElement(job, 'keepDependencies').text = 'true'
     props = ET.SubElement(job, 'properties')
     param_property = ET.SubElement(props, 'hudson.model.ParametersDefinitionProperty')

@@ -11,9 +11,9 @@ import subprocess
 import urllib.parse
 import urllib.request
 
-REPOSITORY = 'denson9874/ExpressiveLauncher'
+REPOSITORY = 'corrifa1/LawnchairZ'
 FEED = f'https://raw.githubusercontent.com/{REPOSITORY}/updates/qa/latest.json'
-QA_PACKAGE = 'dev.launcher.expressive.l3.debug'
+QA_PACKAGE = 'dev.launcher.lawnchairz.l3.debug'
 
 
 def git(repo, *args):

@@ -2,8 +2,8 @@
  * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
  * SPDX-License-Identifier: Apache-2.0
  *
- * Developed for Expressive Launcher.
- * https://github.com/denson9874/ExpressiveLauncher
+ * Developed for LawnchairZ.
+ * https://github.com/corrifa1/LawnchairZ
  * See NOTICE and docs/SOURCE_PROVENANCE.md for project attribution.
  */
 
@@ -33,7 +33,7 @@ import kotlinx.serialization.json.Json
 
 /** Manages the invisible Discover helper; Android owns every install confirmation. */
 object ExpressiveFeedSetup {
-    const val HELPER_PACKAGE = "dev.launcher.expressive.feed"
+    const val HELPER_PACKAGE = "dev.launcher.lawnchairz.feed"
     const val GOOGLE_PACKAGE = "com.google.android.googlequicksearchbox"
     private const val ASSET_DIRECTORY = "expressive-feed"
     private const val ASSET_APK = "$ASSET_DIRECTORY/ExpressiveFeed.apk"

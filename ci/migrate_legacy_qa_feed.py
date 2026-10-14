@@ -21,7 +21,7 @@ import urllib.request
 import uuid
 
 
-REPOSITORY = "denson9874/ExpressiveLauncher"
+REPOSITORY = "corrifa1/LawnchairZ"
 GITHUB_FEED_URL = f"https://raw.githubusercontent.com/{REPOSITORY}/updates/qa/latest.json"
 LEGACY_FILE_ID = "1_A529DlPEMzwizq-6j3fpMBElGugY-_J"
 LEGACY_FILE_NAME = "expressive-launcher-qa-latest.json"
@@ -30,7 +30,7 @@ FIELDS = "id,name,size,md5Checksum,mimeType,version,trashed,modifiedTime"
 METADATA_URL = f"https://www.googleapis.com/drive/v3/files/{LEGACY_FILE_ID}?fields={FIELDS}"
 MEDIA_URL = f"https://www.googleapis.com/drive/v3/files/{LEGACY_FILE_ID}?alt=media"
 UPDATE_URL = f"https://www.googleapis.com/upload/drive/v3/files/{LEGACY_FILE_ID}?uploadType=media&fields={FIELDS}"
-QA_PACKAGE = "dev.launcher.expressive.l3.debug"
+QA_PACKAGE = "dev.launcher.lawnchairz.l3.debug"
 MAX_JSON_BYTES = 1024 * 1024
 FEED_FIELDS = ("schemaVersion", "channel", "packageName", "versionCode", "versionName",
                "apkUrl", "sha256", "sizeBytes", "releaseNotes")

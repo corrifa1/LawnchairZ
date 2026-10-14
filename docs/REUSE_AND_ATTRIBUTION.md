@@ -1,7 +1,7 @@
-# Reusing Expressive Launcher with attribution
+# Reusing LawnchairZ with attribution
 
-Expressive Launcher is maintained by [Daryl Denson](https://github.com/denson9874)
-and its contributors at [denson9874/ExpressiveLauncher](https://github.com/denson9874/ExpressiveLauncher).
+LawnchairZ is maintained by [Daryl Denson](https://github.com/denson9874)
+and its contributors at [corrifa1/LawnchairZ](https://github.com/corrifa1/LawnchairZ).
 The project builds on AOSP Launcher3, Lawnchair, and other credited components.
 The [contribution index](SOURCE_PROVENANCE.md#expressive-contribution-index) identifies
 selected Expressive additions separately from their upstream foundation.
@@ -34,8 +34,8 @@ When incorporating Expressive contributions, this acknowledgment makes their ori
 easy to find. It supplements the applicable license and notices; it does not replace them:
 
 ```text
-Includes work from Expressive Launcher by Daryl Denson and contributors.
-https://github.com/denson9874/ExpressiveLauncher
+Includes work from LawnchairZ by Daryl Denson and contributors.
+https://github.com/corrifa1/LawnchairZ
 Based on AOSP Launcher3 and Lawnchair; see the included licenses and notices.
 ```
 
@@ -46,7 +46,7 @@ The project's contribution workflow is described in [CONTRIBUTING.md](../CONTRIB
 
 ## Project identity and artwork
 
-The Expressive Launcher name and Bloom identity identify this project. Reusing
+The LawnchairZ name and Bloom identity identify this project. Reusing
 software does not imply endorsement by its maintainers. Apache section 6 does not
 grant trademark permission beyond customary identification of the work's origin
 and reproduction of its notices. An independent fork should identify its own
@@ -68,7 +68,7 @@ python3 -m unittest discover -s ci/tests -p 'test_check_attribution.py'
 
 The GitHub workflow runs this check for changes to `main`. The maintainer is listed
 in [CODEOWNERS](../.github/CODEOWNERS) for notices, provenance, and the guard itself.
-GitHub's active [repository rules](https://github.com/denson9874/ExpressiveLauncher/rules)
+GitHub's active [repository rules](https://github.com/corrifa1/LawnchairZ/rules)
 are the authority for enforced branch and tag protections; CODEOWNERS alone does
 not enforce approval. These controls protect this repository's record and catch
 accidental omissions. They cannot control a separately hosted copy.
@@ -84,7 +84,7 @@ Record the other repository or download URL, its exact commit or version, the
 matching Expressive files and revisions, and the notices supplied with that copy.
 Check accompanying source, documentation, and third-party notices before concluding
 that attribution was omitted. Contact the Expressive maintainer through the
-[project repository](https://github.com/denson9874/ExpressiveLauncher) with that
+[project repository](https://github.com/corrifa1/LawnchairZ) with that
 evidence; avoid posting personal information or unsupported accusations.
 
 Public code remains downloadable and reusable under its applicable licenses.

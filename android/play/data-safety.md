@@ -1,4 +1,4 @@
-# Expressive Launcher L3 data-safety worksheet
+# LawnchairZ L3 data-safety worksheet
 
 This is an engineering inventory, not a completed legal declaration. Re-check the exact release
 bundle and every enabled SDK before submitting the Play Console Data safety form.

@@ -77,7 +77,7 @@ internal class NightlyBuildsRepository(
                 val update = decision.manifest
                 updateState.update {
                     UpdateState.Available(
-                        name = "Expressive Launcher ${update.versionName} (${config.channel.wireName.uppercase()})",
+                        name = "LawnchairZ ${update.versionName} (${config.channel.wireName.uppercase()})",
                         url = update.apkUrl,
                         changelogState = null,
                         expectedSha256 = update.sha256,

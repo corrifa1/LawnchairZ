@@ -5,7 +5,7 @@ umask 077
 
 script_dir=${0:A:h}
 repository_dir=${script_dir:h}
-signing_dir="${EXPRESSIVE_SIGNING_DIR:-${repository_dir:h:h}/Expressive Launcher Signing}"
+signing_dir="${EXPRESSIVE_SIGNING_DIR:-${repository_dir:h:h}/LawnchairZ Signing}"
 keystore_path="$signing_dir/expressive-launcher-release.jks"
 backup_properties_path="$signing_dir/release-credentials.properties"
 repository_properties_path="$repository_dir/keystore.properties"
@@ -36,7 +36,7 @@ signing_password=$(openssl rand -hex 32)
     -keysize 4096 \
     -sigalg SHA256withRSA \
     -validity 10000 \
-    -dname "CN=Expressive Launcher Release,O=Expressive Launcher,C=US"
+    -dname "CN=LawnchairZ Release,O=LawnchairZ,C=US"
 
 {
     print -r -- "storeFile=$keystore_path"
@@ -48,7 +48,7 @@ signing_password=$(openssl rand -hex 32)
 cp "$backup_properties_path" "$repository_properties_path"
 chmod 600 "$keystore_path" "$backup_properties_path" "$repository_properties_path"
 
-print "Created the Expressive Launcher release key without exposing its password."
+print "Created the LawnchairZ release key without exposing its password."
 print "Keystore: $keystore_path"
 print "Offline credential backup: $backup_properties_path"
 print "Ignored build configuration: $repository_properties_path"

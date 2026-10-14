@@ -22,7 +22,7 @@ class FeedBundleTests(unittest.TestCase):
         self.apk = self.root / "launcher.apk"
         self.payload = b"signed helper fixture"
         self.metadata = {
-            "schemaVersion": 1, "packageName": "dev.launcher.expressive.feed",
+            "schemaVersion": 1, "packageName": "dev.launcher.lawnchairz.feed",
             "versionCode": 10, "versionName": "1.0.9", "sizeBytes": len(self.payload),
             "sha256": hashlib.sha256(self.payload).hexdigest(), "fileName": "ExpressiveFeed.apk",
         }

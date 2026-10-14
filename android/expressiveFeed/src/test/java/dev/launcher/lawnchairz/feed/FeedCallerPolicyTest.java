@@ -1,4 +1,4 @@
-package dev.launcher.expressive.feed;
+package dev.launcher.lawnchairz.feed;
 
 import static com.google.common.truth.Truth.assertThat;
 

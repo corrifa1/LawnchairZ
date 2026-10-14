@@ -1,4 +1,4 @@
-package dev.launcher.expressive.feed;
+package dev.launcher.lawnchairz.feed;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -10,7 +10,7 @@ import android.os.RemoteException;
 
 /**
  * Relays overlay Binder transactions as the companion process while rejecting every caller that
- * is not both an Expressive Launcher package and signed by the same certificate.
+ * is not both a LawnchairZ package and signed by the same certificate.
  */
 final class SignatureTransactProxy extends Binder {
     private final Context context;
@@ -33,7 +33,7 @@ final class SignatureTransactProxy extends Binder {
                 packageManager.checkSignatures(callingUid, Process.myUid()),
                 claimedLauncherPackage);
         if (!allowed) {
-            throw new SecurityException("Caller is not an authorized Expressive Launcher");
+            throw new SecurityException("Caller is not an authorized LawnchairZ");
         }
 
         // Ensure Google observes this deliberately debuggable bridge as the Binder caller rather

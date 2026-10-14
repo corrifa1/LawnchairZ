@@ -105,7 +105,7 @@ class LegacyQaMigrationTest(unittest.TestCase):
 
     def test_changed_public_github_manifest_prevents_drive_access(self):
         for field, invalid in (("versionCode", 13), ("sha256", "b" * 64),
-                               ("packageName", "dev.launcher.expressive.l3"),
+                               ("packageName", "dev.launcher.lawnchairz.l3"),
                                ("apkUrl", "https://example.invalid/other.apk")):
             with self.subTest(field=field), \
                     mock.patch.object(migration, "public_bytes", return_value=json.dumps({**self.candidate, field: invalid}).encode()), \

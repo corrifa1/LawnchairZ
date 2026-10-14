@@ -20,7 +20,7 @@ class ExpressiveFeedSetupTest {
     @Test
     fun metadata_acceptsTheExactBundledContract() {
         val value = parseFeedBundleMetadata(
-            """{"schemaVersion":1,"packageName":"dev.launcher.expressive.feed","versionCode":10,
+            """{"schemaVersion":1,"packageName":"dev.launcher.lawnchairz.feed","versionCode":10,
                 "versionName":"1.0.9","sizeBytes":4,"sha256":"${"a".repeat(64)}",
                 "fileName":"ExpressiveFeed.apk"}""",
         )
@@ -122,7 +122,7 @@ class ExpressiveFeedSetupTest {
     @Test
     fun archive_rejectsMetadataMismatchAndUnusableNonDebuggableHelper() {
         for (invalid in listOf(
-            archive().copy(packageName = "dev.launcher.expressive.l3"),
+            archive().copy(packageName = "dev.launcher.lawnchairz.l3"),
             archive().copy(versionCode = 9),
             archive().copy(versionName = "wrong"),
             archive().copy(debuggable = false),

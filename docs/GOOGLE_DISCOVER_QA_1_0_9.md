@@ -1,6 +1,6 @@
 # Integrated Google Discover — QA 1.0.9
 
-On September 6, 2026, Jenkins built and staged Expressive Launcher **1.0.9 / code 10** with
+On September 6, 2026, Jenkins built and staged LawnchairZ **1.0.9 / code 10** with
 Google Discover setup and management inside Home settings. The native Google panel attaches to
 Expressive Home. Its included background helper has no separate feed screen or launcher activity.
 Android confirms the helper installation; users do not need a separate download.
@@ -17,12 +17,12 @@ using the existing folder access.
 ## Exact identity
 
 - Source: `e0e8bb2ea30b29d8768bdac6e97e5869e938f9ae` on `codex/pixel-parity`.
-- Package: `dev.launcher.expressive.l3.debug`, minified, non-debuggable, durable-signed `Qa`.
+- Package: `dev.launcher.lawnchairz.l3.debug`, minified, non-debuggable, durable-signed `Qa`.
 - APK: `ExpressiveLauncherL3-1.0.9-Android17-QPR2-Beta4-Jenkins-QA-release-signed.apk`.
 - Size: **21,793,376 bytes**.
 - SHA-256: `d17d255871603b7e7d8666edb52a464df2016c75033aae7771f565b42e6184fc`.
 - Certificate SHA-256: `c14160306d5c059b3d119f15fb74e08c57cc272316e80b36e192c71dc9e4d0d2`.
-- Bundled support: `dev.launcher.expressive.feed`, 1.0.9 / code 10, **37,077 bytes**, same certificate.
+- Bundled support: `dev.launcher.lawnchairz.feed`, 1.0.9 / code 10, **37,077 bytes**, same certificate.
 - Support SHA-256: `c1a037472b0cc496355af543c9f7fb1129498b66c908c38820622778a4b9a442`.
 
 The included service-only helper retains its separate debuggable identity for Google overlay

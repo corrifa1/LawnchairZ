@@ -1,4 +1,4 @@
-# Expressive Launcher Jenkins pipeline
+# LawnchairZ Jenkins pipeline
 
 Jenkins runs full tests, signed/minified QA builds, isolated upgrade checks, sealing, retention,
 and GitHub publication. Codex handles research, implementation, focused development checks,
@@ -7,7 +7,7 @@ exploratory device validation and diagnosis. Failed publication preserves the ex
 ## Infrastructure
 
 - Source checkout: `/path/to/ExpressiveLauncher`, `codex/pixel-parity`.
-- Export repository: https://github.com/denson9874/ExpressiveLauncher . This repository contains
+- Export repository: https://github.com/corrifa1/LawnchairZ . This repository contains
   build exports and manifests; the application source checkout and upstream remotes remain separate.
 - Build job: http://127.0.0.1:8091/job/expressive-qa-build/
 - Publish job: http://127.0.0.1:8091/job/expressive-qa-publish/
@@ -21,7 +21,7 @@ Beta 4 image. The Mac must remain awake and logged in. The controller and worker
 user, but separate processes and directories; only trusted recorded source is accepted.
 
 The GitHub CLI is installed at `/opt/homebrew/bin/gh`. The worker uses the authenticated macOS user's
-GitHub CLI keyring login to publish to `denson9874/ExpressiveLauncher`. Tokens are never embedded in
+GitHub CLI keyring login to publish to `corrifa1/LawnchairZ`. Tokens are never embedded in
 APKs, source, arguments or publication receipts. Public clients need no GitHub account or token.
 GitHub authentication is separate from the Codex GitHub connector. If it expires, complete
 `gh auth login --hostname github.com --git-protocol https --web --skip-ssh-key` and retry the same release.
@@ -43,7 +43,7 @@ python3 ci/jenkins/control.py status --job build --number BUILD_NUMBER
 
 Jenkins verifies that the revision belongs to the saved branch and prepares detached main/submodule
 worktrees at the exact recorded commits. Normal builds download the live GitHub QA manifest from
-`https://raw.githubusercontent.com/denson9874/ExpressiveLauncher/updates/qa/latest.json` and its
+`https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/qa/latest.json` and its
 versioned GitHub APK. Other repositories, stable-channel assets, credential-bearing URLs and HTTP
 redirect downgrades are rejected. Bytes and SHA-256 must agree with the manifest.
 

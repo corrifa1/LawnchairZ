@@ -45,7 +45,7 @@ abstract class GenerateExpressiveFeedAssets extends DefaultTask {
             throw new GradleException("Expected one Expressive Feed APK artifact directory")
         }
         def built = builtArtifactsLoader.get().load(helperApkArtifacts)
-        if (built == null || built.applicationId != "dev.launcher.expressive.feed"
+        if (built == null || built.applicationId != "dev.launcher.lawnchairz.feed"
                 || built.variantName != expectedHelperVariant.get() || built.elements.size() != 1) {
             throw new GradleException("Expected exactly one APK from the selected Expressive Feed variant")
         }

@@ -1,6 +1,6 @@
 # Expressive Bloom app icon
 
-The approved Expressive Bloom artwork is the app identity for Expressive Launcher.
+The approved Expressive Bloom artwork is the app identity for LawnchairZ.
 Its violet, cobalt, coral and mint petals sit on an ink-indigo background (`#141329`).
 
 ![Expressive Bloom](assets/expressive/expressive-bloom.png)

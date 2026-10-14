@@ -52,10 +52,10 @@ if (signingValues.any { it != null && !it.toString().isBlank() } && !releaseSign
 }
 
 android {
-    namespace "dev.launcher.expressive.feed"
+    namespace "dev.launcher.lawnchairz.feed"
 
     defaultConfig {
-        applicationId "dev.launcher.expressive.feed"
+        applicationId "dev.launcher.lawnchairz.feed"
         versionCode feedVersionCode
         versionName feedVersionName
     }
@@ -87,7 +87,7 @@ android {
         }
 
         release {
-            // Intentionally limited to this isolated companion; Expressive Launcher stays hardened.
+            // Intentionally limited to this isolated companion; LawnchairZ stays hardened.
             debuggable true
             if (releaseSigningConfigured) {
                 signingConfig signingConfigs.release

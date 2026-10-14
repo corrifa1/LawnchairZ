@@ -1,4 +1,4 @@
-# Expressive Launcher Pixel parity ledger
+# LawnchairZ Pixel parity ledger
 
 This ledger records verified Pixel Launcher behavior, the public-API-compatible Expressive
 implementation, and validation evidence. Pixel-only private APIs and privileged system behavior are
@@ -48,7 +48,7 @@ the AVD display name alone is not accepted as evidence.
 
 The user requested GitHub build exports and updater notifications, and explicitly selected automatic
 publication of future passing QA builds. The export repository is
-https://github.com/denson9874/ExpressiveLauncher . Stable release publication remains separate.
+https://github.com/corrifa1/LawnchairZ . Stable release publication remains separate.
 
 The app keeps its existing manual and immediate/six-hour scheduled checks, notification deduplication,
 snooze and verified installer flow. QA and release defaults now point to separate public GitHub
@@ -239,7 +239,7 @@ release request and verified Jenkins release are recorded above.
 
 **Observed gap.** On the same clean QPR2 Beta 3 guest, Pixel Launcher displayed `Fri, Aug 28` at the
 top of the first home frame. Expressive 1.0.4 displayed a permanent local onboarding card instead
-when Smartspacer was unavailable: `Welcome to Expressive Launcher L3` / `Swipe up to open the app
+when Smartspacer was unavailable: `Welcome to LawnchairZ L3` / `Swipe up to open the app
 drawer`.
 
 **Implementation.** The Expressive product now removes the local onboarding target and promotes the

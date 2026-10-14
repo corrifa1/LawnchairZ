@@ -1,13 +1,13 @@
 # Source provenance
 
-This public repository is based on the application source snapshot for **Expressive Launcher 1.0.12 / version code 13**. The current `main` branch also includes the **Expressive Bloom** branding update described below; the original snapshot is preserved by `source-v1.0.12-13`.
+This public repository is based on the application source snapshot for **LawnchairZ 1.0.12 / version code 13**. The current `main` branch also includes the **Expressive Bloom** branding update described below; the original snapshot is preserved by `source-v1.0.12-13`.
 
 | Item | Identity |
 | --- | --- |
 | Application source revision used for the signed build | `ad7a5c336423df6edb198a700a050117808c96f6` |
 | Lawnchair 16 baseline | [`eed2baf4efe4cf49540cf4ec474942dc743b83cc`](https://github.com/LawnchairLauncher/lawnchair/tree/eed2baf4efe4cf49540cf4ec474942dc743b83cc) |
 | Required SystemUI submodule | [`e12acf0978875fc4adcebf46207b766106ffc92b`](https://github.com/LawnchairLauncher/platform_frameworks_libs_systemui/tree/e12acf0978875fc4adcebf46207b766106ffc92b) |
-| Signed QA release | [`qa-v1.0.12-13`](https://github.com/denson9874/ExpressiveLauncher/releases/tag/qa-v1.0.12-13) |
+| Signed QA release | [`qa-v1.0.12-13`](https://github.com/corrifa1/LawnchairZ/releases/tag/qa-v1.0.12-13) |
 | Public source tag | `source-v1.0.12-13` |
 | APK SHA-256 | `778bb1720151c4b486ddc5d400fb0b69bc2c725cd692f2d246cf17dc6ebf88a1` |
 
@@ -39,7 +39,7 @@ the surrounding packages, dependencies, or launcher features originated here.
 | Discover helper inspection and verification before requesting Android installation | [ExpressiveFeedSetup.kt](../android/lawnchair/src/app/lawnchair/feed/ExpressiveFeedSetup.kt) |
 
 The attribution hardening adds notices to those files without changing their
-implementations. The original [source snapshot](https://github.com/denson9874/ExpressiveLauncher/tree/source-v1.0.12-13)
+implementations. The original [source snapshot](https://github.com/corrifa1/LawnchairZ/tree/source-v1.0.12-13)
 and [upstream baseline](https://github.com/LawnchairLauncher/lawnchair/tree/eed2baf4efe4cf49540cf4ec474942dc743b83cc)
 remain available for comparison. The [feature comparison](FEATURE_COMPARISON.md)
 credits the inherited functionality. [NOTICE](../NOTICE) and the
@@ -55,7 +55,7 @@ This branding change does not replace the historical signed APK identified above
 ## Get the complete source
 
 ```sh
-git clone --recurse-submodules --branch source-v1.0.12-13 https://github.com/denson9874/ExpressiveLauncher.git
+git clone --recurse-submodules --branch source-v1.0.12-13 https://github.com/corrifa1/LawnchairZ.git
 ```
 
 GitHub's normal source ZIP contains the parent repository but omits submodule contents. Recursive cloning retrieves the pinned SystemUI code required by `settings.gradle`. See [BUILDING.md](BUILDING.md).

@@ -64,7 +64,7 @@ public class TISBindHelper implements ServiceConnection {
         mConnectionCallback = connectionCallback;
         // The standard-home flavor deliberately omits TouchInteractionService because Android only
         // permits the privileged recents component to own it. Retrying a missing service forever
-        // produced log spam and periodic main-thread work in every Expressive Launcher session.
+        // produced log spam and periodic main-thread work in every LawnchairZ session.
         mBindingSupported = !BuildConfig.STANDARD_HOME_ONLY;
         if (mBindingSupported) {
             internalBindToTIS();

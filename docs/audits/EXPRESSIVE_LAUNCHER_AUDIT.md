@@ -1,4 +1,4 @@
-# Expressive Launcher Android 17 Release Audit
+# LawnchairZ Android 17 Release Audit
 
 Audit date: 2026-08-26
 Branch: `codex/launcher3-rebase`

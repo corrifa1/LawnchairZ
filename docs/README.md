@@ -25,7 +25,7 @@
 
 ## Historical reference
 
-- [Expressive launcher audit](audits/EXPRESSIVE_LAUNCHER_AUDIT.md)
+- [LawnchairZ audit](audits/EXPRESSIVE_LAUNCHER_AUDIT.md)
 - [Inherited upstream GitHub configuration and changelogs](reference/upstream-github/)
 
 Historical reports describe the revisions they reviewed. Current build and

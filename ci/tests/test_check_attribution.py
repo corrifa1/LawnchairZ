@@ -1,6 +1,6 @@
 # Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 # SPDX-License-Identifier: Apache-2.0
-# https://github.com/denson9874/ExpressiveLauncher
+# https://github.com/corrifa1/LawnchairZ
 
 """Exercise attribution loss against a small, isolated repository fixture."""
 
@@ -28,15 +28,15 @@ class AttributionTest(unittest.TestCase):
         # Copy only the three retained license texts, not the repository or builds.
         for relative in attribution.LICENSE_SHA256:
             self.write(relative, (REPOSITORY / relative).read_bytes())
-        self.notice = ("Expressive Launcher\nhttps://github.com/denson9874/ExpressiveLauncher\n"
+        self.notice = ("LawnchairZ\nhttps://github.com/corrifa1/LawnchairZ\n"
                        "Copyright 2026 Daryl Denson and Expressive Launcher contributors.\n"
                        "The Android Open Source Project\nLawnchair\n")
         self.write("NOTICE", self.notice)
         self.write(attribution.PACKAGED_NOTICE, self.notice)
         self.header = ("/* Copyright 2026 Daryl Denson and Expressive Launcher contributors.\n"
                        " * SPDX-License-Identifier: Apache-2.0\n"
-                       " * Developed for Expressive Launcher.\n"
-                       " * https://github.com/denson9874/ExpressiveLauncher\n */\n")
+                       " * Developed for LawnchairZ.\n"
+                       " * https://github.com/corrifa1/LawnchairZ\n */\n")
         for relative in attribution.ATTRIBUTED_SOURCES:
             self.write(relative, self.header + "package fixture\n")
 
@@ -79,7 +79,7 @@ class AttributionTest(unittest.TestCase):
     def test_notice_project_name_does_not_replace_contributor_copyright(self):
         copyright = "Copyright 2026 Daryl Denson and Expressive Launcher contributors."
         stripped = self.notice.replace(copyright, "")
-        self.assertIn("Expressive Launcher", stripped)
+        self.assertIn("LawnchairZ", stripped)
         self.write("NOTICE", stripped)
         self.write(attribution.PACKAGED_NOTICE, stripped)
         self.assertTrue(any("NOTICE: missing attribution" in error and copyright in error
@@ -88,7 +88,7 @@ class AttributionTest(unittest.TestCase):
     def test_source_project_name_does_not_replace_contributor_copyright(self):
         copyright = "Copyright 2026 Daryl Denson and Expressive Launcher contributors."
         stripped = self.header.replace(copyright, "")
-        self.assertIn("Expressive Launcher", stripped)
+        self.assertIn("LawnchairZ", stripped)
         for relative in attribution.ATTRIBUTED_SOURCES:
             with self.subTest(path=relative):
                 self.write(relative, stripped + "package fixture\n")

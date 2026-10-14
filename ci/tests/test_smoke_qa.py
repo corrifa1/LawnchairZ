@@ -11,19 +11,19 @@ spec.loader.exec_module(smoke)
 
 class AppCrashGateTests(unittest.TestCase):
     def test_launcher_runtime_fatal_blocks(self):
-        log = "E AndroidRuntime: FATAL EXCEPTION: main\nE AndroidRuntime: Process: dev.launcher.expressive.l3.debug, PID: 123\n"
+        log = "E AndroidRuntime: FATAL EXCEPTION: main\nE AndroidRuntime: Process: dev.launcher.lawnchairz.l3.debug, PID: 123\n"
         self.assertEqual(smoke.app_log_failures(log, "", ""), ["fatal_exception"])
 
     def test_crash_buffer_alone_blocks(self):
-        crash = "FATAL EXCEPTION: main\nProcess: dev.launcher.expressive.l3.debug, PID: 123"
+        crash = "FATAL EXCEPTION: main\nProcess: dev.launcher.lawnchairz.l3.debug, PID: 123"
         self.assertEqual(smoke.app_log_failures("", crash, ""), ["fatal_exception"])
 
     def test_anr_event_blocks_without_main_log_message(self):
-        events = "I am_anr: [0,123,dev.launcher.expressive.l3.debug,0,Input dispatching timed out]"
+        events = "I am_anr: [0,123,dev.launcher.lawnchairz.l3.debug,0,Input dispatching timed out]"
         self.assertEqual(smoke.app_log_failures("", "", events), ["anr"])
 
     def test_process_crash_event_blocks(self):
-        events = "I am_crash: [0,123,dev.launcher.expressive.l3.debug,0,java.lang.RuntimeException]"
+        events = "I am_crash: [0,123,dev.launcher.lawnchairz.l3.debug,0,java.lang.RuntimeException]"
         self.assertEqual(smoke.app_log_failures("", "", events), ["process_crash"])
 
     def test_other_package_crash_does_not_claim_launcher_crash(self):
@@ -31,11 +31,11 @@ class AppCrashGateTests(unittest.TestCase):
         self.assertEqual(smoke.app_log_failures(log, "", ""), [])
 
     def test_native_tombstone_blocks(self):
-        crash = "F DEBUG: pid: 123, tid: 123, name: launcher >>> dev.launcher.expressive.l3.debug <<<"
+        crash = "F DEBUG: pid: 123, tid: 123, name: launcher >>> dev.launcher.lawnchairz.l3.debug <<<"
         self.assertEqual(smoke.app_log_failures("", crash, ""), ["native_crash"])
 
     def test_caught_launcher_warning_is_not_a_fatal(self):
-        log = "E SystemUiProxy: dev.launcher.expressive.l3.debug recent-tasks unavailable\nE Snapshot: caught java.lang.NullPointerException"
+        log = "E SystemUiProxy: dev.launcher.lawnchairz.l3.debug recent-tasks unavailable\nE Snapshot: caught java.lang.NullPointerException"
         self.assertEqual(smoke.app_log_failures(log, "", ""), [])
 
 
