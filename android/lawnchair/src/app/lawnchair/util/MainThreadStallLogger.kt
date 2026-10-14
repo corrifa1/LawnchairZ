@@ -58,11 +58,16 @@ object MainThreadStallLogger {
         Log.i(TAG, "Launcher window focus=$hasFocus (${sinceStart()})")
     }
 
-    /** Logs how long a touch-down waited before the launcher could handle it. */
+    /**
+     * Logs every touch-down the launcher receives, and how long it waited before the launcher
+     * could handle it. Touches the system keeps from us never show up here at all.
+     */
     fun onTouchDown(eventTime: Long) {
         val delay = SystemClock.uptimeMillis() - eventTime
         if (delay >= TOUCH_DELAY_THRESHOLD_MS) {
             Log.w(TAG, "Touch-down delivered ${delay}ms late (${sinceStart()})")
+        } else {
+            Log.i(TAG, "Touch-down received (${sinceStart()})")
         }
     }
 
