@@ -331,6 +331,7 @@
 
     <!--Overlay-->
     <string name="app_closing_animation">App closing animation</string>
+    <string name="app_closing_animation_speed">App closing animation speed</string>
     <string name="overlay_fade_in">Fade in</string>
     <string name="overlay_suck_in">Suck in</string>
     <string name="overlay_label">Overlay</string>

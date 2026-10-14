@@ -607,6 +607,12 @@ class PreferenceManager2 @Inject constructor(
         onSet = { reloadHelper.reloadGrid() },
     )
 
+    // Speed multiplier for the closing-app overlay: durations are divided by it.
+    val closingAppOverlaySpeed = preference(
+        key = floatPreferencesKey(name = "closing_app_overlay_speed"),
+        defaultValue = 1f,
+    )
+
     val matchHotseatQsbStyle = preference(
         key = booleanPreferencesKey(name = "use_drawer_search_icon"),
         defaultValue = false,

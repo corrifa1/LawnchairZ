@@ -188,6 +188,12 @@ class FullScreenOverlayView @JvmOverloads constructor(
     }
 }
 
+const val MIN_OVERLAY_SPEED = 0.5f
+const val MAX_OVERLAY_SPEED = 2f
+
+/** A closing-overlay duration adjusted for the user's speed multiplier (higher is faster). */
+internal fun scaledOverlayDuration(baseMs: Long, speed: Float): Long = (baseMs / speed.coerceIn(MIN_OVERLAY_SPEED, MAX_OVERLAY_SPEED)).toLong()
+
 fun Activity.showFullScreenOverlay(
     durationIn: Long = 200,
     durationOut: Long = 500,
@@ -197,6 +203,7 @@ fun Activity.showFullScreenOverlay(
 ) {
     val pref2 = PreferenceManager2.getInstance(this)
     val animationMode = pref2.closingAppOverlay.firstCached()
+    val speed = pref2.closingAppOverlaySpeed.firstCached()
     val overlayView = FullScreenOverlayView(this)
     val targetRootView = rootView ?: window.decorView.findViewById<ViewGroup>(android.R.id.content)
 
@@ -205,13 +212,13 @@ fun Activity.showFullScreenOverlay(
 
     when (animationMode) {
         FullScreenOverlayMode.FADE_IN -> {
-            overlayView.animateIn(durationIn) {
-                overlayView.animateOut(durationOut, onOverlayReady)
+            overlayView.animateIn(scaledOverlayDuration(durationIn, speed)) {
+                overlayView.animateOut(scaledOverlayDuration(durationOut, speed), onOverlayReady)
             }
         }
 
         FullScreenOverlayMode.SUCK_IN -> {
-            overlayView.suckAnimation(durationOut) {
+            overlayView.suckAnimation(scaledOverlayDuration(durationOut, speed)) {
                 onOverlayReady()
             }
         }
