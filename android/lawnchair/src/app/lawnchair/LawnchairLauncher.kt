@@ -17,14 +17,19 @@
 package app.lawnchair
 
 import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.SystemClock
+import android.util.Log
 import android.util.Pair
 import android.view.Display
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewTreeObserver
 import android.window.SplashScreen
@@ -32,6 +37,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.lifecycleScope
 import app.lawnchair.LawnchairApp.Companion.showQuickstepWarningIfNecessary
+import app.lawnchair.animation.AppReturnAnimator
+import app.lawnchair.animation.AppReturnConditions
+import app.lawnchair.animation.AppReturnTracker
+import app.lawnchair.animation.shouldAnimateReturn
 import app.lawnchair.compat.LawnchairQuickstepCompat
 import app.lawnchair.data.AppDatabase
 import app.lawnchair.gestures.GestureController
@@ -58,6 +67,7 @@ import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherState
 import com.android.launcher3.R
 import com.android.launcher3.Utilities
+import com.android.launcher3.folder.Folder
 import com.android.launcher3.folder.FolderIcon
 import com.android.launcher3.model.data.ItemInfo
 import com.android.launcher3.popup.SystemShortcut
@@ -71,6 +81,7 @@ import com.android.launcher3.uioverrides.states.OverviewState
 import com.android.launcher3.util.ActivityOptionsWrapper
 import com.android.launcher3.util.Executors
 import com.android.launcher3.util.RunnableList
+import com.android.launcher3.util.StableViewInfo
 import com.android.launcher3.util.SystemUiController.UI_STATE_BASE_WINDOW
 import com.android.launcher3.util.Themes
 import com.android.launcher3.util.TouchController
@@ -149,6 +160,16 @@ class LawnchairLauncher : QuickstepLauncher() {
 
     private lateinit var colorScheme: ColorScheme
     private var hasBackGesture = false
+
+    // Launcher-side return-home animation for devices without GestureNavContract. The tracker
+    // lives with this activity instance, so a recreated launcher never animates a stale launch.
+    // elapsedRealtime keeps counting in deep sleep, so the expiry holds across screen-off.
+    private val appReturnTracker = AppReturnTracker(clock = SystemClock::elapsedRealtime)
+    private val appReturnAnimator by unsafeLazy { AppReturnAnimator(this) }
+    private var hasStartedSinceCreate = false
+    private var appReturnCheckPending = false
+    private var lastIntentHadGestureNavContract = false
+    private var configurationChangedSinceStop = false
 
     val gestureController by unsafeLazy { GestureController(this) }
 
@@ -251,6 +272,9 @@ class LawnchairLauncher : QuickstepLauncher() {
     }
 
     override fun onNewIntent(intent: Intent?) {
+        appReturnAnimator.finish()
+        lastIntentHadGestureNavContract = intent != null && GestureNavContract.canBuildFromIntent(intent)
+
         if (intent != null && intent.action == LawnchairShortcutActivity.START_ACTION) {
             val handlerString = intent.getStringExtra(LawnchairShortcutActivity.EXTRA_HANDLER)
             val config = handlerString?.let { GestureHandlerConfig.fromString(it) }
@@ -470,9 +494,17 @@ class LawnchairLauncher : QuickstepLauncher() {
         return ActivityOptionsWrapper(options, callback)
     }
 
+    override fun onStart() {
+        super.onStart()
+        // The first start after creation (including recreation) is never a return from an app.
+        appReturnCheckPending = hasStartedSinceCreate
+        hasStartedSinceCreate = true
+    }
+
     override fun onResume() {
         super.onResume()
         restartIfPending()
+        maybeStartAppReturnAnimation()
 
         dragLayer.viewTreeObserver.addOnDrawListener(
             object : ViewTreeObserver.OnDrawListener {
@@ -492,6 +524,134 @@ class LawnchairLauncher : QuickstepLauncher() {
                 }
             },
         )
+    }
+
+    override fun onPause() {
+        appReturnAnimator.finish()
+        super.onPause()
+    }
+
+    override fun onStop() {
+        appReturnAnimator.finish()
+        super.onStop()
+        if (isChangingConfigurations) {
+            appReturnTracker.clear()
+        } else {
+            appReturnTracker.onLauncherStopped()
+        }
+        appReturnCheckPending = false
+        lastIntentHadGestureNavContract = false
+        configurationChangedSinceStop = false
+    }
+
+    override fun onDestroy() {
+        appReturnAnimator.finish()
+        super.onDestroy()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        appReturnAnimator.finish()
+        configurationChangedSinceStop = true
+        super.onConfigurationChanged(newConfig)
+    }
+
+    override fun dispatchDeviceProfileChanged() {
+        appReturnAnimator.finish()
+        super.dispatchDeviceProfileChanged()
+    }
+
+    override fun onScreenOnChanged(isOn: Boolean) {
+        if (!isOn) {
+            appReturnAnimator.finish()
+            // Screen off while home is visible: the next start is a screen-on, not a return.
+            if (isStarted) appReturnTracker.clear()
+        }
+        super.onScreenOnChanged(isOn)
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
+            appReturnAnimator.finish()
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    override fun startActivitySafely(v: View?, intent: Intent, item: ItemInfo?): RunnableList? {
+        val result = super.startActivitySafely(v, intent, item)
+        if (result != null) {
+            recordAppLaunch(item)
+        }
+        return result
+    }
+
+    private fun recordAppLaunch(item: ItemInfo?) {
+        val packageName = item?.targetPackage
+        val user = item?.user
+        if (packageName == null || user == null) {
+            // Not an app launch we can map back to an icon.
+            appReturnTracker.clear()
+            return
+        }
+        val stableId = item.stableId
+        val stableViewInfo = if (stableId != null && (item.id != ItemInfo.NO_ID || item.container != ItemInfo.NO_ID)) {
+            StableViewInfo(item.id, item.container, stableId)
+        } else {
+            null
+        }
+        appReturnTracker.recordLaunch(
+            packageName = packageName,
+            user = user,
+            stableViewInfo = stableViewInfo,
+            source = AppReturnTracker.sourceForContainer(item.container),
+        )
+    }
+
+    /**
+     * Plays [AppReturnAnimator] when we come back home from an app we launched, on devices where
+     * no GestureNavContract arrives (e.g. Samsung One UI).
+     *
+     * This is the single, deduplicated entry point for both ways back home: swipe-home / home
+     * button (onNewIntent with ACTION_MAIN, then onResume) and back from the app's root activity
+     * (no intent, just onStart/onResume). It only runs after a real stop, once per start, and
+     * after intent handling so the state checks see the final launcher state.
+     *
+     * Timing: the initial (scaled-down, dimmed) state is applied here, synchronously, before the
+     * first traversal after restart, and the animation starts on the first pre-draw. That way the
+     * first launcher frame the system reveals under its own app-close animation is already part
+     * of ours, and there is no flash of the final layout. onEnterAnimationComplete() was not used:
+     * it only fires after the system's window animation has finished, so the home screen would
+     * sit still (and visibly scaled down) for the whole close animation before reacting.
+     */
+    private fun maybeStartAppReturnAnimation() {
+        val hadGestureNavContract = lastIntentHadGestureNavContract
+        lastIntentHadGestureNavContract = false
+        if (!appReturnCheckPending) return
+        appReturnCheckPending = false
+
+        // Always consume, so a skipped return can't be animated later.
+        val pending = appReturnTracker.consumeReturn() ?: return
+
+        val topView = AbstractFloatingView.getTopOpenView(this)
+        val conditions = AppReturnConditions(
+            featureEnabled = prefs.appReturnAnimation.get(),
+            isRecentsProvider = LawnchairApp.isRecentsEnabled,
+            gestureNavContractHandled = hadGestureNavContract && prefs.enableGnc.get(),
+            iconSurfaceOpen = AbstractFloatingView.getOpenView<AbstractFloatingView>(
+                this,
+                AbstractFloatingView.TYPE_ICON_SURFACE,
+            ) != null,
+            isInNormalState = isInState(LauncherState.NORMAL),
+            isOverlayShown = workspace.isOverlayShown,
+            blockingFloatingViewOpen = topView != null &&
+                !(topView is Folder && AppReturnAnimator.folderContains(topView, pending)),
+            configurationChanged = configurationChangedSinceStop || isChangingConfigurations,
+            animatorsEnabled = ValueAnimator.areAnimatorsEnabled(),
+        )
+        if (shouldAnimateReturn(conditions)) {
+            appReturnAnimator.prepareAndStart(pending)
+        } else {
+            Log.d(APP_RETURN_TAG, "Skipping return animation for ${pending.packageName}: $conditions")
+        }
     }
 
     override fun getDefaultOverlay(): LauncherOverlayManager = defaultOverlay
@@ -530,6 +690,7 @@ class LawnchairLauncher : QuickstepLauncher() {
     companion object {
         private const val FLAG_RECREATE = 1 shl 0
         private const val FLAG_RESTART = 1 shl 1
+        private const val APP_RETURN_TAG = "AppReturnAnimation"
 
         var sRestartFlags = 0
 

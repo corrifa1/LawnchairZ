@@ -148,6 +148,11 @@ fun ExperimentalFeaturesPreferences(
             ExpandAndShrink(visible = enableGncAdapter.state.value && !isGestureNavContractCompatible) {
                 WarningPreference(stringResource(R.string.gesturenavcontract_warning_incompatibility))
             }
+            SwitchPreference(
+                adapter = prefs.appReturnAnimation.getAdapter(),
+                label = stringResource(id = R.string.app_return_animation_label),
+                description = stringResource(id = R.string.app_return_animation_description),
+            )
             ListPreference(
                 adapter = vibrationFeedbackLevelAdapter,
                 entries = listOf(

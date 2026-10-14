@@ -185,6 +185,9 @@ class PreferenceManager @Inject constructor(
     val hideVersionInfo = BoolPref("pref_hideVersionInfo", false)
     val pseudonymVersion = StringPref("pref_pseudonymVersion", "Bubble Tea")
     val enableGnc = BoolPref("pref_enableGnc", isGestureNavContractCompatible, recreate)
+
+    // Launcher-side return-home animation, for devices that never send a GestureNavContract.
+    val appReturnAnimation = BoolPref("pref_appReturnAnimation", !isGestureNavContractCompatible)
     val hasOpenedSettings = BoolPref("pref_hasOpenedSettings", false)
 
     val lawnchairMajorVersion = IntPref(
