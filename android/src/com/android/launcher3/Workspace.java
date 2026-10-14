@@ -2362,12 +2362,15 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                     lp.isLockedToGrid = true;
 
                     if (container != CONTAINER_HOTSEAT
-                            && cell instanceof LauncherAppWidgetHostView) {
+                            && (cell instanceof LauncherAppWidgetHostView
+                            // LawnCher: widget stacks resize like widgets
+                            || cell instanceof app.lawnchair.widgetstack.WidgetStackView)) {
 
                         // We post this call so that the widget has a chance to be placed
                         // in its final location
                         onCompleteRunnable = getWidgetResizeFrameRunnable(options,
-                                (LauncherAppWidgetHostView) cell, dropTargetLayout, forceWidgetResize);
+                                (NavigableAppWidgetHostView) cell, dropTargetLayout,
+                                forceWidgetResize);
                     }
                     mLauncher.getModelWriter().modifyItemInDatabase(info, container, screenId,
                             lp.getCellX(), lp.getCellY(), item.spanX, item.spanY);
@@ -2471,10 +2474,13 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     @Nullable
     private Runnable getWidgetResizeFrameRunnable(DragOptions options,
-            LauncherAppWidgetHostView hostView, CellLayout cellLayout, boolean force) {
+            NavigableAppWidgetHostView hostView, CellLayout cellLayout, boolean force) {
         AppWidgetProviderInfo pInfo = hostView.getAppWidgetInfo();
-        boolean shouldResize = (pInfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE) || force;
-        if (pInfo != null && shouldResize && !options.isAccessibleDrag) {
+        // LawnCher: widget stacks have no provider of their own; the frame works out their range.
+        boolean isStack = hostView instanceof app.lawnchair.widgetstack.WidgetStackView;
+        boolean shouldResize = isStack || force
+                || (pInfo != null && pInfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE);
+        if ((pInfo != null || isStack) && shouldResize && !options.isAccessibleDrag) {
             return () -> {
                 if (!isPageInTransition()) {
                     AppWidgetResizeFrame.showForWidget(hostView, cellLayout);
@@ -2681,7 +2687,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     private boolean isDragWidget(DragObject d) {
         return (d.dragInfo instanceof LauncherAppWidgetInfo ||
-                d.dragInfo instanceof PendingAddWidgetInfo);
+                d.dragInfo instanceof PendingAddWidgetInfo
+                // LawnCher: widget stacks are workspace-only, like widgets
+                || d.dragInfo instanceof app.lawnchair.widgetstack.WidgetStackInfo);
     }
 
     public void onDragOver(DragObject d) {
@@ -3808,6 +3816,10 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                     if (api.anyMatch(matcher)) {
                         mLauncher.removeItem(child, info, persistChanges);
                     }
+                } else if (child instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
+                    // LawnCher: widget stacks
+                    app.lawnchair.widgetstack.WidgetStackController.removeMatchingChildren(
+                            mLauncher, stack, matcher, persistChanges);
                 }
             }
         }
@@ -3861,6 +3873,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 View item = container.getChildAt(itemIdx);
                 if (op.evaluate((ItemInfo) item.getTag(), item)) {
                     return item;
+                }
+                // LawnCher: widget stacks. Their widgets are items too.
+                if (item instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
+                    View match = stack.mapOverPages(op);
+                    if (match != null) return match;
                 }
             }
         }

@@ -220,6 +220,10 @@ public class StatusBarTouchController implements TouchController {
                     return false;
                 }
             }
+            // LawnCher: widget stacks page on vertical swipes instead
+            if (app.lawnchair.widgetstack.WidgetStackTouch.isTouchOnPageableStack(launcher, ev)) {
+                return false;
+            }
         }
         if (isTrackpadScroll(ev) || !mIsEnabledCheck.get()
                 || AbstractFloatingView.getTopOpenViewWithType(mLauncher,

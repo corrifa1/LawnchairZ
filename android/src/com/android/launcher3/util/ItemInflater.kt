@@ -97,6 +97,15 @@ class ItemInflater<T>(
             Favorites.ITEM_TYPE_APPWIDGET,
             Favorites.ITEM_TYPE_CUSTOM_APPWIDGET ->
                 return inflateAppWidget(item as LauncherAppWidgetInfo, context.modelWriter)
+            // LawnCher: widget stacks. Children inflate exactly like standalone widgets.
+            Favorites.ITEM_TYPE_WIDGET_STACK ->
+                return app.lawnchair.widgetstack.WidgetStackView.inflate(
+                        context,
+                        item as app.lawnchair.widgetstack.WidgetStackInfo,
+                    ) {
+                        inflateAppWidget(it, context.modelWriter) as AppWidgetHostView?
+                    }
+                    .apply { onFocusChangeListener = focusListener }
             else -> throw RuntimeException("Invalid Item Type")
         }
     }

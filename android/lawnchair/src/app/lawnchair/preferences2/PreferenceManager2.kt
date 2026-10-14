@@ -349,6 +349,19 @@ class PreferenceManager2 @Inject constructor(
         defaultValue = context.resources.getBoolean(R.bool.config_default_widget_unlimited_size),
     )
 
+    // LawnCher: widget stacks. Turning this off hides the ways to create stacks; existing stacks
+    // keep working.
+    val widgetStacks = preference(
+        key = booleanPreferencesKey(name = "widget_stacks"),
+        defaultValue = false,
+    )
+
+    // LawnCher: widget stacks. Developer comparison between free resizing and preset sizes.
+    val widgetStackPresetSizes = preference(
+        key = booleanPreferencesKey(name = "widget_stack_preset_sizes"),
+        defaultValue = false,
+    )
+
     val showStatusBar = preference(
         key = booleanPreferencesKey(name = "show_status_bar"),
         defaultValue = context.resources.getBoolean(R.bool.config_default_show_status_bar),

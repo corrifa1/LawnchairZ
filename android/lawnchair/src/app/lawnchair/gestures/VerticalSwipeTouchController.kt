@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import app.lawnchair.LawnchairLauncher
 import app.lawnchair.gestures.config.GestureHandlerConfig
 import app.lawnchair.preferences2.PreferenceManager2
+import app.lawnchair.widgetstack.WidgetStackTouch
 import com.android.launcher3.AbstractFloatingView
 import com.android.launcher3.LauncherState
 import com.android.launcher3.Utilities
@@ -88,6 +89,10 @@ class VerticalSwipeTouchController(
             it.isTouchOnIconWithSwipeGesture(coord[0], coord[1], true)
         } ?: false
         if (isIconSwipe) {
+            return false
+        }
+        // LawnCher: widget stacks page on vertical swipes instead
+        if (WidgetStackTouch.isTouchOnPageableStack(launcher, ev)) {
             return false
         }
         return AbstractFloatingView.getTopOpenView(launcher) == null &&

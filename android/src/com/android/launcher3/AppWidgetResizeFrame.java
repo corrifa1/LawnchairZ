@@ -43,10 +43,10 @@ import com.android.launcher3.keyboard.ViewGroupFocusHelper;
 import com.android.launcher3.logging.InstanceId;
 import com.android.launcher3.logging.InstanceIdSequence;
 import com.android.launcher3.model.data.ItemInfo;
-import com.android.launcher3.model.data.LauncherAppWidgetInfo;
 import com.android.launcher3.util.PendingRequestArgs;
 import com.android.launcher3.views.ArrowTipView;
 import com.android.launcher3.widget.LauncherAppWidgetHostView;
+import com.android.launcher3.widget.NavigableAppWidgetHostView;
 import com.android.launcher3.widget.LauncherAppWidgetProviderInfo;
 import com.android.launcher3.widget.PendingAppWidgetHostView;
 import com.android.launcher3.widget.util.WidgetSizes;
@@ -85,7 +85,10 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     private final View[] mDragHandles = new View[HANDLE_COUNT];
     private final List<Rect> mSystemGestureExclusionRects = new ArrayList<>(HANDLE_COUNT);
 
-    private LauncherAppWidgetHostView mWidgetView;
+    // LawnCher: widget stacks. Widened from LauncherAppWidgetHostView so stacks can be resized.
+    private NavigableAppWidgetHostView mWidgetView;
+    // LawnCher: widget stacks. Non-null while resizing a stack.
+    @Nullable private app.lawnchair.widgetstack.WidgetStackResize mStackResize;
     private CellLayout mCellLayout;
     private DragLayer mDragLayer;
     private ImageButton mReconfigureButton;
@@ -218,7 +221,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         setSystemGestureExclusionRects(mSystemGestureExclusionRects);
     }
 
-    public static void showForWidget(LauncherAppWidgetHostView widget, CellLayout cellLayout) {
+    public static void showForWidget(NavigableAppWidgetHostView widget, CellLayout cellLayout) {
         PreferenceManager2 pref2 = PreferenceManager2.getInstance(widget.getContext());
         boolean force = PreferenceCacheExtensionsKt.firstCached(pref2.getForceWidgetResize());
         boolean unlimited = PreferenceCacheExtensionsKt.firstCached(pref2.getWidgetUnlimitedSize());
@@ -249,8 +252,15 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     }
 
     private void setCornerRadiusFromWidget() {
-        if (mWidgetView != null && mWidgetView.hasEnforcedCornerRadius()) {
-            float enforcedCornerRadius = mWidgetView.getEnforcedCornerRadius();
+        float enforcedCornerRadius = -1;
+        if (mWidgetView instanceof LauncherAppWidgetHostView lahv
+                && lahv.hasEnforcedCornerRadius()) {
+            enforcedCornerRadius = lahv.getEnforcedCornerRadius();
+        } else if (mWidgetView instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
+            // LawnCher: widget stacks
+            enforcedCornerRadius = stack.getCornerRadius();
+        }
+        if (enforcedCornerRadius >= 0) {
             ImageView imageView = findViewById(R.id.widget_resize_frame);
             Drawable d = imageView.getDrawable();
             if (d instanceof GradientDrawable) {
@@ -267,7 +277,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         return mWidgetView;
     }
 
-    private void setupForWidget(LauncherAppWidgetHostView widgetView, CellLayout cellLayout,
+    private void setupForWidget(NavigableAppWidgetHostView widgetView, CellLayout cellLayout,
             DragLayer dragLayer, boolean force, boolean unlimited) {
         mCellLayout = cellLayout;
         mWidgetView = widgetView;
@@ -275,10 +285,17 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
                 widgetView.getAppWidgetInfo();
         mDragLayer = dragLayer;
         InvariantDeviceProfile idp = LauncherAppState.getIDP(cellLayout.getContext());
+        // LawnCher: widget stacks resize within the range all of their widgets support.
+        mStackResize = widgetView instanceof app.lawnchair.widgetstack.WidgetStackView stack
+                ? app.lawnchair.widgetstack.WidgetStackResize.forStack(
+                        stack, idp.numColumns, idp.numRows)
+                : null;
 
         int resizeMode;
         if (force) {
             resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
+        } else if (mStackResize != null) {
+            resizeMode = mStackResize.getResizeMode();
         } else {
             resizeMode = info.resizeMode;
         }
@@ -293,6 +310,11 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             if (resizeMode != AppWidgetProviderInfo.RESIZE_NONE) {
                 resizeMode = AppWidgetProviderInfo.RESIZE_BOTH;
             }
+        } else if (mStackResize != null) {
+            mMinHSpan = mStackResize.getMinSpanX();
+            mMinVSpan = mStackResize.getMinSpanY();
+            mMaxHSpan = mStackResize.getMaxSpanX();
+            mMaxVSpan = mStackResize.getMaxSpanY();
         } else {
             mMinHSpan = info.minSpanX;
             mMinVSpan = info.minSpanY;
@@ -300,7 +322,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             mMaxVSpan = info.maxSpanY;
         }
 
-        LauncherAppWidgetInfo widgetInfoOnView = (LauncherAppWidgetInfo) mWidgetView.getTag();
+        ItemInfo widgetInfoOnView = (ItemInfo) mWidgetView.getTag();
         // Only show resize handles for the directions in which resizing is possible.
 
         // on font / display change, the dp/px size of a cell changes, which means, existing spans
@@ -331,7 +353,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         }
 
         mReconfigureButton = (ImageButton) findViewById(R.id.widget_reconfigure_button);
-        if (info.isReconfigurable()) {
+        if (info != null && info.isReconfigurable()) {
             mReconfigureButton.setVisibility(VISIBLE);
             mReconfigureButton.setOnClickListener(view -> {
                 mLauncher.setWaitingForResult(
@@ -358,8 +380,9 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             }
         }
 
-        if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()) {
-            mWidgetView.setCellChildViewPreLayoutListener(mCellChildViewPreLayoutListener);
+        if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
+                && mWidgetView instanceof LauncherAppWidgetHostView lahv) {
+            lahv.setCellChildViewPreLayoutListener(mCellChildViewPreLayoutListener);
             mWidgetViewOldRect.set(mWidgetView.getLeft(), mWidgetView.getTop(),
                     mWidgetView.getRight(),
                     mWidgetView.getBottom());
@@ -536,6 +559,19 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         spanY = mTempRange2.size();
         if (vSpanDelta != 0) {
             mDirectionVector[1] = mTopBorderActive ? -1 : 1;
+        }
+
+        // LawnCher: widget stacks. In preset mode, snap to the nearest preset size.
+        if (mStackResize != null) {
+            int[] cells = {cellX, cellY, spanX, spanY};
+            mStackResize.snap(cells, lp.cellHSpan, lp.cellVSpan, mLeftBorderActive,
+                    mTopBorderActive, mCellLayout.getCountX(), mCellLayout.getCountY());
+            cellX = cells[0];
+            cellY = cells[1];
+            hSpanDelta = cells[2] - lp.cellHSpan;
+            vSpanDelta = cells[3] - lp.cellVSpan;
+            spanX = cells[2];
+            spanY = cells[3];
         }
 
         if (!onDismiss && vSpanDelta == 0 && hSpanDelta == 0) return;
@@ -799,9 +835,10 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
     @Override
     protected void handleClose(boolean animate) {
-        if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()) {
-            mWidgetView.clearCellChildViewPreLayoutListener();
-            mWidgetView.setLayoutTransition(null);
+        if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
+                && mWidgetView instanceof LauncherAppWidgetHostView lahv) {
+            lahv.clearCellChildViewPreLayoutListener();
+            lahv.setLayoutTransition(null);
         }
         mDragLayer.removeView(this);
         mWidgetView.removeOnLayoutChangeListener(mWidgetViewLayoutListener);

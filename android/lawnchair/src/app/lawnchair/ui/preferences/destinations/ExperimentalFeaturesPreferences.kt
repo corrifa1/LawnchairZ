@@ -75,6 +75,20 @@ fun ExperimentalFeaturesPreferences(
                 label = stringResource(R.string.show_deck_layout),
                 description = stringResource(R.string.show_deck_layout_description),
             )
+            // LawnCher: widget stacks
+            val widgetStacksAdapter = prefs2.widgetStacks.getAdapter()
+            SwitchPreference(
+                adapter = widgetStacksAdapter,
+                label = stringResource(R.string.widget_stacks_label),
+                description = stringResource(R.string.widget_stacks_description),
+            )
+            ExpandAndShrink(visible = widgetStacksAdapter.state.value) {
+                SwitchPreference(
+                    adapter = prefs2.widgetStackPresetSizes.getAdapter(),
+                    label = stringResource(R.string.widget_stack_preset_sizes_label),
+                    description = stringResource(R.string.widget_stack_preset_sizes_description),
+                )
+            }
             SwitchPreference(
                 checked = hasPermission && enableWallpaperBlur.state.value,
                 onCheckedChange = {

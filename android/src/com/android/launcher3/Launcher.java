@@ -2077,6 +2077,11 @@ public class Launcher extends StatefulActivity<LauncherState>
             if (deleteFromDb) {
                 getModelWriter().deleteCollectionAndContentsFromDatabase(ci);
             }
+        } else if (itemInfo instanceof LauncherAppWidgetInfo
+                // LawnCher: widget stacks manage their own children
+                && app.lawnchair.widgetstack.WidgetStackController.isStackChild(itemInfo)) {
+            app.lawnchair.widgetstack.WidgetStackController.removeChild(
+                    this, v, (LauncherAppWidgetInfo) itemInfo, deleteFromDb);
         } else if (itemInfo instanceof LauncherAppWidgetInfo) {
             final LauncherAppWidgetInfo widgetInfo = (LauncherAppWidgetInfo) itemInfo;
             mWorkspace.removeWorkspaceItem(v);
@@ -2300,6 +2305,11 @@ public class Launcher extends StatefulActivity<LauncherState>
      * Add the views for a widget to the workspace.
      */
     public void bindAppWidget(LauncherAppWidgetInfo item) {
+        // LawnCher: widget stacks. A stack child is shown by its stack, not in a cell.
+        if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
+            app.lawnchair.widgetstack.WidgetStackController.bindChild(this, item);
+            return;
+        }
         View view = mItemInflater.inflateItem(item);
         if (view != null) {
             mWorkspace.addInScreen(view, item);

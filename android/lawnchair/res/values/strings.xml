@@ -1166,4 +1166,18 @@
     <string name="lawnchair_action_failed">Failed to trigger action</string>
 
     <string name="please_wait">Please wait…</string>
+
+    <!-- LawnCher: widget stacks -->
+    <string name="widget_stack_label">Widget stack</string>
+    <!-- Spoken by TalkBack for a widget stack. %1$s is the visible widget's name. -->
+    <string name="widget_stack_description">Widget stack, %1$s</string>
+    <!-- Position of the visible widget in a stack, e.g. "2 of 5". -->
+    <string name="widget_stack_position">%1$d of %2$d</string>
+    <string name="widget_stack_next">Next widget</string>
+    <string name="widget_stack_previous">Previous widget</string>
+    <string name="widget_stack_empty">Empty stack</string>
+    <string name="widget_stacks_label">Widget stacks (experimental)</string>
+    <string name="widget_stacks_description">Stack widgets in the same cells and swipe vertically between them.</string>
+    <string name="widget_stack_preset_sizes_label">Preset stack sizes</string>
+    <string name="widget_stack_preset_sizes_description">Developer comparison: snap stacks to fixed sizes instead of resizing freely.</string>
 </resources>

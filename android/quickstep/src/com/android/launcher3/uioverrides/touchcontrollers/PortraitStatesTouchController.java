@@ -67,6 +67,10 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
                     return false;
                 }
         }
+        // LawnCher: widget stacks page on vertical swipes instead
+        if (app.lawnchair.widgetstack.WidgetStackTouch.isTouchOnPageableStack(mLauncher, ev)) {
+            return false;
+        }
         // If we are swiping to all apps instead of overview, allow it from anywhere.
         boolean interceptAnywhere = mLauncher.isInState(NORMAL);
         if (mCurrentAnimation != null) {
