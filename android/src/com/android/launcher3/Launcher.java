@@ -2143,7 +2143,11 @@ public class Launcher extends StatefulActivity<LauncherState>
 
     @Override
     public RunnableList startActivitySafely(View v, Intent intent, ItemInfo item) {
-        if (!hasBeenResumed()) {
+        // Expressive modification: the deferral below works around our own recents animation
+        // finishing into launcher. When another app is the recents provider (e.g. One UI Home),
+        // the system can keep us started-but-not-resumed after the user is already home, and
+        // deferring made taps in that window feel unresponsive.
+        if (!hasBeenResumed() && LawnchairApp.isRecentsEnabled()) {
             RunnableList result = new RunnableList();
             // Workaround an issue where the WM launch animation is clobbered when finishing the
             // recents animation into launcher. Defer launching the activity until Launcher is
