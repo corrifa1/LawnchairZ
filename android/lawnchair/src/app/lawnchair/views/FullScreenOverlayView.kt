@@ -43,6 +43,11 @@ class FullScreenOverlayView @JvmOverloads constructor(
         clipToOutline = true
     }
 
+    /** Removes the overlay right away, e.g. when the animation that owns it is cancelled. */
+    fun dismiss() {
+        (parent as? ViewGroup)?.removeView(this)
+    }
+
     fun pointyEndView(view: View) {
         val location = IntArray(2)
         view.getLocationOnScreen(location)
@@ -188,15 +193,27 @@ class FullScreenOverlayView @JvmOverloads constructor(
     }
 }
 
+const val MIN_OVERLAY_SPEED = 0.5f
+const val MAX_OVERLAY_SPEED = 2f
+
+/** A closing-overlay duration adjusted for the user's speed multiplier (higher is faster). */
+internal fun scaledOverlayDuration(baseMs: Long, speed: Float): Long = (baseMs / speed.coerceIn(MIN_OVERLAY_SPEED, MAX_OVERLAY_SPEED)).toLong()
+
+/**
+ * Shows the closing-app overlay chosen in settings, shrinking or fading towards [endView].
+ * Returns the overlay so the caller can [FullScreenOverlayView.dismiss] it early, or null when
+ * the setting is off (in which case [onOverlayReady] has already run).
+ */
 fun Activity.showFullScreenOverlay(
     durationIn: Long = 200,
     durationOut: Long = 500,
     rootView: ViewGroup? = null,
     endView: View,
     onOverlayReady: () -> Unit,
-) {
+): FullScreenOverlayView? {
     val pref2 = PreferenceManager2.getInstance(this)
     val animationMode = pref2.closingAppOverlay.firstCached()
+    val speed = pref2.closingAppOverlaySpeed.firstCached()
     val overlayView = FullScreenOverlayView(this)
     val targetRootView = rootView ?: window.decorView.findViewById<ViewGroup>(android.R.id.content)
 
@@ -205,13 +222,13 @@ fun Activity.showFullScreenOverlay(
 
     when (animationMode) {
         FullScreenOverlayMode.FADE_IN -> {
-            overlayView.animateIn(durationIn) {
-                overlayView.animateOut(durationOut, onOverlayReady)
+            overlayView.animateIn(scaledOverlayDuration(durationIn, speed)) {
+                overlayView.animateOut(scaledOverlayDuration(durationOut, speed), onOverlayReady)
             }
         }
 
         FullScreenOverlayMode.SUCK_IN -> {
-            overlayView.suckAnimation(durationOut) {
+            overlayView.suckAnimation(scaledOverlayDuration(durationOut, speed)) {
                 onOverlayReady()
             }
         }
@@ -219,6 +236,8 @@ fun Activity.showFullScreenOverlay(
         FullScreenOverlayMode.NONE -> {
             targetRootView?.removeView(overlayView)
             onOverlayReady()
+            return null
         }
     }
+    return overlayView
 }

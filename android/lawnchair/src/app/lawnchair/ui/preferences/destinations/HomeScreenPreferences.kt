@@ -48,6 +48,9 @@ import app.lawnchair.ui.preferences.components.layout.PreferenceGroup
 import app.lawnchair.ui.preferences.components.layout.PreferenceLayout
 import app.lawnchair.ui.preferences.navigation.HomeScreenGrid
 import app.lawnchair.util.collectAsStateBlocking
+import app.lawnchair.views.MAX_OVERLAY_SPEED
+import app.lawnchair.views.MIN_OVERLAY_SPEED
+import app.lawnchair.views.overlay.FullScreenOverlayMode
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.LauncherSettings
@@ -133,10 +136,20 @@ fun HomeScreenPreferences(
         }
         PreferenceGroup(heading = stringResource(R.string.style)) {
             HomeScreenTextColorPreference()
+            val closingAppOverlayAdapter = prefs2.closingAppOverlay.getAdapter()
             OverlayHandlerPreference(
-                adapter = prefs2.closingAppOverlay.getAdapter(),
+                adapter = closingAppOverlayAdapter,
                 label = stringResource(id = R.string.app_closing_animation),
             )
+            ExpandAndShrink(visible = closingAppOverlayAdapter.state.value != FullScreenOverlayMode.NONE) {
+                SliderPreference(
+                    label = stringResource(id = R.string.app_closing_animation_speed),
+                    adapter = prefs2.closingAppOverlaySpeed.getAdapter(),
+                    valueRange = MIN_OVERLAY_SPEED..MAX_OVERLAY_SPEED,
+                    step = 0.25F,
+                    showAsPercentage = true,
+                )
+            }
         }
         PreferenceGroup(heading = stringResource(id = R.string.wallpaper)) {
             SwitchPreference(

@@ -211,5 +211,18 @@
             android:name="org.chickenhook.restrictionbypass.BypassProvider"
             android:authorities="${applicationId}.restrictionbypass"
             tools:node="remove"/>
+
+        <!-- Invisible normal-task activity held in front of home while folding, so One UI
+             applies app continuity instead of locking (see FoldBridgeController). -->
+        <activity
+            android:name="app.lawnchair.fold.FoldBridgeActivity"
+            android:autoRemoveFromRecents="true"
+            android:configChanges="density|keyboard|keyboardHidden|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:noHistory="true"
+            android:resizeableActivity="true"
+            android:taskAffinity="${applicationId}.foldbridge"
+            android:theme="@style/Theme.Transparent" />
     </application>
 </manifest>

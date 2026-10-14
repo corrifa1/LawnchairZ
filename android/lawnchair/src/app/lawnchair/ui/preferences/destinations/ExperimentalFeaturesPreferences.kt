@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.lawnchair.fold.FoldBridgeController
 import app.lawnchair.preferences.getAdapter
 import app.lawnchair.preferences.preferenceManager
 import app.lawnchair.preferences2.preferenceManager2
@@ -180,6 +181,23 @@ fun ExperimentalFeaturesPreferences(
             ExpandAndShrink(visible = enableGncAdapter.state.value && !isGestureNavContractCompatible) {
                 WarningPreference(stringResource(R.string.gesturenavcontract_warning_incompatibility))
             }
+            SwitchPreference(
+                adapter = prefs.appReturnAnimation.getAdapter(),
+                label = stringResource(id = R.string.app_return_animation_label),
+                description = stringResource(id = R.string.app_return_animation_description),
+            )
+            if (remember { FoldBridgeController.isSupported(context) }) {
+                SwitchPreference(
+                    adapter = prefs.foldBridge.getAdapter(),
+                    label = stringResource(id = R.string.fold_bridge_label),
+                    description = stringResource(id = R.string.fold_bridge_description),
+                )
+            }
+            SwitchPreference(
+                adapter = prefs.normalLauncherAnimationSpeed.getAdapter(),
+                label = stringResource(id = R.string.normal_launcher_animation_speed_label),
+                description = stringResource(id = R.string.normal_launcher_animation_speed_description),
+            )
             ListPreference(
                 adapter = vibrationFeedbackLevelAdapter,
                 entries = listOf(
