@@ -89,6 +89,8 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     private NavigableAppWidgetHostView mWidgetView;
     // LawnCher: widget stacks. Non-null while resizing a stack.
     @Nullable private app.lawnchair.widgetstack.WidgetStackResize mStackResize;
+    // LawnCher: widget stacks. The "Create stack" / "Edit stack" button, if shown.
+    @Nullable private View mStackButton;
     private CellLayout mCellLayout;
     private DragLayer mDragLayer;
     private ImageButton mReconfigureButton;
@@ -381,7 +383,8 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
         }
 
         // LawnCher: widget stacks. "Edit stack" on stacks, "Create stack" on widgets.
-        app.lawnchair.widgetstack.WidgetStackResize.attachFrameButton(this, mWidgetView, mLauncher);
+        mStackButton = app.lawnchair.widgetstack.WidgetStackResize.attachFrameButton(
+                this, mWidgetView, mLauncher);
 
         if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
                 && mWidgetView instanceof LauncherAppWidgetHostView lahv) {
@@ -643,9 +646,16 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
      * Returns the rect of this view when the frame is snapped around the widget, with the bounds
      * relative to the {@link DragLayer}.
      */
+    // LawnCher: widget stacks. The resize transition relies on the pre-layout listener that only
+    // LauncherAppWidgetHostView offers; stacks use their measured bounds instead.
+    private boolean usesResizeTransition() {
+        return FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
+                && mWidgetView instanceof LauncherAppWidgetHostView;
+    }
+
     private void getSnappedRectRelativeToDragLayer(@NonNull Rect out) {
         float scale = mWidgetView.getScaleToFit();
-        if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()) {
+        if (usesResizeTransition()) {
             getViewRectRelativeToDragLayer(out);
         } else {
             mDragLayer.getViewRectRelativeToSelf(mWidgetView, out);
@@ -689,8 +699,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     private void snapToWidget(boolean animate) {
         // The widget is guaranteed to be attached to the cell layout at this point, thus setting
         // the transition here
-        if (FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
-                && mWidgetView.getLayoutTransition() == null) {
+        if (usesResizeTransition() && mWidgetView.getLayoutTransition() == null) {
             final LayoutTransition transition = new LayoutTransition();
             transition.setDuration(RESIZE_TRANSITION_DURATION_MS);
             transition.enableTransitionType(LayoutTransition.CHANGING);
@@ -824,6 +833,13 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
     @Override
     public boolean onControllerInterceptTouchEvent(MotionEvent ev) {
+        // LawnCher: widget stacks. Let a tap on the stack button reach it; it sits by the border.
+        if (mStackButton != null) {
+            mStackButton.getHitRect(sTmpRect);
+            if (sTmpRect.contains((int) ev.getX() - getLeft(), (int) ev.getY() - getTop())) {
+                return false;
+            }
+        }
         if (ev.getAction() == MotionEvent.ACTION_DOWN && handleTouchDown(ev)) {
             return true;
         }

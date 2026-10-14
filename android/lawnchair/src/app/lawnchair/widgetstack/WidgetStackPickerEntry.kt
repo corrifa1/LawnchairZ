@@ -13,6 +13,7 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.GradientDrawable
 import android.view.Gravity
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -77,13 +78,22 @@ object WidgetStackPickerEntry {
                     marginEnd = margin
                 },
             )
+            // The picker's sticky header keeps only width and height of its children's layout
+            // params, so center the entry inside a full-width row instead of using gravity.
             is LinearLayout -> header.addView(
-                entry,
-                header.indexOfChild(title) + 1,
-                LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply {
-                    gravity = Gravity.CENTER_HORIZONTAL
-                    topMargin = margin
+                FrameLayout(launcher).apply {
+                    setPadding(0, margin, 0, 0)
+                    addView(
+                        entry,
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            Gravity.CENTER_HORIZONTAL,
+                        ),
+                    )
                 },
+                header.indexOfChild(title) + 1,
+                LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT),
             )
             else -> Unit
         }

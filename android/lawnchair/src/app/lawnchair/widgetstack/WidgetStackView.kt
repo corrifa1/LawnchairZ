@@ -299,7 +299,10 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
         if (info.spanX == appliedSpanX && info.spanY == appliedSpanY) return
         appliedSpanX = info.spanX
         appliedSpanY = info.spanY
-        info.syncChildGeometry()
+        // Keep the children's rows in step with a resized stack (persisted rows only).
+        info.syncChildGeometry().filter { it.id != ItemInfo.NO_ID }.forEach {
+            launcher?.modelWriter?.modifyItemInDatabase(it, info.id, info.screenId, 0, 0, info.spanX, info.spanY)
+        }
         pages.forEach { child ->
             if (child is AppWidgetHostView) {
                 WidgetSizes.updateWidgetSizeRanges(child, context, info.spanX, info.spanY)
@@ -525,7 +528,8 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
 
     private fun scheduleIndicatorHide() {
         removeCallbacks(hideIndicator)
-        if (indicatorAlpha > 0f) postDelayed(hideIndicator, INDICATOR_HIDE_DELAY_MS)
+        // Always schedule: the indicator may still be fading in and read as 0 here.
+        postDelayed(hideIndicator, INDICATOR_HIDE_DELAY_MS)
     }
 
     private fun animateIndicator(target: Float) {

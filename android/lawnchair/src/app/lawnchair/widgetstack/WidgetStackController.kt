@@ -195,6 +195,7 @@ object WidgetStackController {
         stackView.pageViews.firstOrNull { it.tag === child }?.let(stackView::removePage)
         val writer = writer(launcher)
         writer.detachChild(stack, child)
+        child.rank = 0
         launcher.modelWriter.moveItemInDatabase(child, Favorites.CONTAINER_DESKTOP, screenId, cell[0], cell[1])
         workspace.post { launcher.bindAppWidget(child) }
         collapseIfNeeded(launcher, stack, keepEmpty = true)

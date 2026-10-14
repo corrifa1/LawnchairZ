@@ -65,18 +65,19 @@ class WidgetStackResize private constructor(
     companion object {
         /**
          * Adds the frame's stack button, opposite the reconfigure button: "Edit stack" on a
-         * stack, or "Create stack" on a plain workspace widget while stacks are enabled.
+         * stack, or "Create stack" on a plain workspace widget while stacks are enabled. Returns
+         * the button, which the frame must let touches through to, or null when none was added.
          */
         @JvmStatic
-        fun attachFrameButton(frame: AbstractFloatingView, widgetView: View, launcher: Launcher) {
-            val reconfigure = frame.findViewById<View>(R.id.widget_reconfigure_button) ?: return
-            val container = reconfigure.parent as? FrameLayout ?: return
+        fun attachFrameButton(frame: AbstractFloatingView, widgetView: View, launcher: Launcher): View? {
+            val reconfigure = frame.findViewById<View>(R.id.widget_reconfigure_button) ?: return null
+            val container = reconfigure.parent as? FrameLayout ?: return null
             val isStack = widgetView is WidgetStackView
             val widget = widgetView.tag as? LauncherAppWidgetInfo
             val canCreate = !isStack && widget != null && !widget.isCustomWidget &&
                 widget.container == Favorites.CONTAINER_DESKTOP &&
                 PreferenceManager2.getInstance(launcher).widgetStacks.firstCached()
-            if (!isStack && !canCreate) return
+            if (!isStack && !canCreate) return null
 
             val margin = launcher.resources.getDimensionPixelSize(R.dimen.widget_reconfigure_button_margin)
             val padding = launcher.resources.getDimensionPixelSize(R.dimen.widget_reconfigure_button_padding)
@@ -111,6 +112,7 @@ class WidgetStackResize private constructor(
                     marginStart = margin
                 },
             )
+            return button
         }
 
         /** Builds the rules for [stack] on a [countX] x [countY] grid. */
