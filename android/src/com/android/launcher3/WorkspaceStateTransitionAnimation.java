@@ -159,6 +159,12 @@ public class WorkspaceStateTransitionAnimation {
                 workspaceFadeInterpolator);
         float hotseatIconsAlpha = (elements & HOTSEAT_ICONS) != 0 ? 1 : 0;
         propertySetter.setViewAlpha(hotseat, hotseatIconsAlpha, hotseatFadeInterpolator);
+        // LawnchairZ: side dock. The search pill under the grid belongs to the dock.
+        View sideDockSearchPill = mLauncher.getDragLayer().findViewById(R.id.side_dock_search_pill);
+        if (sideDockSearchPill != null) {
+            propertySetter.setViewAlpha(sideDockSearchPill, hotseatIconsAlpha,
+                    hotseatFadeInterpolator);
+        }
 
         // Update the accessibility flags for hotseat based on launcher state.
         hotseat.setImportantForAccessibility(
@@ -191,6 +197,10 @@ public class WorkspaceStateTransitionAnimation {
                 hotseatScaleAndTranslation.translationY, hotseatTranslationInterpolator);
         propertySetter.setFloat(mWorkspace.getPageIndicator(), VIEW_TRANSLATE_Y,
                 hotseatScaleAndTranslation.translationY, hotseatTranslationInterpolator);
+        if (sideDockSearchPill != null) {
+            propertySetter.setFloat(sideDockSearchPill, VIEW_TRANSLATE_Y,
+                    hotseatScaleAndTranslation.translationY, hotseatTranslationInterpolator);
+        }
 
         if (!config.hasAnimationFlag(SKIP_SCRIM)) {
             setScrim(propertySetter, state, config);

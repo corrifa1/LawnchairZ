@@ -30,4 +30,6 @@
 
     <!-- LawnCher: widget stacks -->
     <item type="id" name="action_edit_widget_stack" />
+    <!-- LawnchairZ: side dock -->
+    <item type="id" name="side_dock_search_pill" />
 </resources>

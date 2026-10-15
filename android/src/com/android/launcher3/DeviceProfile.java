@@ -132,6 +132,8 @@ public class DeviceProfile {
     private final boolean mSideDockOnLeft;
     // Space between side dock icons, 0..1 (see getHotseatLayoutPadding).
     private final float mSideDockSpacing;
+    // Height of the side dock's search pill (SideDockSearchPill); 0 when there is none.
+    public int sideDockSearchPillHeightPx;
 
     // Device properties in current orientation
 
@@ -594,6 +596,9 @@ public class DeviceProfile {
                 workspacePageIndicatorHeight,
                 hotseatMode
         );
+
+        // LawnchairZ: side dock. The dock's search bar moves to a pill under the grid.
+        sideDockSearchPillHeightPx = isSideDock ? hotseatProfile.getQsbHeight() : 0;
 
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
         isQsbInline = !isSideDock && isQsbInline(
@@ -1792,10 +1797,11 @@ public class DeviceProfile {
             }
         } else if (isSideDock) {
             // LawnchairZ: side dock in portrait, or on a two-panel screen. The dock takes width
-            // from the outer edge of the screen; the bottom keeps room for the page indicator.
-            // Two panels split the remaining width evenly (see getCellLayoutWidth()).
+            // from the outer edge of the screen; the bottom keeps room for the page indicator and
+            // the search pill. Two panels split the remaining width evenly (getCellLayoutWidth()).
             int paddingTop = workspaceTopPadding + (mIsScalableGrid ? 0 : edgeMarginPx);
-            int paddingBottom = workspaceBottomPadding + edgeMarginPx;
+            int paddingBottom = workspaceBottomPadding + edgeMarginPx
+                    + (sideDockSearchPillHeightPx > 0 ? sideDockSearchPillHeightPx + edgeMarginPx : 0);
             if (!mIsResponsiveGrid) {
                 paddingBottom +=
                         workspacePageIndicatorHeight - mWorkspacePageIndicatorOverlapWorkspace;

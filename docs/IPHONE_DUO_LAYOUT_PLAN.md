@@ -1,6 +1,6 @@
 # iPhone Duo-style home layout: plan
 
-Status: **Steps 0–3 implemented (uncommitted), plus the parts of Steps 4, 5 and 7 they need.**
+Status: **Steps 0–3 and 6 implemented, plus the parts of Steps 4, 5 and 7 they need.**
 Written 2026-10-14 against `rename/lawnchairz` at `3bee6590ac` (after the fold fixes `8838535f89`
 and `3bee6590ac`).
 
@@ -15,6 +15,19 @@ and `3bee6590ac`).
 - **Side dock icon spacing:** a "Space between dock icons" slider (`pref_sideDockSpacing`, 0–100%,
   default 40%), shown under Dock position when a side is chosen. Each icon gets between its own
   size (0%) and one workspace row (100%, the first version's spacing); the column stays centered.
+- **Step 6, search pill:**
+  - `app.lawnchair.qsb.SideDockSearchPill`, added to the drag layer by `LawnchairLauncher` next to
+    the dock.
+  - It inflates the dock search bar's own layout, chosen the same way `Hotseat` chooses it. So it
+    has the same provider icon, mic/lens buttons, tap and long-press actions.
+  - Sized to 75% of one pane and centered under the grid, beside the dock. On the inner screen it
+    is centered across both panes.
+  - `DeviceProfile.sideDockSearchPillHeightPx` reserves room for it at the bottom of the
+    workspace; the page dots sit just above it.
+  - `WorkspaceStateTransitionAnimation` fades and moves it with the dock between launcher states.
+  - Hidden while the dock is at the bottom, and when the dock search bar is turned off.
+  - Checked on the Fold: cover and inner screens. A tap opened the configured provider (Sesame),
+    and the pill follows the dock into the all apps sheet.
 - **Pulled forward because Step 3 needs them:** the top-down `CellPosMapper` mode (Step 4), the
   page-indicator position (Step 5), and the Dock position picker (part of Step 7).
 - **Fixes found on the device:**
@@ -28,7 +41,6 @@ and `3bee6590ac`).
     one-time reload.
   - No crashes.
 - **Not done yet:**
-  - The search pill (Step 6). The dock's search bar is hidden while the dock is on a side.
   - The rest of the settings work (Step 7: hiding rows and pages, the dock preview).
   - Tests (Step 8).
   - Dock background styling not checked on the device.
