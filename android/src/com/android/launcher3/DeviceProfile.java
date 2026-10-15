@@ -132,8 +132,8 @@ public class DeviceProfile {
     private final boolean mSideDockOnLeft;
     // Space between side dock icons, 0..1 (see getHotseatLayoutPadding).
     private final float mSideDockSpacing;
-    // Height of the side dock's search pill (SideDockSearchPill); 0 when there is none.
-    public int sideDockSearchPillHeightPx;
+    // Whether the side dock shows the dock search bar as a button below its icons.
+    private boolean mSideDockHasSearch;
 
     // Device properties in current orientation
 
@@ -597,8 +597,8 @@ public class DeviceProfile {
                 hotseatMode
         );
 
-        // LawnchairZ: side dock. The dock's search bar moves to a pill under the grid.
-        sideDockSearchPillHeightPx = isSideDock ? hotseatProfile.getQsbHeight() : 0;
+        // LawnchairZ: side dock. The dock's search bar becomes a button below the dock icons.
+        mSideDockHasSearch = isSideDock && hotseatProfile.getQsbHeight() > 0;
 
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
         isQsbInline = !isSideDock && isQsbInline(
@@ -1797,11 +1797,10 @@ public class DeviceProfile {
             }
         } else if (isSideDock) {
             // LawnchairZ: side dock in portrait, or on a two-panel screen. The dock takes width
-            // from the outer edge of the screen; the bottom keeps room for the page indicator and
-            // the search pill. Two panels split the remaining width evenly (getCellLayoutWidth()).
+            // from the outer edge of the screen; the bottom keeps room for the page indicator.
+            // Two panels split the remaining width evenly (see getCellLayoutWidth()).
             int paddingTop = workspaceTopPadding + (mIsScalableGrid ? 0 : edgeMarginPx);
-            int paddingBottom = workspaceBottomPadding + edgeMarginPx
-                    + (sideDockSearchPillHeightPx > 0 ? sideDockSearchPillHeightPx + edgeMarginPx : 0);
+            int paddingBottom = workspaceBottomPadding + edgeMarginPx;
             if (!mIsResponsiveGrid) {
                 paddingBottom +=
                         workspacePageIndicatorHeight - mWorkspacePageIndicatorOverlapWorkspace;
@@ -1936,9 +1935,13 @@ public class DeviceProfile {
             int paddingBottom = Math.max((int) (mInsets.bottom + cellLayoutPaddingPx.bottom), 0);
 
             if (isSideDock) {
-                // LawnchairZ: side dock. Center a compact column instead of spreading the icons
-                // over the whole screen. Each icon gets between its own size (spacing 0) and one
-                // workspace row (spacing 1).
+                // LawnchairZ: side dock. Keep the search button's slot at the bottom free, then
+                // center a compact column instead of spreading the icons over the whole screen.
+                // Each icon gets between its own size (spacing 0) and one workspace row
+                // (spacing 1).
+                if (mSideDockHasSearch) {
+                    paddingBottom += getSideDockSearchButtonSizePx() + 2 * edgeMarginPx;
+                }
                 int rowPitch = getCellSize().y + cellLayoutBorderSpacePx.y;
                 int minSlot = Math.min(rowPitch, getIconSizeWithOverlap(iconSizePx));
                 int slot = minSlot + Math.round((rowPitch - minSlot) * mSideDockSpacing);
@@ -2245,6 +2248,38 @@ public class DeviceProfile {
      */
     public boolean hasVerticalHotseat() {
         return isVerticalBarLayout() || isSideDock;
+    }
+
+    /**
+     * LawnchairZ: side dock. Size of the search button below the side dock's icons (the dock
+     * search bar's provider icon), or 0 when there is none.
+     */
+    public int getSideDockSearchButtonSizePx() {
+        return mSideDockHasSearch ? iconSizePx : 0;
+    }
+
+    /**
+     * LawnchairZ: side dock. Bounds of the search button in drag layer coordinates: centered in
+     * the dock column, at the bottom edge of the screen. Empty when there is no button.
+     */
+    public Rect getSideDockSearchButtonBounds(Context context) {
+        int size = getSideDockSearchButtonSizePx();
+        if (size <= 0) {
+            return new Rect();
+        }
+        Rect dockPadding = getHotseatLayoutPadding(context);
+        int dockLeft;
+        int dockRight;
+        if (isDockOnLeft()) {
+            dockLeft = 0;
+            dockRight = hotseatBarSizePx + mInsets.left;
+        } else {
+            dockRight = mDeviceProperties.getWidthPx();
+            dockLeft = dockRight - hotseatBarSizePx - mInsets.right;
+        }
+        int centerX = (dockLeft + dockPadding.left + dockRight - dockPadding.right) / 2;
+        int bottom = mDeviceProperties.getHeightPx() - mInsets.bottom - edgeMarginPx;
+        return new Rect(centerX - size / 2, bottom - size, centerX - size / 2 + size, bottom);
     }
 
     /** LawnchairZ: side dock. Whether a vertical dock sits on the left edge. */

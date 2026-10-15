@@ -421,13 +421,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             lp.bottomMargin = padding.bottom;
         } else if (grid.isSideDock) {
             // LawnchairZ: side dock. Center the dots under the grid, beside the dock, just above
-            // the search pill (or the bottom inset when there is none).
+            // the bottom inset.
             lp.leftMargin = padding.left;
             lp.rightMargin = padding.right;
             lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
-            lp.bottomMargin = grid.getInsets().bottom + grid.edgeMarginPx
-                    + (grid.sideDockSearchPillHeightPx > 0
-                            ? grid.sideDockSearchPillHeightPx + grid.edgeMarginPx : 0);
+            lp.bottomMargin = grid.getInsets().bottom + grid.edgeMarginPx;
         } else {
             lp.leftMargin = lp.rightMargin = 0;
             lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;

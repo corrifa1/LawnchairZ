@@ -15,19 +15,21 @@ and `3bee6590ac`).
 - **Side dock icon spacing:** a "Space between dock icons" slider (`pref_sideDockSpacing`, 0–100%,
   default 40%), shown under Dock position when a side is chosen. Each icon gets between its own
   size (0%) and one workspace row (100%, the first version's spacing); the column stays centered.
-- **Step 6, search pill:**
-  - `app.lawnchair.qsb.SideDockSearchPill`, added to the drag layer by `LawnchairLauncher` next to
-    the dock.
-  - It inflates the dock search bar's own layout, chosen the same way `Hotseat` chooses it. So it
-    has the same provider icon, mic/lens buttons, tap and long-press actions.
-  - Sized to 75% of one pane and centered under the grid, beside the dock. On the inner screen it
-    is centered across both panes.
-  - `DeviceProfile.sideDockSearchPillHeightPx` reserves room for it at the bottom of the
-    workspace; the page dots sit just above it.
+- **Step 6, search button** (replaces the first version's pill under the grid, which cost the
+  grid a row of height):
+  - `app.lawnchair.qsb.SideDockSearchButton`: a round button at the bottom edge of the dock
+    column, below the dock icons, the size of a dock icon. `LawnchairLauncher` adds it to the drag
+    layer next to the dock.
+  - It shows the icon the dock search bar shows on its left (the provider's icon, themed the same
+    way, via `setThemedIconResource`) on the search bar's fill color and transparency. It follows
+    changes to the provider and theming.
+  - Tap and long-press do what they do on the search bar: `LawnQsbLayout.launchHotseatSearch` and
+    `openHotseatSearchOptions`, now shared by both.
+  - The grid keeps all its space. The dock column reserves the button's slot at its bottom
+    (`getHotseatLayoutPadding`), and `DeviceProfile.getSideDockSearchButtonBounds` places it.
   - `WorkspaceStateTransitionAnimation` fades and moves it with the dock between launcher states.
   - Hidden while the dock is at the bottom, and when the dock search bar is turned off.
-  - Checked on the Fold: cover and inner screens. A tap opened the configured provider (Sesame),
-    and the pill follows the dock into the all apps sheet.
+  - Checked on the Fold: inner and cover screens. A tap opened the configured provider (Sesame).
 - **Pulled forward because Step 3 needs them:** the top-down `CellPosMapper` mode (Step 4), the
   page-indicator position (Step 5), and the Dock position picker (part of Step 7).
 - **Fixes found on the device:**
