@@ -45,6 +45,9 @@ class SideDockSearchButton(private val launcher: LawnchairLauncher) :
     private val prefs2 = PreferenceManager2.getInstance(launcher)
     private val icon = ImageView(launcher)
 
+    // Whether the dock is on a side, so the button should show (see setVisibility).
+    private var active = false
+
     init {
         id = R.id.side_dock_search_button
         layoutParams = LayoutParams(0, 0, Gravity.TOP or Gravity.LEFT)
@@ -95,10 +98,20 @@ class SideDockSearchButton(private val launcher: LawnchairLauncher) :
         background = RippleDrawable(rippleColor, circle, null)
     }
 
+    /**
+     * Keeps the button gone while the dock is not on a side. Launcher state animations show the
+     * dock's views by setting their alpha, which also makes them visible (PropertySetter), so the
+     * hidden state has to hold against that.
+     */
+    override fun setVisibility(visibility: Int) {
+        super.setVisibility(if (active) visibility else GONE)
+    }
+
     override fun setInsets(insets: Rect) {
         val dp = launcher.deviceProfile
         val bounds = dp.getSideDockSearchButtonBounds(launcher)
-        if (bounds.isEmpty) {
+        active = !bounds.isEmpty
+        if (!active) {
             visibility = GONE
             return
         }

@@ -106,6 +106,8 @@ public class Hotseat extends FrameLayout implements Insettable {
     private boolean mHasVerticalHotseat;
     // LawnchairZ: side dock. Whether the vertical dock puts rank 0 at the top.
     private boolean mVerticalTopDown;
+    // LawnchairZ: side dock. Whether the background is currently fitted to a side dock column.
+    private boolean mSideDockBackground;
     private Workspace<?> mWorkspace;
     private boolean mSendTouchToWorkspace;
     private boolean mSendTouchToPager;
@@ -523,17 +525,20 @@ public class Hotseat extends FrameLayout implements Insettable {
         }
 
         Rect padding = grid.getHotseatLayoutPadding(getContext());
-        setPadding(padding.left, padding.top, padding.right, padding.bottom);
-        setLayoutParams(lp);
-        if (grid.isSideDock) {
-            // LawnchairZ: side dock. Fit the background to the centered icon column.
+        if (grid.isSideDock || mSideDockBackground) {
+            // LawnchairZ: side dock. Fit the background to the centered icon column (or back to
+            // the whole dock after leaving side dock mode). This must come before setPadding:
+            // setting a background with insets resets the view's padding to those insets.
+            mSideDockBackground = grid.isSideDock;
             int gap = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                     SIDE_DOCK_BACKGROUND_GAP_DP, getResources().getDisplayMetrics());
-            setUpBackground(new Rect(0, Math.max(0, padding.top - gap), 0,
-                    Math.max(0, padding.bottom - gap)));
-        } else {
-            setUpBackground(new Rect());
+            setUpBackground(grid.isSideDock
+                    ? new Rect(0, Math.max(0, padding.top - gap), 0,
+                            Math.max(0, padding.bottom - gap))
+                    : new Rect());
         }
+        setPadding(padding.left, padding.top, padding.right, padding.bottom);
+        setLayoutParams(lp);
         InsettableFrameLayout.dispatchInsets(this, insets);
     }
 

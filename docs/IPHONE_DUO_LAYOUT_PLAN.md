@@ -51,11 +51,29 @@ and `3bee6590ac`).
   top-down rank mapping and its round trip, the stock bottom-up mapping, icon slot spacing
   (`DeviceProfile.calculateSideDockSlot`) and the foldable dock count. Run with
   `./gradlew testLawnWithQuickstepExpressiveDebugUnitTest --tests "app.lawnchair.sidedock.*"`.
+- **Device checks (2026-10-15, Fold):**
+  - Drag and drop: reorder within the side dock, dock to grid, and grid to dock. Each was saved
+    with the right rank, with suggested apps filling the free slots; the layout was restored
+    afterwards.
+  - Dock background: fitted to the icon column, ending above the search button.
+  - Rotation: inner-screen portrait keeps two panes and the dock on the physical right edge.
+  - Back to Bottom: all 8 dock icons and the search bar return, with saved apps in rank order.
+  - Two bugs found and fixed:
+    - Rebuilding the dock background after `setPadding` reset the dock's padding, enlarging
+      and shifting the dock icons, and would have affected the bottom dock too. The background
+      is now set before the padding, and only in side dock mode.
+    - Launcher state animations made the search button visible again after switching to
+      Bottom. `SideDockSearchButton.setVisibility` now keeps it gone unless the dock is on a
+      side.
+- **Found while testing, not caused by the side dock:**
+  - The home grid flipped between 4×6 and 5×5 (at 21:42 and 00:11 on 2026-10-14/15), each time
+    with a grid migration into a different database.
+  - The recorded device type alternated between phone and foldable, so this looks tied to the
+    fold screen detection.
 - **Not done yet:**
-  - Dock background styling not checked on the device.
-  - Drag and drop into the side dock not checked.
-  - Rotation not checked.
-  - Turning the setting back to Bottom not checked.
+  - An iPhone-like translucent default for the side dock background; it uses the existing dock
+    background color and opacity.
+  - The search button does not appear in the settings preview.
 
 ## What "iPhone Duo-like" means here
 
