@@ -218,7 +218,8 @@ class StatsLogCompatManager private constructor(context: Context) : StatsLogMana
                     event,
                     applyOverwrites(
                         info.buildProto(
-                            dataModel.itemsIdMap[info.container] as CollectionInfo?,
+                            // LawnCher: stacked widgets have a WidgetStackInfo parent
+                            dataModel.itemsIdMap[info.container] as? CollectionInfo,
                             context,
                         )
                     ),
