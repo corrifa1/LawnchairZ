@@ -396,8 +396,10 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             // In portrait, we want the pages spaced such that there is no
             // overhang of the previous / next page into the current page viewport.
             // We assume symmetrical padding in portrait mode.
+            // LawnchairZ: side dock. Not with a side dock, which pads one side only.
             int maxInsets = Math.max(insets.left, insets.right);
-            int maxPadding = Math.max(grid.edgeMarginPx, padding.left + 1);
+            int maxPadding = Math.max(grid.edgeMarginPx,
+                    Math.max(padding.left, padding.right) + 1);
             setPageSpacing(Math.max(maxInsets, maxPadding));
         }
 
@@ -417,6 +419,13 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             lp.leftMargin = padding.left + grid.workspaceCellPaddingXPx;
             lp.rightMargin = padding.right + grid.workspaceCellPaddingXPx;
             lp.bottomMargin = padding.bottom;
+        } else if (grid.isSideDock) {
+            // LawnchairZ: side dock. Center the dots under the grid, beside the dock, just above
+            // the bottom inset.
+            lp.leftMargin = padding.left;
+            lp.rightMargin = padding.right;
+            lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+            lp.bottomMargin = grid.getInsets().bottom + grid.edgeMarginPx;
         } else {
             lp.leftMargin = lp.rightMargin = 0;
             lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;

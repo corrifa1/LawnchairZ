@@ -99,9 +99,13 @@ public class Hotseat extends FrameLayout implements Insettable {
     public static final float QSB_CENTER_FACTOR = .325f;
     private static final int BUBBLE_BAR_ADJUSTMENT_ANIMATION_DURATION_MS = 250;
     private static final int DOCK_PAGE_INDICATOR_HEIGHT_DP = 8;
+    // LawnchairZ: side dock. Space between the dock background and the first and last icon.
+    private static final float SIDE_DOCK_BACKGROUND_GAP_DP = 12f;
 
     @ViewDebug.ExportedProperty(category = "launcher")
     private boolean mHasVerticalHotseat;
+    // LawnchairZ: side dock. Whether the vertical dock puts rank 0 at the top.
+    private boolean mVerticalTopDown;
     private Workspace<?> mWorkspace;
     private boolean mSendTouchToWorkspace;
     private boolean mSendTouchToPager;
@@ -210,6 +214,11 @@ public class Hotseat extends FrameLayout implements Insettable {
     }
 
     private void setUpBackground() {
+        setUpBackground(new Rect());
+    }
+
+    /** @param extraInsets added to the user's background insets (LawnchairZ: side dock). */
+    private void setUpBackground(Rect extraInsets) {
         if(!preferenceManager.getHotseatBG().get()) return;
 
         var bgColor = PreferenceCacheExtensionsKt.firstCached(preferenceManager2.getHotseatBackgroundColor());
@@ -231,7 +240,9 @@ public class Hotseat extends FrameLayout implements Insettable {
         background.setColor(finalColor);
         background.setCornerRadius(cornerRadius);
         InsetDrawable bg = new InsetDrawable(background,
-                insetHorizontalLeft, insetVerticalTop, insetHorizontalRight, insetVerticalBottom);
+                insetHorizontalLeft + extraInsets.left, insetVerticalTop + extraInsets.top,
+                insetHorizontalRight + extraInsets.right,
+                insetVerticalBottom + extraInsets.bottom);
         setBackground(bg);
     }
 
@@ -299,6 +310,10 @@ public class Hotseat extends FrameLayout implements Insettable {
     public int getCellYFromOrder(int rank) {
         if (mHasVerticalHotseat) {
             CellLayout page = getCurrentPageLayout();
+            if (mVerticalTopDown) {
+                // LawnchairZ: side dock lists ranks from the top.
+                return rank;
+            }
             int countY = page != null ? page.getCountY() : mActivity.getDeviceProfile().numShownHotseatIcons;
             return countY - (rank + 1);
         }
@@ -311,7 +326,13 @@ public class Hotseat extends FrameLayout implements Insettable {
     /** Returns the dock page index for a global hotseat rank. */
     public int getPageFromOrder(int rank) {
         if (mHasVerticalHotseat) {
-            return 0;
+            // LawnchairZ: side dock. The vertical dock is one page of one column; a rank past
+            // it (a second dock row or page) reports page 1 so it is kept as an overflow item
+            // instead of being placed outside the grid.
+            CellLayout page = getPageAt(0);
+            int countY = page != null ? page.getCountY()
+                    : mActivity.getDeviceProfile().numShownHotseatIcons;
+            return rank < countY ? 0 : 1;
         }
         DeviceProfile dp = mActivity.getDeviceProfile();
         int slotsPerPage = Math.max(1, dp.numShownHotseatIcons * dp.numHotseatRows);
@@ -362,7 +383,7 @@ public class Hotseat extends FrameLayout implements Insettable {
                 items.add(icons.getChildAt(i));
             }
         }
-        resetLayout(mActivity.getDeviceProfile().isVerticalBarLayout());
+        resetLayout(mActivity.getDeviceProfile().hasVerticalHotseat());
         DragController<?> dragController = mActivity.getDragController();
         for (View child : items) {
             if (child.getParent() instanceof ViewGroup parent) {
@@ -380,9 +401,10 @@ public class Hotseat extends FrameLayout implements Insettable {
 
     private boolean gridDiffersFromDeviceProfile() {
         DeviceProfile dp = mActivity.getDeviceProfile();
-        boolean vertical = dp.isVerticalBarLayout();
+        boolean vertical = dp.hasVerticalHotseat();
         CellLayout firstPage = getPageAt(0);
-        if (firstPage == null || vertical != mHasVerticalHotseat) {
+        if (firstPage == null || vertical != mHasVerticalHotseat
+                || (vertical && dp.isVerticalHotseatTopDown() != mVerticalTopDown)) {
             return true;
         }
         int expectedPages = vertical ? 1 : Math.max(1, dp.numHotseatPages);
@@ -402,6 +424,7 @@ public class Hotseat extends FrameLayout implements Insettable {
         boolean hasBubbles = activityContext.hasBubbles();
         mHasVerticalHotseat = hasVerticalHotseat;
         DeviceProfile dp = mActivity.getDeviceProfile();
+        mVerticalTopDown = hasVerticalHotseat && dp.isVerticalHotseatTopDown();
 
         mPagedView.resetPages(hasVerticalHotseat, mWorkspace, dp);
 
@@ -481,11 +504,11 @@ public class Hotseat extends FrameLayout implements Insettable {
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) getLayoutParams();
         DeviceProfile grid = mActivity.getDeviceProfile();
 
-        if (grid.isVerticalBarLayout()) {
+        if (grid.hasVerticalHotseat()) {
             mQsb.setVisibility(View.GONE);
             mPageIndicator.setVisibility(GONE);
             lp.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            if (grid.isSeascape()) {
+            if (grid.isDockOnLeft()) {
                 lp.gravity = Gravity.LEFT;
                 lp.width = grid.hotseatBarSizePx + insets.left;
             } else {
@@ -502,6 +525,15 @@ public class Hotseat extends FrameLayout implements Insettable {
         Rect padding = grid.getHotseatLayoutPadding(getContext());
         setPadding(padding.left, padding.top, padding.right, padding.bottom);
         setLayoutParams(lp);
+        if (grid.isSideDock) {
+            // LawnchairZ: side dock. Fit the background to the centered icon column.
+            int gap = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                    SIDE_DOCK_BACKGROUND_GAP_DP, getResources().getDisplayMetrics());
+            setUpBackground(new Rect(0, Math.max(0, padding.top - gap), 0,
+                    Math.max(0, padding.bottom - gap)));
+        } else {
+            setUpBackground(new Rect());
+        }
         InsettableFrameLayout.dispatchInsets(this, insets);
     }
 
@@ -591,7 +623,7 @@ public class Hotseat extends FrameLayout implements Insettable {
         int paddingBottom = getPaddingBottom();
 
         DeviceProfile dp = mActivity.getDeviceProfile();
-        boolean showIndicator = mPagedView.isPagingEnabled() && !dp.isVerticalBarLayout();
+        boolean showIndicator = mPagedView.isPagingEnabled() && !dp.hasVerticalHotseat();
         int indicatorSpace = showIndicator ? mPageIndicatorHeight : 0;
 
         int pagerWidth = widthSize - paddingLeft - paddingRight;
@@ -637,7 +669,7 @@ public class Hotseat extends FrameLayout implements Insettable {
 
         int containerWidth = mIconsContainer.getWidth();
         int containerHeight = mIconsContainer.getHeight();
-        boolean showIndicator = mPagedView.isPagingEnabled() && !dp.isVerticalBarLayout();
+        boolean showIndicator = mPagedView.isPagingEnabled() && !dp.hasVerticalHotseat();
         int indicatorSpace = showIndicator ? mPageIndicatorHeight : 0;
 
         mPagedView.layout(0, 0, containerWidth, Math.max(0, containerHeight - indicatorSpace));

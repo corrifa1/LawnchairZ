@@ -911,6 +911,11 @@
     <string name="dock_icons">Dock icons</string>
     <string name="dock_rows">Dock rows</string>
     <string name="dock_pages">Dock pages</string>
+    <string name="dock_position">Dock position</string>
+    <string name="dock_position_bottom">Bottom</string>
+    <string name="dock_position_right">Right side</string>
+    <string name="dock_position_left">Left side</string>
+    <string name="side_dock_icon_spacing">Space between dock icons</string>
     <string name="state_folded">%1$s (folded)</string>
     <string name="state_unfolded">%1$s (unfolded)</string>
     <string name="folded_label">Folded</string>

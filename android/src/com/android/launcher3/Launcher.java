@@ -750,9 +750,9 @@ public class Launcher extends StatefulActivity<LauncherState>
         if (FOLDABLE_SINGLE_PAGE.get() && mDeviceProfile.getDeviceProperties().isTwoPanels()) {
             mCellPosMapper = new TwoPanelCellPosMapper(mDeviceProfile.inv.numColumns);
         } else {
-            mCellPosMapper = new CellPosMapper(mDeviceProfile.isVerticalBarLayout(),
+            mCellPosMapper = new CellPosMapper(mDeviceProfile.hasVerticalHotseat(),
                     mDeviceProfile.numShownHotseatIcons, mDeviceProfile.numHotseatRows,
-                    mDeviceProfile.numHotseatPages);
+                    mDeviceProfile.numHotseatPages, mDeviceProfile.isVerticalHotseatTopDown());
         }
         mModelWriter = mModel.getWriter(true, mCellPosMapper, this);
         updateFixedLandscape();

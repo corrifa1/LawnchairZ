@@ -41,6 +41,8 @@ import app.lawnchair.ui.preferences.components.WallpaperPreview
 import app.lawnchair.ui.preferences.components.WithWallpaper
 import app.lawnchair.ui.preferences.components.clipToBottomPercentage
 import app.lawnchair.ui.preferences.components.colorpreference.ColorPreference
+import app.lawnchair.ui.preferences.components.controls.ListPreference
+import app.lawnchair.ui.preferences.components.controls.ListPreferenceEntry
 import app.lawnchair.ui.preferences.components.controls.MainSwitchPreference
 import app.lawnchair.ui.preferences.components.controls.SliderPreference
 import app.lawnchair.ui.preferences.components.controls.SwitchPreference
@@ -147,8 +149,36 @@ fun GridSettings(prefs: PreferenceManager, prefs2: PreferenceManager2) {
     val hotseatColumnsUnfoldedAdapter = prefs.hotseatColumnsUnfolded.getAdapter()
     val hotseatRowsAdapter = prefs.hotseatRows.getAdapter()
     val dockPagesAdapter = prefs.dockPages.getAdapter()
+    val dockPositionAdapter = prefs.dockPosition.getAdapter()
 
     PreferenceGroup(heading = stringResource(id = R.string.grid)) {
+        // LawnchairZ: side dock
+        ListPreference(
+            adapter = dockPositionAdapter,
+            entries = listOf(
+                ListPreferenceEntry(PreferenceManager.DOCK_POSITION_BOTTOM) {
+                    stringResource(R.string.dock_position_bottom)
+                },
+                ListPreferenceEntry(PreferenceManager.DOCK_POSITION_RIGHT) {
+                    stringResource(R.string.dock_position_right)
+                },
+                ListPreferenceEntry(PreferenceManager.DOCK_POSITION_LEFT) {
+                    stringResource(R.string.dock_position_left)
+                },
+            ),
+            label = stringResource(id = R.string.dock_position),
+        )
+        ExpandAndShrink(
+            visible = dockPositionAdapter.state.value != PreferenceManager.DOCK_POSITION_BOTTOM,
+        ) {
+            SliderPreference(
+                adapter = prefs.sideDockSpacing.getAdapter(),
+                label = stringResource(id = R.string.side_dock_icon_spacing),
+                valueRange = 0.0F..1.0F,
+                step = 0.1F,
+                showAsPercentage = true,
+            )
+        }
         if (isFoldable) {
             SliderPreference(
                 label = stringResource(id = R.string.state_folded, stringResource(id = R.string.dock_icons)),

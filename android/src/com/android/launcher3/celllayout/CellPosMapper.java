@@ -34,6 +34,8 @@ public class CellPosMapper {
     private final boolean mHasVerticalHotseat;
     private final int mNumOfHotseat;
     private final int mNumHotseatRows;
+    // LawnchairZ: side dock. Whether a vertical hotseat puts rank 0 at the top.
+    private final boolean mVerticalTopDown;
 
     public CellPosMapper(boolean hasVerticalHotseat, int numOfHotseat) {
         this(hasVerticalHotseat, numOfHotseat, 1, 1);
@@ -41,9 +43,15 @@ public class CellPosMapper {
 
     public CellPosMapper(boolean hasVerticalHotseat, int numOfHotseat, int numHotseatRows,
             int numHotseatPages) {
+        this(hasVerticalHotseat, numOfHotseat, numHotseatRows, numHotseatPages, false);
+    }
+
+    public CellPosMapper(boolean hasVerticalHotseat, int numOfHotseat, int numHotseatRows,
+            int numHotseatPages, boolean verticalTopDown) {
         mHasVerticalHotseat = hasVerticalHotseat;
         mNumOfHotseat = numOfHotseat;
         mNumHotseatRows = Math.max(1, numHotseatRows);
+        mVerticalTopDown = hasVerticalHotseat && verticalTopDown;
     }
 
     private static boolean isHotseatContainer(int container) {
@@ -57,7 +65,8 @@ public class CellPosMapper {
     public CellPos mapModelToPresenter(ItemInfo info) {
         if (isHotseatContainer(info.container) && mNumOfHotseat > 0) {
             if (mHasVerticalHotseat) {
-                return new CellPos(0, mNumOfHotseat - info.screenId - 1, 0);
+                int cellY = mVerticalTopDown ? info.screenId : mNumOfHotseat - info.screenId - 1;
+                return new CellPos(0, cellY, 0);
             }
             int slotsPerPage = Math.max(1, mNumOfHotseat * mNumHotseatRows);
             int page = info.screenId / slotsPerPage;
@@ -76,7 +85,7 @@ public class CellPosMapper {
             int container) {
         if (isHotseatContainer(container)) {
             if (mHasVerticalHotseat && mNumOfHotseat > 0) {
-                presenterScreen = mNumOfHotseat - presenterY - 1;
+                presenterScreen = mVerticalTopDown ? presenterY : mNumOfHotseat - presenterY - 1;
             } else if (!mHasVerticalHotseat && mNumOfHotseat > 0) {
                 // presenterScreen is the dock page index (0-based)
                 int page = Math.max(0, presenterScreen);
