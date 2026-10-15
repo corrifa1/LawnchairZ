@@ -1194,6 +1194,7 @@
     <string name="widget_stack_preset_sizes_description">Developer comparison: snap stacks to fixed sizes instead of resizing freely.</string>
     <string name="widget_stack_edit">Edit stack</string>
     <string name="widget_stack_create">Create stack</string>
+    <string name="widget_stack_resize">Resize</string>
     <string name="widget_stack_delete">Delete stack</string>
     <string name="widget_stack_delete_title">Delete this stack?</string>
     <plurals name="widget_stack_delete_message">
