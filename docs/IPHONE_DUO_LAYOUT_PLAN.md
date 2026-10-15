@@ -1,6 +1,6 @@
 # iPhone Duo-style home layout: plan
 
-Status: **Steps 0–3 and 6 implemented, plus the parts of Steps 4, 5 and 7 they need.**
+Status: **Steps 0–3 and 5–8 implemented; Step 4 except the PinToTaskbarShortcut and StaggeredWorkspaceAnim hooks (the side dock is off with the taskbar).**
 Written 2026-10-14 against `rename/lawnchairz` at `3bee6590ac` (after the fold fixes `8838535f89`
 and `3bee6590ac`).
 
@@ -42,9 +42,16 @@ and `3bee6590ac`).
   - Over 4 fold transitions: one rebind each; the first unfold after install does the documented
     one-time reload.
   - No crashes.
+- **Step 7, settings:** with a side dock, the Grid section shows one "Dock icons" slider (used on
+  both fold screens, via `DeviceProfileOverrides.shownHotseatIconsOnFoldable`) and hides dock
+  rows, dock pages, the unfolded count and bottom padding; their values are kept. The dock preview
+  refreshes on the side dock settings, lays the dock out as a column (`LauncherPreviewRenderer`),
+  and shows the whole screen instead of the bottom strip. The search button is not in the preview.
+- **Step 8, tests:** `tests/expressiveUnit/app/lawnchair/sidedock/SideDockLayoutTest.kt`, 12 cases:
+  top-down rank mapping and its round trip, the stock bottom-up mapping, icon slot spacing
+  (`DeviceProfile.calculateSideDockSlot`) and the foldable dock count. Run with
+  `./gradlew testLawnWithQuickstepExpressiveDebugUnitTest --tests "app.lawnchair.sidedock.*"`.
 - **Not done yet:**
-  - The rest of the settings work (Step 7: hiding rows and pages, the dock preview).
-  - Tests (Step 8).
   - Dock background styling not checked on the device.
   - Drag and drop into the side dock not checked.
   - Rotation not checked.

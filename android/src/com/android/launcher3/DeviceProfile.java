@@ -1942,9 +1942,8 @@ public class DeviceProfile {
                 if (mSideDockHasSearch) {
                     paddingBottom += getSideDockSearchButtonSizePx() + 2 * edgeMarginPx;
                 }
-                int rowPitch = getCellSize().y + cellLayoutBorderSpacePx.y;
-                int minSlot = Math.min(rowPitch, getIconSizeWithOverlap(iconSizePx));
-                int slot = minSlot + Math.round((rowPitch - minSlot) * mSideDockSpacing);
+                int slot = calculateSideDockSlot(getCellSize().y + cellLayoutBorderSpacePx.y,
+                        getIconSizeWithOverlap(iconSizePx), mSideDockSpacing);
                 int columnHeight = numShownHotseatIcons * slot;
                 int extra = mDeviceProperties.getHeightPx() - paddingTop - paddingBottom
                         - columnHeight;
@@ -2217,6 +2216,16 @@ public class DeviceProfile {
                     mInsets.top + mDeviceProperties.getAvailableHeightPx() - hotseatTop
                             - workspacePageIndicatorHeight - edgeMarginPx);
         }
+    }
+
+    /**
+     * LawnchairZ: side dock. Height of one side dock icon's slot: between the icon's own size
+     * ({@code spacing} 0) and one workspace row ({@code spacing} 1), never more than a row.
+     */
+    public static int calculateSideDockSlot(int rowPitch, int iconSlot, float spacing) {
+        int minSlot = Math.min(rowPitch, iconSlot);
+        float clampedSpacing = Math.max(0f, Math.min(1f, spacing));
+        return minSlot + Math.round((rowPitch - minSlot) * clampedSpacing);
     }
 
     public static int calculateCellWidth(int width, int borderSpacing, int countX) {

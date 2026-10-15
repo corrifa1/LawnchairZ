@@ -168,9 +168,8 @@ fun GridSettings(prefs: PreferenceManager, prefs2: PreferenceManager2) {
             ),
             label = stringResource(id = R.string.dock_position),
         )
-        ExpandAndShrink(
-            visible = dockPositionAdapter.state.value != PreferenceManager.DOCK_POSITION_BOTTOM,
-        ) {
+        val isSideDock = dockPositionAdapter.state.value != PreferenceManager.DOCK_POSITION_BOTTOM
+        ExpandAndShrink(visible = isSideDock) {
             SliderPreference(
                 adapter = prefs.sideDockSpacing.getAdapter(),
                 label = stringResource(id = R.string.side_dock_icon_spacing),
@@ -179,7 +178,10 @@ fun GridSettings(prefs: PreferenceManager, prefs2: PreferenceManager2) {
                 showAsPercentage = true,
             )
         }
-        if (isFoldable) {
+        // A side dock shows the same icons on both fold screens and has one column, so the
+        // unfolded count, rows, pages and bottom space only apply to a bottom dock. Their values
+        // are kept for when the dock moves back.
+        if (isFoldable && !isSideDock) {
             SliderPreference(
                 label = stringResource(id = R.string.state_folded, stringResource(id = R.string.dock_icons)),
                 adapter = hotseatColumnsAdapter,
@@ -207,25 +209,29 @@ fun GridSettings(prefs: PreferenceManager, prefs2: PreferenceManager2) {
                 valueRange = 3..10,
             )
         }
-        SliderPreference(
-            label = stringResource(id = R.string.dock_rows),
-            adapter = hotseatRowsAdapter,
-            step = 1,
-            valueRange = 1..2,
-        )
-        SliderPreference(
-            label = stringResource(id = R.string.dock_pages),
-            adapter = dockPagesAdapter,
-            step = 1,
-            valueRange = 1..5,
-        )
-        SliderPreference(
-            adapter = prefs2.hotseatBottomFactor.getAdapter(),
-            label = stringResource(id = R.string.hotseat_bottom_space_label),
-            valueRange = 0.0F..1.7F,
-            step = 0.1F,
-            showAsPercentage = true,
-        )
+        ExpandAndShrink(visible = !isSideDock) {
+            DividerColumn {
+                SliderPreference(
+                    label = stringResource(id = R.string.dock_rows),
+                    adapter = hotseatRowsAdapter,
+                    step = 1,
+                    valueRange = 1..2,
+                )
+                SliderPreference(
+                    label = stringResource(id = R.string.dock_pages),
+                    adapter = dockPagesAdapter,
+                    step = 1,
+                    valueRange = 1..5,
+                )
+                SliderPreference(
+                    adapter = prefs2.hotseatBottomFactor.getAdapter(),
+                    label = stringResource(id = R.string.hotseat_bottom_space_label),
+                    valueRange = 0.0F..1.7F,
+                    step = 0.1F,
+                    showAsPercentage = true,
+                )
+            }
+        }
         SliderPreference(
             adapter = prefs2.pageIndicatorHeightFactor.getAdapter(),
             label = stringResource(id = R.string.page_indicator_height),
@@ -244,6 +250,8 @@ fun ColumnScope.DockPreferencesPreview(modifier: Modifier = Modifier) {
 
         val hotseatRows = prefs.hotseatRows
         val dockPages = prefs.dockPages
+        val dockPositionAdapter = prefs.dockPosition.getAdapter()
+        val isSideDock = dockPositionAdapter.state.value != PreferenceManager.DOCK_POSITION_BOTTOM
 
         val adapters = listOf(
             prefs2.hotseatMode.getAdapter(),
@@ -267,6 +275,8 @@ fun ColumnScope.DockPreferencesPreview(modifier: Modifier = Modifier) {
             prefs2.hotseatBackgroundColor.getAdapter(),
             prefs2.hotseatBackgroundCornerRadius.getAdapter(),
             prefs.hotseatBGAlpha.getAdapter(),
+            dockPositionAdapter,
+            prefs.sideDockSpacing.getAdapter(),
         )
 
         PreferenceGroupHeading(
@@ -281,7 +291,14 @@ fun ColumnScope.DockPreferencesPreview(modifier: Modifier = Modifier) {
                         .weight(1f)
                         .align(Alignment.CenterHorizontally)
                         .clip(MaterialTheme.shapes.large)
-                        .clipToBottomPercentage(if (hotseatRows.getAdapter().state.value >= 2) .4f else .3f),
+                        // A side dock runs the full height, so show the whole screen.
+                        .clipToBottomPercentage(
+                            when {
+                                isSideDock -> 1f
+                                hotseatRows.getAdapter().state.value >= 2 -> .4f
+                                else -> .3f
+                            },
+                        ),
                 ) {
                     WallpaperPreview(
                         wallpaper = wallpaper,

@@ -153,7 +153,8 @@ public class LauncherPreviewRenderer extends BaseContext
         measureAndLayoutRootView();
 
         mHotseat = mRootView.findViewById(R.id.hotseat);
-        mHotseat.resetLayout(false);
+        // LawnchairZ: side dock. Lay the dock out the way the launcher will.
+        mHotseat.resetLayout(mDp.hasVerticalHotseat());
 
         CellLayout firstScreen = mRootView.findViewById(R.id.workspace);
         firstScreen.setPadding(
