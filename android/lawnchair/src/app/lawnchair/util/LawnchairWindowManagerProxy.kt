@@ -34,11 +34,22 @@ class LawnchairWindowManagerProxy @Inject constructor() : WindowManagerProxy(Uti
     @Suppress("PropertyName")
     val TAG = "LC-WindowManagerProxy"
 
+    /**
+     * Every screen seen behind the default display so far, at [seenDefaultDisplayDensity]. Some
+     * foldables (One UI) swap the inner and cover panels behind display 0 and list only the one in
+     * use, and getPossibleMaximumWindowMetrics returns nothing there. Without the screen we're not
+     * on, each fold looked like a new display: the grid's supported profiles flipped, the model
+     * reloaded and widgets were rebound twice and re-rendered for the other screen's sizes.
+     */
+    private val seenDefaultDisplayBounds = ArrayMap<CachedDisplayInfo, List<WindowBounds>>()
+    private var seenDefaultDisplayDensity = 0
+
     override fun estimateInternalDisplayBounds(displayInfoContext: Context): ArrayMap<CachedDisplayInfo, List<WindowBounds>> {
         val result = ArrayMap<CachedDisplayInfo, List<WindowBounds>>()
         val displayManager = displayInfoContext.getSystemService(DisplayManager::class.java) ?: return result
 
         val displays = displayManager.displays
+        val defaultDisplayBounds = ArrayMap<CachedDisplayInfo, List<WindowBounds>>()
 
         for (display in displays) {
             try {
@@ -51,13 +62,44 @@ class LawnchairWindowManagerProxy @Inject constructor() : WindowManagerProxy(Uti
                     val bounds = estimateWindowBounds(contextForDisplay, info)
 
                     result[info] = bounds
+                    if (display.displayId == DEFAULT_DISPLAY) defaultDisplayBounds[info] = withRealBounds(displayInfoContext, info, bounds)
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Error estimating bounds for display ${display.displayId}", e)
             }
         }
 
+        synchronized(seenDefaultDisplayBounds) {
+            // Bounds measured at another density (display size setting) are stale.
+            val density = displayInfoContext.resources.configuration.densityDpi
+            if (density != seenDefaultDisplayDensity) {
+                seenDefaultDisplayBounds.clear()
+                seenDefaultDisplayDensity = density
+            }
+            seenDefaultDisplayBounds.putAll(defaultDisplayBounds)
+            for (i in 0 until seenDefaultDisplayBounds.size) {
+                val info = seenDefaultDisplayBounds.keyAt(i)
+                if (!result.containsKey(info)) result[info] = seenDefaultDisplayBounds.valueAt(i)
+            }
+        }
         return result
+    }
+
+    /**
+     * [estimated] with the current rotation's entry replaced by the real window bounds, the same
+     * correction DisplayController makes for the screen in use. Remembering the corrected list
+     * means the screen doesn't count as changed the next time it comes back from the cache.
+     */
+    private fun withRealBounds(
+        displayInfoContext: Context,
+        info: CachedDisplayInfo,
+        estimated: List<WindowBounds>,
+    ): List<WindowBounds> {
+        val current = getDisplayInfo(displayInfoContext)
+        if (current.normalize(this) != info || current.rotation !in estimated.indices) return estimated
+        val real = getRealBounds(displayInfoContext, current)
+        if (estimated.getOrNull(current.rotation) == real) return estimated
+        return estimated.toMutableList().also { it[current.rotation] = real }
     }
 
     override fun getRealBounds(displayInfoContext: Context, info: CachedDisplayInfo): WindowBounds {
