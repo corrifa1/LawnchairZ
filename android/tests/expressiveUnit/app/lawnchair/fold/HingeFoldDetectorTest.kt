@@ -5,7 +5,7 @@ import org.junit.Test
 
 class HingeFoldDetectorTest {
 
-    private val detector = HingeFoldDetector(minDrop = 20f, maxTriggerAngle = 140f, closedAngle = 5f)
+    private val detector = HingeFoldDetector(minDrop = 20f, maxTriggerAngle = 140f)
 
     @Test
     fun foldFromFlat_firesOnceBelowTheMaxTriggerAngle() {
@@ -50,7 +50,40 @@ class HingeFoldDetectorTest {
 
     @Test
     fun alreadyClosed_doesNotFire() {
-        detector.onAngle(30f)
-        assertThat(detector.onAngle(4f)).isFalse()
+        // The launcher comes back (reset) on the cover screen.
+        detector.reset()
+        assertThat(detector.onAngle(0f)).isFalse()
+        assertThat(detector.onAngle(0f)).isFalse()
+        assertThat(detector.onAngle(3f)).isFalse()
+    }
+
+    @Test
+    fun coarseSensor_jumpFromOpenToClosed_fires() {
+        // The Fold's hinge sensor can skip its 90 degree position on a normal fold.
+        assertThat(detector.onAngle(180f)).isFalse()
+        assertThat(detector.onAngle(0f)).isTrue()
+    }
+
+    @Test
+    fun coarseSensor_foldFromOpen_firesOnceAtTheMiddlePosition() {
+        assertThat(detector.onAngle(180f)).isFalse()
+        assertThat(detector.onAngle(90f)).isTrue()
+        assertThat(detector.onAngle(90f)).isFalse()
+    }
+
+    @Test
+    fun coarseSensor_finishingFoldAfterHoldingHalfFolded_fires() {
+        // The bridge gave the launcher back (reset) while the hinge read 90 degrees.
+        detector.reset()
+        assertThat(detector.onAngle(90f)).isFalse()
+        assertThat(detector.onAngle(0f)).isTrue()
+    }
+
+    @Test
+    fun coarseSensor_unfolding_neverFires() {
+        detector.reset()
+        assertThat(detector.onAngle(0f)).isFalse()
+        assertThat(detector.onAngle(90f)).isFalse()
+        assertThat(detector.onAngle(180f)).isFalse()
     }
 }

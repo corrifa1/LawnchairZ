@@ -97,7 +97,9 @@ class FoldBridgeActivity :
 
     companion object {
         private const val TAG = "FoldBridge"
-        private const val STALL_MS = 700L
+        // Long enough for a slow fold on a coarse hinge sensor, which may report nothing between
+        // its middle position and closed for well over half a second.
+        private const val STALL_MS = 1_500L
         private const val MAX_LIFETIME_MS = 10_000L
         private const val MOVED_FINISH_DELAY_MS = 150L
         private const val REOPENED_ANGLE = 160f
