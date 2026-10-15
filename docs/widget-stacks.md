@@ -106,7 +106,7 @@ upstream ships its own schema 33, the next rebase must renumber ours.
 | Mostly vertical drag (past touch slop, \|dy\| > \|dx\|) | The stack pages, unless the view under the finger can scroll in that direction (e.g. a list widget), in which case the widget owns the whole gesture. The decision is made once per gesture; there is no mid-gesture handover. |
 | Horizontal drag | The workspace pages (or opens the feed). |
 | Tap | The child widget. |
-| Long-press | A child's long-press is forwarded to the stack, which is picked up and shows Edit / Delete. |
+| Long-press | A child's long-press is forwarded to the stack, which is picked up and shows Edit / Delete. Only a still finger counts: once the finger moves past touch slop (paging, or scrolling a widget that disallowed intercepts), or while the stack is settling, the forwarded long-press is cancelled. `WidgetStackView.dispatchTouchEvent` tracks this because it sees every event even after a scrolling child stops `onInterceptTouchEvent` from running. |
 | Touch during a paging animation | Catches the page mid-flight. |
 
 The app-drawer swipe (`PortraitStatesTouchController`), notification swipe

@@ -93,6 +93,12 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
     private var isPaging = false
     private var isTouching = false
 
+    // Seen in dispatchTouchEvent, so they stay current while a scrolling child has disallowed
+    // intercepts and onInterceptTouchEvent no longer runs.
+    private var gestureDownX = 0f
+    private var gestureDownY = 0f
+    private var gestureMoved = false
+
     private val spring = SpringAnimation(this, OFFSET_PX).apply {
         spring = SpringForce().setDampingRatio(SPRING_DAMPING).setStiffness(SPRING_STIFFNESS)
         addEndListener { _, canceled, _, _ -> if (!canceled) onSettled(springTarget) }
@@ -161,8 +167,8 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
         children.forEach { child ->
             addView(child, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
             pages.add(child)
-            // A child's long-press picks up the whole stack.
-            child.setOnLongClickListener { performLongClick() }
+            // A child's long-press picks up the whole stack, unless the finger has moved.
+            child.setOnLongClickListener { forwardChildLongPress() }
             if (child is ListenableHostView) {
                 updateListeners[child] = child.addUpdateListener { onChildUpdated(child) }
             }
@@ -386,6 +392,33 @@ class WidgetStackView(context: Context) : NavigableAppWidgetHostView(context) {
 
     // ---------------------------------------------------------------------------------------
     // Touch
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_DOWN -> {
+                gestureDownX = ev.x
+                gestureDownY = ev.y
+                gestureMoved = false
+            }
+            MotionEvent.ACTION_MOVE -> if (
+                !gestureMoved &&
+                WidgetStackTouch.movedPastSlop(ev.x - gestureDownX, ev.y - gestureDownY, touchSlop)
+            ) {
+                // A child that scrolls takes the gesture and stops this view and the child's host
+                // from seeing moves, so the host's long-press timer would still fire mid-scroll.
+                gestureMoved = true
+                pages.forEach { it.cancelLongPress() }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun forwardChildLongPress(): Boolean {
+        if (!WidgetStackTouch.shouldForwardChildLongPress(gestureMoved, isPaging, spring.isRunning)) {
+            return false
+        }
+        return performLongClick()
+    }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         if (!canPage()) return false

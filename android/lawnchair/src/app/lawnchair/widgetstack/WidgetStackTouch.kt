@@ -12,6 +12,7 @@ package app.lawnchair.widgetstack
 import android.view.MotionEvent
 import com.android.launcher3.CellLayout
 import com.android.launcher3.Launcher
+import kotlin.math.abs
 
 /** Touch arbitration between widget stacks and the launcher's own vertical gestures. */
 object WidgetStackTouch {
@@ -42,4 +43,21 @@ object WidgetStackTouch {
         }
         return false
     }
+
+    /**
+     * Whether a finger that moved ([dx], [dy]) since touch down has left the tap zone. Uses the
+     * same square slop as the stack's paging decision.
+     */
+    @JvmStatic
+    fun movedPastSlop(dx: Float, dy: Float, touchSlop: Int): Boolean =
+        abs(dx) >= touchSlop || abs(dy) >= touchSlop
+
+    /**
+     * Whether a child widget's long-press may pick up the stack. A gesture that already moved
+     * (a scroll inside the widget, or paging the stack) or a stack still settling on a page is
+     * not a long-press, even if the child's timer fires.
+     */
+    @JvmStatic
+    fun shouldForwardChildLongPress(movedPastSlop: Boolean, isPaging: Boolean, isSettling: Boolean): Boolean =
+        !movedPastSlop && !isPaging && !isSettling
 }
