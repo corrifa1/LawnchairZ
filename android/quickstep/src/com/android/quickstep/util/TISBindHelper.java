@@ -65,6 +65,8 @@ public class TISBindHelper implements ServiceConnection {
         // The standard-home flavor deliberately omits TouchInteractionService because Android only
         // permits the privileged recents component to own it. Retrying a missing service forever
         // produced log spam and periodic main-thread work in every LawnchairZ session.
+        // LawnchairZ modification: the comment above names LawnchairZ instead of Expressive
+        // Launcher.
         mBindingSupported = !BuildConfig.STANDARD_HOME_ONLY;
         if (mBindingSupported) {
             internalBindToTIS();

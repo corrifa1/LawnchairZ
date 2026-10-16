@@ -56,6 +56,8 @@ class SmartspaceProvider @Inject constructor(
             } else {
                 it.targets
             }
+            // LawnchairZ modification: Expressive's smartspace policy and build flag were renamed
+            // for LawnchairZ.
             applyLawnchairzSmartspaceTargetPolicy(targets, BuildConfig.IS_LAWNCHAIRZ_PRODUCT)
         }
     val previewTargets = state

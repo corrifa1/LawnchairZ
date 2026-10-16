@@ -18,6 +18,9 @@
 ** Modifications copyright 2021, Lawnchair
 */
 
+LawnchairZ modification: renamed from Expressive Launcher; Expressive's update job service
+was removed.
+
 Standard Home application policy for LawnchairZ L3.
 
 The implementation continues to compile Lawnchair's Quickstep-derived launcher classes, but

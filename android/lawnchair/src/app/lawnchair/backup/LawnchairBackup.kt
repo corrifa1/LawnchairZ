@@ -127,6 +127,7 @@ class LawnchairBackup(
         )
 
         fun generateBackupFileName(): String {
+            // LawnchairZ modification: backup files are named after LawnchairZ.
             val productName = if (BuildConfig.STANDARD_HOME_ONLY) "LawnchairZ" else "Lawnchair"
             val fileName = "${productName}_Backup ${SimpleDateFormat.getDateTimeInstance().format(Date())}"
             return "$fileName.lawnchairbackup"

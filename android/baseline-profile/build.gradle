@@ -19,6 +19,7 @@ android {
         github { dimension = "channel" }
         nightly { dimension = "channel" }
         play { dimension = "channel" }
+        // LawnchairZ modification: the expressive flavor is now lawnchairz.
         lawnchairz { dimension = "channel" }
     }
 

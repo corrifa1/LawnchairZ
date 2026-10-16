@@ -636,6 +636,7 @@ public class ModelDbController {
                 // Expressive promises Pixel-style first-run defaults. System-image partner and
                 // auto-install providers are device/vendor policy, and can otherwise replace the
                 // bundled layout (the Play Store AVD supplied a carrier dock during QA).
+                // LawnchairZ modification: Expressive's build flag is now IS_LAWNCHAIRZ_PRODUCT.
                 AutoInstallsLayout loader = shouldUseExternalDefaultLayout(
                         BuildConfig.IS_LAWNCHAIRZ_PRODUCT)
                                 ? mLayoutParserFactory.createExternalLayoutParser(

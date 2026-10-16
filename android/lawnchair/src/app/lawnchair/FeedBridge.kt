@@ -39,6 +39,7 @@ class FeedBridge(private val context: Context) {
     private val requiresBridge = context.applicationInfo.flags and (FLAG_DEBUGGABLE or FLAG_SYSTEM) == 0
     private val prefs by lazy { PreferenceManager.getInstance(context) }
     private val bridgePackages: List<BridgeInfo> by lazy {
+        // LawnchairZ modification: Expressive's build flag and helper package are now LawnchairZ's.
         if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
             // Lawnfeed's bridge rejects application IDs outside its built-in Lawnchair allowlist.
             // Expressive therefore uses its own same-signed companion instead of advertising an

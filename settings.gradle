@@ -31,6 +31,8 @@ develocity {
     }
 }
 
+// LawnchairZ modification: the root project and the Discover helper module are named for
+// LawnchairZ.
 rootProject.name = "lawnchairz-l3"
 // Keep the wrapper, local.properties, signing inputs, task paths and build outputs at
 // the repository root while grouping Android source and build configuration together.

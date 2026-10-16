@@ -97,6 +97,7 @@ class ItemInflater<T>(
             Favorites.ITEM_TYPE_APPWIDGET,
             Favorites.ITEM_TYPE_CUSTOM_APPWIDGET ->
                 return inflateAppWidget(item as LauncherAppWidgetInfo, context.modelWriter)
+            // LawnchairZ modification: inflates widget stacks.
             // LawnCher: widget stacks. Children inflate exactly like standalone widgets.
             Favorites.ITEM_TYPE_WIDGET_STACK ->
                 return app.lawnchair.widgetstack.WidgetStackView.inflate(

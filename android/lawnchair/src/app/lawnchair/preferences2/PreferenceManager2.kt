@@ -349,6 +349,7 @@ class PreferenceManager2 @Inject constructor(
         defaultValue = context.resources.getBoolean(R.bool.config_default_widget_unlimited_size),
     )
 
+    // LawnchairZ modification: preferences for widget stacks and the closing-animation speed.
     // LawnCher: widget stacks. Turning this off hides the ways to create stacks; existing stacks
     // keep working.
     val widgetStacks = preference(

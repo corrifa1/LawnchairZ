@@ -5,6 +5,7 @@ import org.junit.Test
 
 class DefaultWorkspaceSourcePolicyTest {
 
+    // LawnchairZ modification: renamed for LawnchairZ.
     @Test
     fun lawnchairzProduct_usesBundledPixelStyleLayout() {
         assertThat(ModelDbController.shouldUseExternalDefaultLayout(true)).isFalse()

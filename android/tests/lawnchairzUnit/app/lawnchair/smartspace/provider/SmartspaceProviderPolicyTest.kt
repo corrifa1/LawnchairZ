@@ -6,6 +6,7 @@ import org.junit.Test
 
 class SmartspaceProviderPolicyTest {
 
+    // LawnchairZ modification: tests renamed for LawnchairZ's smartspace policy.
     @Test
     fun lawnchairzProduct_leadsWithDateAndPreservesFunctionalCards() {
         val setup = target("setup", SmartspaceTarget.FeatureType.FEATURE_TIPS, score = 999f)

@@ -750,6 +750,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         if (FOLDABLE_SINGLE_PAGE.get() && mDeviceProfile.getDeviceProperties().isTwoPanels()) {
             mCellPosMapper = new TwoPanelCellPosMapper(mDeviceProfile.inv.numColumns);
         } else {
+            // LawnchairZ modification: side dock cell mapping and widget stack handling.
             mCellPosMapper = new CellPosMapper(mDeviceProfile.hasVerticalHotseat(),
                     mDeviceProfile.numShownHotseatIcons, mDeviceProfile.numHotseatRows,
                     mDeviceProfile.numHotseatPages, mDeviceProfile.isVerticalHotseatTopDown());

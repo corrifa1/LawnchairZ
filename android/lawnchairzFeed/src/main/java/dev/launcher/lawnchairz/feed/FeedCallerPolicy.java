@@ -1,3 +1,5 @@
+// LawnchairZ modification: moved to dev.launcher.lawnchairz.feed; trusts the LawnchairZ launcher
+// packages.
 package dev.launcher.lawnchairz.feed;
 
 import android.content.Context;

@@ -216,6 +216,8 @@ fun PreferencesDashboard(
             )
 
             ExpandAndShrink(visible = advancedExpanded) {
+                // LawnchairZ modification: every Advanced settings row is shown, not only Backup
+                // and restore.
                 // AnimatedVisibility stacks its children like a Box, so the rows need their own
                 // column, spaced like the rest of the group.
                 Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {

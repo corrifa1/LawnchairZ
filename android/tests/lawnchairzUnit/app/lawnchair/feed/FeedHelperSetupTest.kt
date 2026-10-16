@@ -13,6 +13,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
+// LawnchairZ modification: renamed from ExpressiveFeedSetupTest; uses LawnchairZ's helper names.
 class FeedHelperSetupTest {
     @get:Rule
     val temporary = TemporaryFolder()

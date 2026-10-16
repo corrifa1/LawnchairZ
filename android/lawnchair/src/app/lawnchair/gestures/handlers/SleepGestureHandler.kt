@@ -103,6 +103,8 @@ class SleepMethodDeviceAdmin(context: Context) : SleepGestureHandler.SleepMethod
                     launcher.getString(
                         productStringId(
                             R.string.dt2s_admin_hint,
+                            // LawnchairZ modification: the expressive_* product string is now
+                            // product_*.
                             R.string.product_dt2s_admin_hint,
                         ),
                     ),

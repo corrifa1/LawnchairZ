@@ -159,6 +159,7 @@ public class WorkspaceStateTransitionAnimation {
                 workspaceFadeInterpolator);
         float hotseatIconsAlpha = (elements & HOTSEAT_ICONS) != 0 ? 1 : 0;
         propertySetter.setViewAlpha(hotseat, hotseatIconsAlpha, hotseatFadeInterpolator);
+        // LawnchairZ modification: the side dock's search button fades and moves with the dock.
         // LawnchairZ: side dock. The search button below the dock icons belongs to the dock.
         View sideDockSearchButton = mLauncher.getDragLayer().findViewById(R.id.side_dock_search_button);
         if (sideDockSearchButton != null) {

@@ -29,6 +29,8 @@ data class ProviderInfo(
 
 fun getProviders(context: Context) = FeedBridge.getAvailableProviders(context).map {
     ProviderInfo(
+        // LawnchairZ modification: the Discover helper is named using LawnchairZ's build flag and
+        // string.
         name = if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT && it.packageName == FeedBridge.FIRST_PARTY_FEED_PACKAGE) {
             context.getString(R.string.discover_title)
         } else {

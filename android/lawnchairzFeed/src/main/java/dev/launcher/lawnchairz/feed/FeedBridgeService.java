@@ -1,3 +1,5 @@
+// LawnchairZ modification: renamed from ExpressiveFeedBridgeService and moved to
+// dev.launcher.lawnchairz.feed.
 package dev.launcher.lawnchairz.feed;
 
 import android.app.Service;

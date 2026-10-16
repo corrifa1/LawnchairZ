@@ -101,6 +101,8 @@ class OnboardingProvider(context: Context) :
                         title = context.getString(
                             productStringId(
                                 R.string.onboarding_welcome,
+                                // LawnchairZ modification: the expressive_* product string is now
+                                // product_*.
                                 R.string.product_onboarding_welcome,
                             ),
                         ),

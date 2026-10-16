@@ -84,6 +84,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
     protected static final int RESIZE = R.id.action_resize;
     public static final int DEEP_SHORTCUTS = R.id.action_deep_shortcuts;
     public static final int CLOSE = R.id.action_close;
+    // LawnchairZ modification: accessibility actions for widget stacks and their widgets.
     // LawnCher: widget stacks
     protected static final int EDIT_WIDGET_STACK = R.id.action_edit_widget_stack;
 

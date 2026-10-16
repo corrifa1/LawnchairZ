@@ -63,6 +63,8 @@ fun ServiceWarningDialog(
                     text = stringResource(
                         productStringId(
                             R.string.generic_a11y_hint,
+                            // LawnchairZ modification: the expressive_* product string is now
+                            // product_*.
                             R.string.product_generic_a11y_hint,
                         ),
                         stringResource(action),

@@ -13,6 +13,7 @@ import org.robolectric.annotation.Config
 @Config(sdk = [37], application = Application::class)
 class FeedDefaultPolicyTest {
 
+    // LawnchairZ modification: renamed for LawnchairZ.
     @Test
     fun cleanLawnchairzInstall_enablesPixelStyleLeftFeed() {
         val resources = ApplicationProvider.getApplicationContext<Application>().resources

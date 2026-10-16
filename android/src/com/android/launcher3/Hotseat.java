@@ -99,6 +99,8 @@ public class Hotseat extends FrameLayout implements Insettable {
     public static final float QSB_CENTER_FACTOR = .325f;
     private static final int BUBBLE_BAR_ADJUSTMENT_ANIMATION_DURATION_MS = 250;
     private static final int DOCK_PAGE_INDICATOR_HEIGHT_DP = 8;
+    // LawnchairZ modification: the side dock, and dock items kept as hidden overflow across fold
+    // and unfold.
     // LawnchairZ: side dock. Space between the dock background and the first and last icon.
     private static final float SIDE_DOCK_BACKGROUND_GAP_DP = 12f;
 

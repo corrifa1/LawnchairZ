@@ -28,6 +28,8 @@ data class AboutUiState(
     val supportAndPr: List<TeamMember> = emptyList(),
     val topLinks: List<Link> = emptyList(),
     val bottomLinks: List<Link> = emptyList(),
+    // LawnchairZ modification: credits for the projects LawnchairZ builds on; Expressive's update
+    // fields were removed.
     val credits: List<Link> = emptyList(),
     val updateState: UpdateState = UpdateState.Hidden,
 )

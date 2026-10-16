@@ -143,6 +143,7 @@ private fun QuickSwitchIgnoredWarning(
             text = stringResource(
                 productStringId(
                     R.string.quickswitch_ignored_warning,
+                    // LawnchairZ modification: the expressive_* product string is now product_*.
                     R.string.product_quickswitch_warning,
                 ),
             ),

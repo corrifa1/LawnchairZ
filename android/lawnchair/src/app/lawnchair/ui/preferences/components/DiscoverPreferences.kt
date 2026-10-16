@@ -43,6 +43,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+// LawnchairZ modification: renamed from ExpressiveFeedPreferences; uses FeedHelperSetup and the
+// discover_* strings.
 /** Owns the user-facing setup; the included service never has a launcher icon or a feed Activity. */
 @Composable
 fun DiscoverPreferences() {

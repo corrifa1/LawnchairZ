@@ -62,6 +62,7 @@ class FeedBridgeConnectionPolicyTest {
 
     @Test
     fun firstPartyContract_matchesCompanionManifest() {
+        // LawnchairZ modification: expects LawnchairZ's helper package and permission.
         assertThat(FeedBridge.FIRST_PARTY_FEED_PACKAGE)
             .isEqualTo("dev.launcher.lawnchairz.feed")
         assertThat(FeedBridge.FIRST_PARTY_CONNECT_PERMISSION)

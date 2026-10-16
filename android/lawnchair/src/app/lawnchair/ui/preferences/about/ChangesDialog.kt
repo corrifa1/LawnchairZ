@@ -40,6 +40,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun ChangesDialog(
     changelogState: ChangelogState?,
+    // LawnchairZ modification: Expressive's release notes and update snoozing were removed.
     sheetState: SheetState,
     onDismiss: () -> Unit,
     onDownload: () -> Unit,

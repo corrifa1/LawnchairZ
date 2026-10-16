@@ -3,6 +3,7 @@ package app.lawnchair.ui.util
 import com.android.launcher3.BuildConfig
 
 internal fun isPlayStoreChannel(channel: String): Boolean {
+    // LawnchairZ modification: the expressive channel is now lawnchairz.
     return channel == "play" || channel == "lawnchairz"
 }
 

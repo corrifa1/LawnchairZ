@@ -2,6 +2,8 @@
 <paths>
     <cache-path name="log_files" path="logs"/>
     <cache-path name="nightly_updates" path="updates" />
+    <!-- LawnchairZ modification: the Discover helper's cache path was renamed from
+         expressive-feed. -->
     <cache-path name="feed_helper" path="feed-helper/" />
     <external-path name="external_files" path="." />
     <external-path name="external_storage" path="/"/>

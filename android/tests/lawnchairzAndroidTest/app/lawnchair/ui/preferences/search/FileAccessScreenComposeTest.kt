@@ -26,6 +26,7 @@ class FileAccessScreenComposeTest {
     @get:Rule
     val composeRule = createEmptyComposeRule()
 
+    // LawnchairZ modification: checks LawnchairZ's build flag.
     @Test
     fun lawnchairzManifest_omitsRestrictedStoragePermissions() {
         assumeTrue("LawnchairZ-only storage contract", BuildConfig.IS_LAWNCHAIRZ_PRODUCT)

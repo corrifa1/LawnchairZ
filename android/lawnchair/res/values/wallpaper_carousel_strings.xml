@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- LawnchairZ modification: renamed from expressive_wallpaper_strings.xml. -->
     <!-- LawnchairZ currently ships this product-owned copy in English only. Marking it explicitly
          avoids pretending the inherited Lawnchair locale set contains reviewed translations. -->
     <string name="wallpaper_carousel_home" translatable="false">Home wallpaper preview</string>

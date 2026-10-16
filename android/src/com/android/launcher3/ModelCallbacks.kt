@@ -85,6 +85,7 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
                 "hotseat layout was vertical: ${launcher.hotseat?.isHasVerticalHotseat}" +
                 " and is setting to ${launcher.deviceProfile.hasVerticalHotseat()}",
         )
+        // LawnchairZ modification: a side dock lays the hotseat out vertically too.
         launcher.hotseat?.resetLayout(launcher.deviceProfile.hasVerticalHotseat())
         launcher.startBinding()
         TraceHelper.INSTANCE.endSection()

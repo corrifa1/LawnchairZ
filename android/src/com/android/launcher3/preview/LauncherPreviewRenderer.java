@@ -153,6 +153,7 @@ public class LauncherPreviewRenderer extends BaseContext
         measureAndLayoutRootView();
 
         mHotseat = mRootView.findViewById(R.id.hotseat);
+        // LawnchairZ modification: the preview lays out a side dock.
         // LawnchairZ: side dock. Lay the dock out the way the launcher will.
         mHotseat.resetLayout(mDp.hasVerticalHotseat());
 

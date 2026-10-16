@@ -442,6 +442,8 @@ class GridSizeMigrationLogic {
                     entryCountDiff[entry]?.let { entryDiff ->
                         if (entryDiff < 0) {
                             add(entry.id)
+                            // LawnchairZ modification: grid migration keeps widget stacks together
+                            // with their widgets.
                             if (
                                 entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER ||
                                     // LawnCher: widget stacks

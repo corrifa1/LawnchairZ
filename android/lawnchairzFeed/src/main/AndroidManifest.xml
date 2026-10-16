@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- LawnchairZ modification: LawnchairZ's permission, package and service names. -->
     <permission
         android:name="dev.launcher.lawnchairz.feed.permission.CONNECT"
         android:label="@string/connect_permission_label"

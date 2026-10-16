@@ -85,6 +85,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     private final View[] mDragHandles = new View[HANDLE_COUNT];
     private final List<Rect> mSystemGestureExclusionRects = new ArrayList<>(HANDLE_COUNT);
 
+    // LawnchairZ modification: widget stacks are resized, created and edited from this frame.
     // LawnCher: widget stacks. Widened from LauncherAppWidgetHostView so stacks can be resized.
     private NavigableAppWidgetHostView mWidgetView;
     // LawnCher: widget stacks. Non-null while resizing a stack.

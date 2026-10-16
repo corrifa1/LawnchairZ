@@ -204,6 +204,9 @@
     <string name="backup_and_restore_description">Save current setup, restore backups</string>
 
     <string name="about_label">About</string>
+    <!-- LawnchairZ modification: removed Expressive's About easter egg and Daily Spark strings;
+         added strings for widget stacks, the side dock, the fold bridge and the launcher
+         animations. -->
 
     <string name="app_info_drop_target_label">App info</string>
     <string name="debug_restart_launcher">Restart Lawnchair</string>

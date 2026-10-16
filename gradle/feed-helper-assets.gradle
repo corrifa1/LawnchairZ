@@ -17,6 +17,8 @@ import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 
+// LawnchairZ modification: renamed from expressive-feed-assets.gradle; embeds LawnchairZ's Discover
+// helper.
 /** No Project/model access during execution: inputs are variant-aware APK artifacts. */
 @CacheableTask
 abstract class GenerateFeedHelperAssets extends DefaultTask {

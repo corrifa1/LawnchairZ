@@ -297,6 +297,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private static final int DRAG_MODE_ADD_TO_FOLDER = 2;
     private static final int DRAG_MODE_REORDER = 3;
     protected int mDragMode = DRAG_MODE_NONE;
+    // LawnchairZ modification: creating and dropping onto widget stacks, and side dock padding.
     // LawnCher: widget stacks. Hover-to-stack state, like folder creation.
     private final app.lawnchair.widgetstack.WidgetStackDropHelper mWidgetStackDrop =
             new app.lawnchair.widgetstack.WidgetStackDropHelper();

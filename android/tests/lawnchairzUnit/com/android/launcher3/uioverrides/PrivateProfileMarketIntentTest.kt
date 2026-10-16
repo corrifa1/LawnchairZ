@@ -25,6 +25,7 @@ class PrivateProfileMarketIntentTest {
 
         val actual =
             resolvePrivateProfileMarketIntentSender(
+                // LawnchairZ modification: uses LawnchairZ's package name.
                 "dev.launcher.lawnchairz.l3",
                 privateUser,
             ) { packageName, user ->

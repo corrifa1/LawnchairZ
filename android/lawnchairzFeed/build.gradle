@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+// LawnchairZ modification: renamed for LawnchairZ. LawnchairZ property and variable names come
+// first; Expressive's still work.
 // The helper always carries the launcher's version (see android/build.gradle). The expressive*
 // property names are older fallbacks.
 final def feedVersionCodeText = providers.gradleProperty("lawnchairzVersionCode")

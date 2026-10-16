@@ -35,6 +35,7 @@ class BugReportReceiver : BroadcastReceiver() {
             context.getString(
                 productStringId(
                     R.string.lawnchair_bug_report,
+                    // LawnchairZ modification: the expressive_* product string is now product_*.
                     R.string.product_bug_report,
                 ),
             ),

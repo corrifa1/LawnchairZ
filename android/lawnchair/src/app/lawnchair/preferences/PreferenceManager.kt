@@ -98,6 +98,8 @@ class PreferenceManager @Inject constructor(
     val hotseatRows = IntPref("pref_hotseatRows", 1, reloadGrid)
     val dockPages = IntPref("pref_dockPages", 1, reloadGrid)
 
+    // LawnchairZ modification: preferences for the side dock, return animation, animation speed and
+    // fold bridge.
     // LawnchairZ: side dock (iPhone Duo-style). One of the DOCK_POSITION_* values.
     val dockPosition = StringPref("pref_dockPosition", DOCK_POSITION_BOTTOM, reloadGrid)
 

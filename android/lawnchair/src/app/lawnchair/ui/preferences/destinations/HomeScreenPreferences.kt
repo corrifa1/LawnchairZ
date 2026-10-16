@@ -117,6 +117,7 @@ fun HomeScreenPreferences(
                 },
             )
         }
+        // LawnchairZ modification: Discover settings renamed; closing-animation speed slider added.
         if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
             DiscoverPreferences()
         } else {

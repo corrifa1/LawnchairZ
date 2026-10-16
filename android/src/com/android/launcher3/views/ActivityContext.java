@@ -554,6 +554,7 @@ public interface ActivityContext extends SavedStateRegistryOwner {
 
     default CellPosMapper getCellPosMapper() {
         DeviceProfile dp = getDeviceProfile();
+        // LawnchairZ modification: side dock cell mapping.
         return new CellPosMapper(dp.hasVerticalHotseat(), dp.numShownHotseatIcons,
                 dp.numHotseatRows, dp.numHotseatPages, dp.isVerticalHotseatTopDown());
     }

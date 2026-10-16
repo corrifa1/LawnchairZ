@@ -24,6 +24,7 @@ class FileAccessPolicyTest {
     @Test
     fun playPolicy_recognizesBothPlayDistributedChannels() {
         assertThat(isPlayStoreChannel("play")).isTrue()
+        // LawnchairZ modification: the expressive channel and package names are now LawnchairZ's.
         assertThat(isPlayStoreChannel("lawnchairz")).isTrue()
         assertThat(isPlayStoreChannel("github")).isFalse()
         assertThat(isPlayStoreChannel("nightly")).isFalse()

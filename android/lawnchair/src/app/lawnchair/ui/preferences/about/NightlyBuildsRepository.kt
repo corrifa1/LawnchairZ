@@ -39,6 +39,8 @@ internal class NightlyBuildsRepository(
         coroutineScope.launch(Dispatchers.Default) {
             updateState.update { UpdateState.Checking }
             try {
+                // LawnchairZ modification: Expressive's update checker was removed; only the
+                // Lawnchair nightly check remains.
                 checkNightlyUpdate()
             } catch (e: Exception) {
                 when (e) {

@@ -233,6 +233,8 @@ private fun SponsorDisclaimer(
                 text = stringResource(
                     productStringId(
                         R.string.search_provider_sponsored_description,
+                        // LawnchairZ modification: the expressive_* product string is now
+                        // product_*.
                         R.string.product_search_provider_description,
                     ),
                     sponsor,

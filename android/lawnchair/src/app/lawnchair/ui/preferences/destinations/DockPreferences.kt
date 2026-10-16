@@ -149,6 +149,7 @@ fun GridSettings(prefs: PreferenceManager, prefs2: PreferenceManager2) {
     val hotseatColumnsUnfoldedAdapter = prefs.hotseatColumnsUnfolded.getAdapter()
     val hotseatRowsAdapter = prefs.hotseatRows.getAdapter()
     val dockPagesAdapter = prefs.dockPages.getAdapter()
+    // LawnchairZ modification: side dock position and icon spacing settings.
     val dockPositionAdapter = prefs.dockPosition.getAdapter()
 
     PreferenceGroup(heading = stringResource(id = R.string.grid)) {

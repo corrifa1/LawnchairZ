@@ -165,6 +165,8 @@ class LawnchairLauncher : QuickstepLauncher() {
     private lateinit var colorScheme: ColorScheme
     private var hasBackGesture = false
 
+    // LawnchairZ modification: return-home animation, fold bridge, animation speed and side dock
+    // search button.
     // Launcher-side return-home animation for devices without GestureNavContract. The tracker
     // lives with this activity instance, so a recreated launcher never animates a stale launch.
     // elapsedRealtime keeps counting in deep sleep, so the expiry holds across screen-off.

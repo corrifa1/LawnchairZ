@@ -136,6 +136,8 @@ class DeviceProfileOverrides @Inject constructor(
             numDockPages = prefs.dockPages.get().coerceIn(1, 5),
 
             foldableShownHotseatIcons = if (deviceType == InvariantDeviceProfile.TYPE_MULTI_DISPLAY) {
+                // LawnchairZ modification: a side dock shows the folded dock icon count on both
+                // fold screens.
                 shownHotseatIconsOnFoldable(
                     folded = prefs.hotseatColumns.get(),
                     unfolded = previewOverrides.foldableDatabaseHotseatIcons ?: prefs.hotseatColumnsUnfolded.get(),

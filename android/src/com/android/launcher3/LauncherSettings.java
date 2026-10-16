@@ -152,6 +152,7 @@ public class LauncherSettings {
          */
         public static final int ITEM_TYPE_PRIVATE_SPACE_INSTALL_APP_BUTTON = 11;
 
+        // LawnchairZ modification: the widget stack item type.
         // LawnCher: widget stacks. A workspace-only item whose children are widget rows with
         // container = stack id, ordered by rank. Numbered away from upstream's sequence so that a
         // future AOSP item type cannot collide with it.

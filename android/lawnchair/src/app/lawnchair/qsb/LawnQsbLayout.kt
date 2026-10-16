@@ -258,6 +258,8 @@ class LawnQsbLayout(context: Context, attrs: AttributeSet?) : FrameLayout(contex
 
                         val actions = QsbActions(
                             onQsbClick = {
+                                // LawnchairZ modification: search and its options moved to the
+                                // companion so the side dock's search button can share them.
                                 launchHotseatSearch(context.launcher, searchProvider)
                             },
                             onQsbLongClick = ::openOptions,

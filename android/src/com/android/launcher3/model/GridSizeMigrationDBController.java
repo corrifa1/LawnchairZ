@@ -332,6 +332,8 @@ public class GridSizeMigrationDBController {
         dest.forEach(entry -> {
             if (entryCountDiff.get(entry) < 0) {
                 toBeRemoved.add(entry.id);
+                // LawnchairZ modification: grid migration keeps widget stacks together with their
+                // widgets.
                 if (entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER
                         // LawnCher: widget stacks
                         || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK) {

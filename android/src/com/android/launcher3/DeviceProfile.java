@@ -125,6 +125,7 @@ public class DeviceProfile {
     public boolean isPredictiveBackSwipe;
     public final boolean isQsbInline;
 
+    // LawnchairZ modification: side dock (iPhone Duo-style) layout.
     // LawnchairZ: side dock. True when the user put the dock on a side of the screen
     // (iPhone Duo-style) in any orientation; isVerticalBarLayout() stays the stock
     // landscape-phone flag that overview, all apps and quickstep read.

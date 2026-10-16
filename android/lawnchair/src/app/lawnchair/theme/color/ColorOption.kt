@@ -70,6 +70,8 @@ sealed class ColorOption {
                 stringResource(
                     productStringId(
                         R.string.managed_by_lawnchair,
+                        // LawnchairZ modification: the expressive_* product string is now
+                        // product_*.
                         R.string.product_managed_by_launcher,
                     ),
                 )

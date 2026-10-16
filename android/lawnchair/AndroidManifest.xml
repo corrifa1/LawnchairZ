@@ -212,6 +212,7 @@
             android:authorities="${applicationId}.restrictionbypass"
             tools:node="remove"/>
 
+        <!-- LawnchairZ modification: the fold bridge activity. -->
         <!-- Invisible normal-task activity held in front of home while folding, so One UI
              applies app continuity instead of locking (see FoldBridgeController). -->
         <activity

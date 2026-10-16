@@ -119,6 +119,7 @@ class WorkspaceItemProcessor(
                 Favorites.ITEM_TYPE_APP_PAIR -> processFolderOrAppPair()
                 Favorites.ITEM_TYPE_APPWIDGET,
                 Favorites.ITEM_TYPE_CUSTOM_APPWIDGET -> processWidget()
+                // LawnchairZ modification: loads widget stacks and their widgets.
                 // LawnCher: widget stacks
                 Favorites.ITEM_TYPE_WIDGET_STACK ->
                     app.lawnchair.widgetstack.WidgetStackLoader.processStackRow(

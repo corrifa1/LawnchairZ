@@ -34,6 +34,7 @@ public class CellPosMapper {
     private final boolean mHasVerticalHotseat;
     private final int mNumOfHotseat;
     private final int mNumHotseatRows;
+    // LawnchairZ modification: an optional top-down order for a vertical (side) dock.
     // LawnchairZ: side dock. Whether a vertical hotseat puts rank 0 at the top.
     private final boolean mVerticalTopDown;
 

@@ -34,6 +34,7 @@ class LawnchairWindowManagerProxy @Inject constructor() : WindowManagerProxy(Uti
     @Suppress("PropertyName")
     val TAG = "LC-WindowManagerProxy"
 
+    // LawnchairZ modification: remember both fold screens so folding doesn't reload the widgets.
     /**
      * Every screen seen behind the default display so far, at [seenDefaultDisplayDensity]. Some
      * foldables (One UI) swap the inner and cover panels behind display 0 and list only the one in

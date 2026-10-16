@@ -34,6 +34,7 @@ sealed class HotseatMode(
 object LawnchairHotseat : HotseatMode(
     nameResourceId = productStringId(
         R.string.hotseat_mode_lawnchair,
+        // LawnchairZ modification: the expressive_* product string is now product_*.
         R.string.product_hotseat_mode,
     ),
     layoutResourceId = R.layout.search_container_hotseat,
