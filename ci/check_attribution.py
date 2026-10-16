@@ -60,9 +60,10 @@ LICENSE_SHA256 = {
 }
 ATTRIBUTED_SOURCES = (
     "android/lawnchair/src/app/lawnchair/feed/ExpressiveFeedSetup.kt",
-    "android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdatePolicy.kt",
-    "android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotifications.kt",
-    "android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotificationControl.kt",
+    "android/tests/expressiveUnit/app/lawnchair/backup/NovaBackupExtractionSecurityTest.kt",
+    "android/tests/expressiveUnit/app/lawnchair/ui/preferences/about/NotificationPendingIntentSecurityTest.kt",
+    "ci/check_security_manifests.py",
+    "gradle/dependency-security.gradle",
 )
 # Expressive-origin sources keep Expressive Launcher's own notice, even after LawnchairZ changes.
 SOURCE_MARKERS = (

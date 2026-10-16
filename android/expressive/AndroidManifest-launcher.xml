@@ -208,11 +208,6 @@ SystemUI remains responsible for Overview and gesture navigation.
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <service
-            android:name="app.lawnchair.ui.preferences.about.ExpressiveUpdateJobService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <receiver
             android:name="app.lawnchair.gestures.handlers.SleepMethodDeviceAdmin$SleepDeviceAdmin"
             android:description="@string/expressive_dt2s_admin_hint"

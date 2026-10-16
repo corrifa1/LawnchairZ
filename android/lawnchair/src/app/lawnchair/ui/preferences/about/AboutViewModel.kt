@@ -16,24 +16,29 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.create
 
-/** Product-owned destinations shown by the About screen. */
+/**
+ * Product-owned destinations shown by the About screen.
+ * LawnchairZ modification: LawnchairZ's own maintainer and repository replace Expressive's.
+ */
 internal object AboutDestinations {
-    const val GITHUB_PROFILE_URL = "https://github.com/denson9874"
+    const val GITHUB_PROFILE_URL = "https://github.com/corrifa1"
     const val GITHUB_REPOSITORY_URL = "https://github.com/corrifa1/LawnchairZ"
-    const val PAYPAL_PAYMENT_URL = "https://www.paypal.com/ncp/payment/9RB3TYYQ6FWE2"
     const val RELEASE_BUILDS_URL = "$GITHUB_REPOSITORY_URL/releases"
+    const val EXPRESSIVE_REPOSITORY_URL = "https://github.com/denson9874/ExpressiveLauncher"
+    const val LAWNCHAIR_REPOSITORY_URL = "https://github.com/LawnchairLauncher/lawnchair"
+    const val LAUNCHER3_REPOSITORY_URL = "https://android.googlesource.com/platform/packages/apps/Launcher3"
 }
 
-internal fun expressiveProductOwners(): List<TeamMember> = listOf(
+internal fun productOwners(): List<TeamMember> = listOf(
     TeamMember(
-        name = "Daryl Denson",
+        name = "Corey Flynn",
         role = Role.DesignAndDevelopment,
-        photoResId = R.drawable.about_daryl_denson,
+        photoUrl = "${AboutDestinations.GITHUB_PROFILE_URL}.png",
         socialUrl = AboutDestinations.GITHUB_PROFILE_URL,
     ),
 )
 
-internal fun expressiveProductLinks(): List<Link> = listOf(
+internal fun productLinks(): List<Link> = listOf(
     Link(
         iconResId = R.drawable.ic_new_releases,
         labelResId = R.string.news,
@@ -49,10 +54,24 @@ internal fun expressiveProductLinks(): List<Link> = listOf(
         labelResId = R.string.github,
         url = AboutDestinations.GITHUB_REPOSITORY_URL,
     ),
+)
+
+/** The projects LawnchairZ is based on, credited on its About screen. */
+internal fun productCredits(): List<Link> = listOf(
     Link(
-        iconResId = R.drawable.ic_donate,
-        labelResId = R.string.donate,
-        url = AboutDestinations.PAYPAL_PAYMENT_URL,
+        iconResId = R.drawable.ic_github,
+        labelResId = R.string.about_credit_expressive,
+        url = AboutDestinations.EXPRESSIVE_REPOSITORY_URL,
+    ),
+    Link(
+        iconResId = R.drawable.ic_github,
+        labelResId = R.string.about_credit_lawnchair,
+        url = AboutDestinations.LAWNCHAIR_REPOSITORY_URL,
+    ),
+    Link(
+        iconResId = R.drawable.ic_website,
+        labelResId = R.string.about_credit_launcher3,
+        url = AboutDestinations.LAUNCHER3_REPOSITORY_URL,
     ),
 )
 
@@ -61,17 +80,19 @@ internal data class AboutBranding(
     val supportAndPr: List<TeamMember>,
     val topLinks: List<Link>,
     val bottomLinks: List<Link>,
+    val credits: List<Link>,
 )
 
-/** Keeps Expressive ownership isolated without changing attribution in sibling Lawnchair builds. */
+/** Keeps LawnchairZ ownership isolated without changing attribution in sibling Lawnchair builds. */
 internal fun aboutBranding(
     isExpressiveProduct: Boolean,
 ): AboutBranding = if (isExpressiveProduct) {
     AboutBranding(
-        coreTeam = expressiveProductOwners(),
+        coreTeam = productOwners(),
         supportAndPr = emptyList(),
-        topLinks = expressiveProductLinks(),
+        topLinks = productLinks(),
         bottomLinks = emptyList(),
+        credits = productCredits(),
     )
 } else {
     AboutBranding(
@@ -79,6 +100,7 @@ internal fun aboutBranding(
         supportAndPr = lawnchairSupportAndPr,
         topLinks = lawnchairTopLinks,
         bottomLinks = lawnchairBottomLinks,
+        credits = emptyList(),
     )
 }
 
@@ -89,12 +111,9 @@ class AboutViewModel(
     private val api: GitHubService = gitHubApiRetrofit.create()
     private val prefs: PreferenceManager = PreferenceManager.getInstance(application)
     private val prefs2: PreferenceManager2 = PreferenceManager2.getInstance(application)
-    private val expressiveUpdateConfig = installedExpressiveUpdateConfig()
-
     private val nightlyBuildsRepository = NightlyBuildsRepository(
         applicationContext = application,
         api = api,
-        expressiveUpdateConfig = expressiveUpdateConfig,
     )
 
     val uiState: StateFlow<AboutUiState>
@@ -118,10 +137,11 @@ class AboutViewModel(
                 supportAndPr = branding.supportAndPr,
                 topLinks = branding.topLinks,
                 bottomLinks = branding.bottomLinks,
+                credits = branding.credits,
             )
         }
 
-        // Expressive has its own single-owner card and must never query Lawnchair's activity feed.
+        // LawnchairZ has its own owner card and must never query Lawnchair's activity feed.
         // Other flavors retain their existing attribution and active-contributor behavior.
         if (!BuildConfig.IS_EXPRESSIVE_PRODUCT) {
             viewModelScope.launch(Dispatchers.Default) {
@@ -141,9 +161,10 @@ class AboutViewModel(
             }
         }
 
-        val shouldCheckForUpdates = expressiveUpdateConfig != null || (
+        // LawnchairZ modification: LawnchairZ has no update channel. Only Lawnchair nightly
+        // builds check Lawnchair's own nightly releases.
+        val shouldCheckForUpdates = !BuildConfig.IS_EXPRESSIVE_PRODUCT &&
             BuildConfig.APPLICATION_ID.contains("nightly") && prefs2.autoUpdaterNightly.firstCached()
-            )
         if (shouldCheckForUpdates) {
             nightlyBuildsRepository.checkForUpdate()
             viewModelScope.launch {
@@ -156,22 +177,6 @@ class AboutViewModel(
 
     fun downloadUpdate() {
         nightlyBuildsRepository.downloadUpdate()
-    }
-
-    fun downloadAndInstallUpdate() {
-        nightlyBuildsRepository.downloadUpdate(installAfterDownload = true)
-    }
-
-    fun snoozeUpdate(update: UpdateState.Available, option: ExpressiveUpdateSnoozeOption) {
-        val config = expressiveUpdateConfig ?: return
-        val versionCode = update.expectedVersionCode ?: return
-        ExpressiveUpdateNotificationStore(getApplication()).snooze(
-            channel = config.channel,
-            versionCode = versionCode,
-            option = option,
-        )
-        ExpressiveUpdateNotifications.cancel(getApplication())
-        ExpressiveUpdateScheduler.scheduleAfterSnooze(getApplication(), option.durationMillis)
     }
 
     fun installUpdate(file: File, forceInstall: Boolean = false) {

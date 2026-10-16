@@ -42,7 +42,7 @@ import app.lawnchair.backup.LawnchairBackup
 import app.lawnchair.flowerpot.Flowerpot
 import app.lawnchair.preferences.PreferenceManager
 import app.lawnchair.ui.ModalBottomSheetContent
-import app.lawnchair.ui.preferences.about.ExpressiveUpdateScheduler
+import app.lawnchair.ui.preferences.about.LegacyUpdateCleanup
 import app.lawnchair.ui.preferences.destinations.openAppInfo
 import app.lawnchair.util.restartLauncher
 import app.lawnchair.util.unsafeLazy
@@ -71,7 +71,8 @@ class LawnchairApp : LauncherApplication() {
         QuickStepContract.sRecentsDisabled = !recentsEnabled
         Flowerpot.Manager.getInstance(this)
         registerActivityLifecycleCallbacks(activityHandler)
-        ExpressiveUpdateScheduler.ensureScheduled(this)
+        // LawnchairZ modification: the inherited update checker is gone; clear what it left.
+        LegacyUpdateCleanup.run(this)
     }
 
     fun hideClockInStatusBar() {

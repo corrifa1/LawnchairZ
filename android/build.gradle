@@ -163,12 +163,6 @@ final def expressiveVersionName = providers.gradleProperty("expressiveVersionNam
 final def expressivePrivacyPolicyUrl = providers.gradleProperty("expressivePrivacyPolicyUrl")
         .orElse("")
         .get()
-final def expressiveQaUpdateManifestUrl = providers.gradleProperty("expressiveQaUpdateManifestUrl")
-        .orElse("https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/qa/latest.json")
-        .get()
-final def expressiveReleaseUpdateManifestUrl = providers.gradleProperty("expressiveReleaseUpdateManifestUrl")
-        .orElse("https://raw.githubusercontent.com/corrifa1/LawnchairZ/updates/release/latest.json")
-        .get()
 final def expressiveVersionCode = expressiveVersionCodeText.isInteger()
         ? expressiveVersionCodeText.toInteger()
         : -1
@@ -247,8 +241,6 @@ android {
         buildConfigField "boolean", "ENABLE_AUTO_INSTALLS_LAYOUT", "false"
         buildConfigField "boolean", "STANDARD_HOME_ONLY", "false"
         buildConfigField "boolean", "IS_EXPRESSIVE_PRODUCT", "false"
-        buildConfigField "String", "EXPRESSIVE_QA_UPDATE_MANIFEST_URL", '""'
-        buildConfigField "String", "EXPRESSIVE_RELEASE_UPDATE_MANIFEST_URL", '""'
         // This must match the channel manifest. Play-distributed variants use the Storage Access
         // Framework instead of requesting Android's policy-restricted all-files permission.
         buildConfigField "boolean", "CAN_REQUEST_MANAGE_ALL_FILES_ACCESS", "false"
@@ -417,8 +409,6 @@ android {
             buildConfigField "String", "MAJOR_VERSION", "\"${expressiveVersionName}\""
             buildConfigField "boolean", "STANDARD_HOME_ONLY", "true"
             buildConfigField "boolean", "IS_EXPRESSIVE_PRODUCT", "true"
-            buildConfigField "String", "EXPRESSIVE_QA_UPDATE_MANIFEST_URL", "\"${expressiveQaUpdateManifestUrl}\""
-            buildConfigField "String", "EXPRESSIVE_RELEASE_UPDATE_MANIFEST_URL", "\"${expressiveReleaseUpdateManifestUrl}\""
             buildConfigField "String", "PRIVACY_POLICY_URL", "\"${expressivePrivacyPolicyUrl}\""
             resValue("string", "derived_app_name", "LawnchairZ L3")
         }
