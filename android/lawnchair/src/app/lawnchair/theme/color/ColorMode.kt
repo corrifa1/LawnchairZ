@@ -12,7 +12,7 @@ enum class ColorMode(
     AUTO(
         labelResourceId = productStringId(
             R.string.managed_by_lawnchair,
-            R.string.expressive_managed_by_launcher,
+            R.string.product_managed_by_launcher,
         ),
     ),
     LIGHT(

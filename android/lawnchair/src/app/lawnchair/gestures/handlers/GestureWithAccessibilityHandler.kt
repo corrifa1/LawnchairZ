@@ -63,7 +63,7 @@ fun ServiceWarningDialog(
                     text = stringResource(
                         productStringId(
                             R.string.generic_a11y_hint,
-                            R.string.expressive_generic_a11y_hint,
+                            R.string.product_generic_a11y_hint,
                         ),
                         stringResource(action),
                     ),
@@ -73,7 +73,7 @@ fun ServiceWarningDialog(
                     text = stringResource(
                         productStringId(
                             R.string.generic_a11y_disclaimer,
-                            R.string.expressive_generic_a11y_disclaimer,
+                            R.string.product_generic_a11y_disclaimer,
                         ),
                     ),
                 )

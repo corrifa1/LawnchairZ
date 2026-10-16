@@ -47,8 +47,8 @@ Sources: [settings dashboard](../android/lawnchair/src/app/lawnchair/ui/preferen
 and checks its identity and bytes before handing installation to Android. After
 setup, a switch controls Google's native panel beside the first Home page. The
 support component has no separate launcher icon. Sources:
-[settings integration](../android/lawnchair/src/app/lawnchair/ui/preferences/components/ExpressiveFeedPreferences.kt),
-[support installer](../android/lawnchair/src/app/lawnchair/feed/ExpressiveFeedSetup.kt),
+[settings integration](../android/lawnchair/src/app/lawnchair/ui/preferences/components/DiscoverPreferences.kt),
+[support installer](../android/lawnchair/src/app/lawnchair/feed/FeedHelperSetup.kt),
 [integration details](GOOGLE_DISCOVER.md).
 
 **At a Glance refinements.** The built-in fallback leads with the date and available
@@ -95,7 +95,7 @@ lineage before Android's installer is offered. Sources:
   action. Separate stable support does not imply a stable build is already
   published; check [available releases](https://github.com/corrifa1/LawnchairZ/releases).
 - **No root is required for the Home app.** Expressive does not replace SystemUI's
-  Recents or system navigation. The [product manifest](../android/expressive/AndroidManifest-launcher.xml)
+  Recents or system navigation. The [product manifest](../android/lawnchairz/AndroidManifest-launcher.xml)
   implements that boundary. Performance superiority, complete Pixel feature
   parity and compatibility with every Android 17 device are not claimed.
 

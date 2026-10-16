@@ -82,7 +82,7 @@ jobs:
           ./gradlew --no-daemon --no-scan --no-build-cache \
             --no-configuration-cache --max-workers=2 \
             -Pkotlin.compiler.execution.strategy=in-process \
-            clean assembleLawnWithQuickstepExpressiveDebug
+            clean assembleLawnWithQuickstepLawnchairzDebug
 
       - name: Compile standalone Swift tools for analysis
         if: matrix.language == 'swift'

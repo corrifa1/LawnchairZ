@@ -47,10 +47,10 @@ and `3bee6590ac`).
   rows, dock pages, the unfolded count and bottom padding; their values are kept. The dock preview
   refreshes on the side dock settings, lays the dock out as a column (`LauncherPreviewRenderer`),
   and shows the whole screen instead of the bottom strip. The search button is not in the preview.
-- **Step 8, tests:** `tests/expressiveUnit/app/lawnchair/sidedock/SideDockLayoutTest.kt`, 12 cases:
+- **Step 8, tests:** `tests/lawnchairzUnit/app/lawnchair/sidedock/SideDockLayoutTest.kt`, 12 cases:
   top-down rank mapping and its round trip, the stock bottom-up mapping, icon slot spacing
   (`DeviceProfile.calculateSideDockSlot`) and the foldable dock count. Run with
-  `./gradlew testLawnWithQuickstepExpressiveDebugUnitTest --tests "app.lawnchair.sidedock.*"`.
+  `./gradlew testLawnWithQuickstepLawnchairzDebugUnitTest --tests "app.lawnchair.sidedock.*"`.
 - **Device checks (2026-10-15, Fold):**
   - Drag and drop: reorder within the side dock, dock to grid, and grid to dock. Each was saved
     with the right rank, with suggested apps filling the free slots; the layout was restored
@@ -296,7 +296,7 @@ tests for the rank mapping and the "never lower `numDatabaseHotseatIcons`" rule 
 Device `RFGL829RE0P` (SM-F971U1, One UI, SDK 37). Always pass `-s`; an emulator is often attached.
 
 ```bash
-ANDROID_SERIAL=RFGL829RE0P ./gradlew :installLawnWithQuickstepExpressiveDebug
+ANDROID_SERIAL=RFGL829RE0P ./gradlew :installLawnWithQuickstepLawnchairzDebug
 ```
 
 ```bash

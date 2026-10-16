@@ -43,7 +43,7 @@ Any disclosure date and researcher credit should be agreed in the private report
 ## System and security boundaries
 
 LawnchairZ is an Android Home application built on Launcher3 and Lawnchair.
-This policy covers LawnchairZ's app behavior, its bundled Discover feed helper, and repository build and release tooling. Relevant areas include `android/lawnchair/`, `android/src/`, `android/quickstep/`, `android/expressive/`, `android/expressiveFeed/`, `ci/`, and `scripts/`.
+This policy covers LawnchairZ's app behavior, its bundled Discover feed helper, and repository build and release tooling. Relevant areas include `android/lawnchair/`, `android/src/`, `android/quickstep/`, `android/lawnchairz/`, `android/lawnchairzFeed/`, `ci/`, and `scripts/`.
 
 Android provides the app sandbox, permissions, profile authentication, and package installation.
 Other installed apps, exported-component callers, imported files, content providers, widgets, integrations, and network responses may supply untrusted input.

@@ -45,8 +45,9 @@ Expressive Launcher.
 ## Expressive Launcher provenance record
 
 The record below is Expressive Launcher's `docs/SOURCE_PROVENANCE.md` at the fork point,
-retained unchanged apart from heading levels and links to files LawnchairZ removed, which
-point to Expressive's repository at the fork point. In it, "this public repository", tags,
+retained unchanged apart from heading levels and links. Links to files LawnchairZ renamed
+point to their new names; links to files LawnchairZ removed point to Expressive's repository
+at the fork point. In it, "this public repository", tags,
 releases and the `main` branch refer to
 [denson9874/ExpressiveLauncher](https://github.com/denson9874/ExpressiveLauncher).
 
@@ -87,7 +88,7 @@ the surrounding packages, dependencies, or launcher features originated here.
 | Expressive update-manifest validation and channel decisions | [ExpressiveUpdatePolicy.kt](https://github.com/denson9874/ExpressiveLauncher/blob/73b6592add1b3c572b1cf1eb481d8d8285e664c7/android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdatePolicy.kt) |
 | Update notification scheduling, reminders, and snooze decisions | [ExpressiveUpdateNotifications.kt](https://github.com/denson9874/ExpressiveLauncher/blob/73b6592add1b3c572b1cf1eb481d8d8285e664c7/android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotifications.kt) |
 | Notification permission and opt-in controls for Expressive updates | [ExpressiveUpdateNotificationControl.kt](https://github.com/denson9874/ExpressiveLauncher/blob/73b6592add1b3c572b1cf1eb481d8d8285e664c7/android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotificationControl.kt) |
-| Discover helper inspection and verification before requesting Android installation | [ExpressiveFeedSetup.kt](../android/lawnchair/src/app/lawnchair/feed/ExpressiveFeedSetup.kt) |
+| Discover helper inspection and verification before requesting Android installation | [ExpressiveFeedSetup.kt](../android/lawnchair/src/app/lawnchair/feed/FeedHelperSetup.kt) |
 
 The attribution hardening adds notices to those files without changing their
 implementations. The original [source snapshot](https://github.com/denson9874/ExpressiveLauncher/tree/source-v1.0.12-13)

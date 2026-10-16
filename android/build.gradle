@@ -45,7 +45,7 @@ allprojects {
         }
         // The feed companion deliberately uses only platform APIs. Keeping AndroidX out of that
         // isolated APK avoids unrelated initializers, receivers, and generated permissions.
-        if (project.path != ":expressiveFeed") {
+        if (project.path != ":lawnchairzFeed") {
             dependencies {
                 implementation libs.androidx.core.ktx
                 implementation libs.androidx.core.animation
@@ -151,74 +151,61 @@ final def majorVersion = versionDisplayName.split("\\.")[0]
 
 // The direct-distribution identity is intentionally explicit. Android accepts an in-place update
 // only when the application ID and signing lineage match the installed build.
-final def expressiveApplicationId = providers.gradleProperty("expressiveApplicationId")
-        .orElse("dev.launcher.lawnchairz.l3")
-        .get()
-final def expressiveVersionCodeText = providers.gradleProperty("expressiveVersionCode")
-        .orElse("13")
-        .get()
-final def expressiveVersionName = providers.gradleProperty("expressiveVersionName")
-        .orElse("1.0.12")
-        .get()
-final def expressivePrivacyPolicyUrl = providers.gradleProperty("expressivePrivacyPolicyUrl")
-        .orElse("")
-        .get()
-final def expressiveVersionCode = expressiveVersionCodeText.isInteger()
-        ? expressiveVersionCodeText.toInteger()
+// LawnchairZ modification: these properties were named expressive*; the old names still work.
+final def productProperty = { String name, String legacyName, String defaultValue ->
+    providers.gradleProperty(name).orElse(providers.gradleProperty(legacyName)).orElse(defaultValue).get()
+}
+final def lawnchairzApplicationId = productProperty(
+        "lawnchairzApplicationId", "lawnchairzApplicationId", "dev.launcher.lawnchairz.l3")
+final def lawnchairzVersionCodeText = productProperty(
+        "lawnchairzVersionCode", "lawnchairzVersionCode", "13")
+final def lawnchairzVersionName = productProperty(
+        "lawnchairzVersionName", "lawnchairzVersionName", "1.0.12")
+final def lawnchairzPrivacyPolicyUrl = productProperty(
+        "lawnchairzPrivacyPolicyUrl", "lawnchairzPrivacyPolicyUrl", "")
+final def lawnchairzVersionCode = lawnchairzVersionCodeText.isInteger()
+        ? lawnchairzVersionCodeText.toInteger()
         : -1
 
-if (!(expressiveApplicationId ==~ /[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+/)) {
-    throw new GradleException("expressiveApplicationId must be a valid Android application ID")
+if (!(lawnchairzApplicationId ==~ /[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)+/)) {
+    throw new GradleException("lawnchairzApplicationId must be a valid Android application ID")
 }
-if (expressiveVersionCode < 1 || expressiveVersionCode > 2_100_000_000) {
-    throw new GradleException("expressiveVersionCode must be an integer from 1 through 2100000000")
+if (lawnchairzVersionCode < 1 || lawnchairzVersionCode > 2_100_000_000) {
+    throw new GradleException("lawnchairzVersionCode must be an integer from 1 through 2100000000")
 }
 
 // Release credentials may come from an ignored local file or CI environment variables. Never
 // fall back to the Android debug certificate: every direct update must retain the same signer.
-final def expressiveKeystoreProperties = new Properties()
-final def expressiveKeystorePropertiesPath = System.getenv("EXPRESSIVE_KEYSTORE_PROPERTIES")
-final def expressiveKeystorePropertiesFile = expressiveKeystorePropertiesPath
-        ? rootProject.file(expressiveKeystorePropertiesPath)
+// LawnchairZ modification: LAWNCHAIRZ_* variables first, then the older EXPRESSIVE_* names.
+final def lawnchairzKeystoreProperties = new Properties()
+final def lawnchairzKeystorePropertiesPath = System.getenv("LAWNCHAIRZ_KEYSTORE_PROPERTIES")
+        ?: System.getenv("EXPRESSIVE_KEYSTORE_PROPERTIES")
+final def lawnchairzKeystorePropertiesFile = lawnchairzKeystorePropertiesPath
+        ? rootProject.file(lawnchairzKeystorePropertiesPath)
         : rootProject.file("keystore.properties")
-if (expressiveKeystorePropertiesFile.exists()) {
-    expressiveKeystorePropertiesFile.withInputStream { expressiveKeystoreProperties.load(it) }
+if (lawnchairzKeystorePropertiesFile.exists()) {
+    lawnchairzKeystorePropertiesFile.withInputStream { lawnchairzKeystoreProperties.load(it) }
 }
-final def expressiveSigningValue = { String propertyName, String environmentName, String legacyEnvironmentName ->
-    System.getenv(environmentName)
-            ?: System.getenv(legacyEnvironmentName)
-            ?: expressiveKeystoreProperties[propertyName]
+final def lawnchairzSigningValue = { String propertyName, String variableSuffix ->
+    ["LAWNCHAIRZ_RELEASE_", "EXPRESSIVE_RELEASE_", "EXPRESSIVE_UPLOAD_"]
+            .collect { System.getenv(it + variableSuffix) }
+            .find { it }
+            ?: lawnchairzKeystoreProperties[propertyName]
 }
-final def expressiveStoreFile = expressiveSigningValue(
-        "storeFile",
-        "EXPRESSIVE_RELEASE_STORE_FILE",
-        "EXPRESSIVE_UPLOAD_STORE_FILE",
-)
-final def expressiveStorePassword = expressiveSigningValue(
-        "storePassword",
-        "EXPRESSIVE_RELEASE_STORE_PASSWORD",
-        "EXPRESSIVE_UPLOAD_STORE_PASSWORD",
-)
-final def expressiveKeyAlias = expressiveSigningValue(
-        "keyAlias",
-        "EXPRESSIVE_RELEASE_KEY_ALIAS",
-        "EXPRESSIVE_UPLOAD_KEY_ALIAS",
-)
-final def expressiveKeyPassword = expressiveSigningValue(
-        "keyPassword",
-        "EXPRESSIVE_RELEASE_KEY_PASSWORD",
-        "EXPRESSIVE_UPLOAD_KEY_PASSWORD",
-)
-final def expressiveSigningValues = [
-        expressiveStoreFile,
-        expressiveStorePassword,
-        expressiveKeyAlias,
-        expressiveKeyPassword,
+final def lawnchairzStoreFile = lawnchairzSigningValue("storeFile", "STORE_FILE")
+final def lawnchairzStorePassword = lawnchairzSigningValue("storePassword", "STORE_PASSWORD")
+final def lawnchairzKeyAlias = lawnchairzSigningValue("keyAlias", "KEY_ALIAS")
+final def lawnchairzKeyPassword = lawnchairzSigningValue("keyPassword", "KEY_PASSWORD")
+final def lawnchairzSigningValues = [
+        lawnchairzStoreFile,
+        lawnchairzStorePassword,
+        lawnchairzKeyAlias,
+        lawnchairzKeyPassword,
 ]
-final def expressiveSigningConfigured = expressiveSigningValues.every { it != null && !it.toString().isBlank() }
-if (expressiveSigningValues.any { it != null && !it.toString().isBlank() } && !expressiveSigningConfigured) {
+final def lawnchairzSigningConfigured = lawnchairzSigningValues.every { it != null && !it.toString().isBlank() }
+if (lawnchairzSigningValues.any { it != null && !it.toString().isBlank() } && !lawnchairzSigningConfigured) {
     throw new GradleException(
-            "Expressive release signing is only partially configured. Provide storeFile, " +
+            "LawnchairZ release signing is only partially configured. Provide storeFile, " +
                     "storePassword, keyAlias, and keyPassword together.",
     )
 }
@@ -240,7 +227,7 @@ android {
         buildConfigField "String", "COMMIT_HASH", "\"${buildCommit}\""
         buildConfigField "boolean", "ENABLE_AUTO_INSTALLS_LAYOUT", "false"
         buildConfigField "boolean", "STANDARD_HOME_ONLY", "false"
-        buildConfigField "boolean", "IS_EXPRESSIVE_PRODUCT", "false"
+        buildConfigField "boolean", "IS_LAWNCHAIRZ_PRODUCT", "false"
         // This must match the channel manifest. Play-distributed variants use the Storage Access
         // Framework instead of requesting Android's policy-restricted all-files permission.
         buildConfigField "boolean", "CAN_REQUEST_MANAGE_ALL_FILES_ACCESS", "false"
@@ -295,16 +282,16 @@ android {
     }.flatten().findAll { it.exists() }.toArray()
 
     def releaseSigning = null
-    if (expressiveSigningConfigured) {
-        def resolvedStoreFile = rootProject.file(expressiveStoreFile)
+    if (lawnchairzSigningConfigured) {
+        def resolvedStoreFile = rootProject.file(lawnchairzStoreFile)
         if (!resolvedStoreFile.isFile()) {
-            throw new GradleException("Expressive release keystore does not exist: ${resolvedStoreFile}")
+            throw new GradleException("LawnchairZ release keystore does not exist: ${resolvedStoreFile}")
         }
         releaseSigning = signingConfigs.create("release") {
-            keyAlias expressiveKeyAlias
-            keyPassword expressiveKeyPassword
+            keyAlias lawnchairzKeyAlias
+            keyPassword lawnchairzKeyPassword
             storeFile resolvedStoreFile
-            storePassword expressiveStorePassword
+            storePassword lawnchairzStorePassword
             enableV1Signing false
             enableV2Signing true
         }
@@ -393,23 +380,23 @@ android {
             isDefault true
         }
 
-        expressive {
-            applicationId expressiveApplicationId
-            versionCode expressiveVersionCode
-            versionName expressiveVersionName
+        lawnchairz {
+            applicationId lawnchairzApplicationId
+            versionCode lawnchairzVersionCode
+            versionName lawnchairzVersionName
             dimension "channel"
-            // Keep the Expressive release credential scoped to this product flavor. It must never
+            // Keep the LawnchairZ release credential scoped to this product flavor. It must never
             // silently sign an upstream Lawnchair release assembled from the same source tree.
             if (releaseSigning != null) {
                 signingConfig releaseSigning
             }
-            buildConfigField "String", "VERSION_DISPLAY_NAME", "\"${expressiveVersionName}\""
+            buildConfigField "String", "VERSION_DISPLAY_NAME", "\"${lawnchairzVersionName}\""
             // The dashboard uses MAJOR_VERSION as its compact version label. For this product,
             // show the complete Play version instead of Lawnchair's unrelated major version 16.
-            buildConfigField "String", "MAJOR_VERSION", "\"${expressiveVersionName}\""
+            buildConfigField "String", "MAJOR_VERSION", "\"${lawnchairzVersionName}\""
             buildConfigField "boolean", "STANDARD_HOME_ONLY", "true"
-            buildConfigField "boolean", "IS_EXPRESSIVE_PRODUCT", "true"
-            buildConfigField "String", "PRIVACY_POLICY_URL", "\"${expressivePrivacyPolicyUrl}\""
+            buildConfigField "boolean", "IS_LAWNCHAIRZ_PRODUCT", "true"
+            buildConfigField "String", "PRIVACY_POLICY_URL", "\"${lawnchairzPrivacyPolicyUrl}\""
             resValue("string", "derived_app_name", "LawnchairZ L3")
         }
 
@@ -434,20 +421,20 @@ android {
         }
 
         test {
-            java.srcDirs = ['android/tests/expressiveUnit']
-            kotlin.directories.addAll('android/tests/expressiveUnit')
+            java.srcDirs = ['android/tests/lawnchairzUnit']
+            kotlin.directories.addAll('android/tests/lawnchairzUnit')
         }
 
         androidTest {
-            java.srcDirs = ['android/tests/expressiveAndroidTest']
-            kotlin.directories.addAll('android/tests/expressiveAndroidTest')
-            manifest.srcFile 'android/tests/ExpressiveAndroidTestManifest.xml'
+            java.srcDirs = ['android/tests/lawnchairzAndroidTest']
+            kotlin.directories.addAll('android/tests/lawnchairzAndroidTest')
+            manifest.srcFile 'android/tests/LawnchairzAndroidTestManifest.xml'
         }
 
         debug {
-            java.srcDirs += ['android/tests/expressiveDebug']
-            kotlin.directories.addAll('android/tests/expressiveDebug')
-            manifest.srcFile 'android/tests/ExpressiveDebugManifest.xml'
+            java.srcDirs += ['android/tests/lawnchairzDebug']
+            kotlin.directories.addAll('android/tests/lawnchairzDebug')
+            manifest.srcFile 'android/tests/LawnchairzDebugManifest.xml'
         }
 
         lawn {
@@ -487,11 +474,11 @@ android {
             manifest.srcFile "android/play/AndroidManifest.xml"
         }
 
-        lawnWithQuickstepExpressive {
-            manifest.srcFile "android/expressive/AndroidManifest-launcher.xml"
+        lawnWithQuickstepLawnchairz {
+            manifest.srcFile "android/lawnchairz/AndroidManifest-launcher.xml"
             // Combined source sets outrank the Lawnchair app flavor. Product branding and
             // standard-Home dimensions therefore survive resource merging for this variant.
-            res.srcDirs = ["android/expressive/res"]
+            res.srcDirs = ["android/lawnchairz/res"]
         }
 
         withQuickstep {
@@ -503,52 +490,52 @@ android {
     }
 }
 
-def verifyExpressivePlayRelease = tasks.register("verifyExpressivePlayRelease") {
+def verifyLawnchairzPlayRelease = tasks.register("verifyLawnchairzPlayRelease") {
     group = "verification"
-    description = "Fails unless the Expressive Google Play identity, privacy URL, and upload key are release-ready."
+    description = "Fails unless the LawnchairZ Google Play identity, privacy URL, and upload key are release-ready."
 
     doLast {
-        if (!expressiveSigningConfigured) {
+        if (!lawnchairzSigningConfigured) {
             throw new GradleException(
-                    "Expressive Play release signing is not configured. Copy " +
+                    "LawnchairZ Play release signing is not configured. Copy " +
                             "keystore.properties.example to the ignored keystore.properties file " +
-                            "or set the EXPRESSIVE_UPLOAD_* environment variables.",
+                            "or set the LAWNCHAIRZ_RELEASE_* environment variables.",
             )
         }
-        if (!(expressivePrivacyPolicyUrl ==~ /https:\/\/.+/)) {
+        if (!(lawnchairzPrivacyPolicyUrl ==~ /https:\/\/.+/)) {
             throw new GradleException(
-                    "Set -PexpressivePrivacyPolicyUrl=https://... to the public, product-specific " +
+                    "Set -PlawnchairzPrivacyPolicyUrl=https://... to the public, product-specific " +
                             "privacy policy before creating a Play bundle.",
             )
         }
-        if (expressivePrivacyPolicyUrl.contains("lawnchair.app")) {
+        if (lawnchairzPrivacyPolicyUrl.contains("lawnchair.app")) {
             throw new GradleException("LawnchairZ must not publish with Lawnchair's privacy policy URL")
         }
-        if (expressiveVersionName.toLowerCase(java.util.Locale.ROOT).contains("dev")) {
-            throw new GradleException("expressiveVersionName must be a user-facing release version, not a development label")
+        if (lawnchairzVersionName.toLowerCase(java.util.Locale.ROOT).contains("dev")) {
+            throw new GradleException("lawnchairzVersionName must be a user-facing release version, not a development label")
         }
     }
 }
 
-def verifyExpressiveDirectSigning = tasks.register("verifyExpressiveDirectSigning") {
+def verifyLawnchairzDirectSigning = tasks.register("verifyLawnchairzDirectSigning") {
     group = "verification"
-    description = "Fails unless Expressive QA and release APK signing is configured."
+    description = "Fails unless LawnchairZ QA and release APK signing is configured."
 
     doLast {
-        if (!expressiveSigningConfigured) {
+        if (!lawnchairzSigningConfigured) {
             throw new GradleException(
-                    "Expressive direct-release signing is not configured. Run " +
-                            "scripts/configure-expressive-release-signing.sh, copy " +
+                    "LawnchairZ direct-release signing is not configured. Run " +
+                            "scripts/configure-release-signing.sh, copy " +
                             "keystore.properties.example to the ignored keystore.properties file, " +
-                            "or set the EXPRESSIVE_RELEASE_* environment variables.",
+                            "or set the LAWNCHAIRZ_RELEASE_* environment variables.",
             )
         }
     }
 }
 
-def expressiveReleaseManifest = layout.buildDirectory.file(
-        "intermediates/merged_manifests/lawnWithQuickstepExpressiveRelease/" +
-                "processLawnWithQuickstepExpressiveReleaseManifest/AndroidManifest.xml",
+def lawnchairzReleaseManifest = layout.buildDirectory.file(
+        "intermediates/merged_manifests/lawnWithQuickstepLawnchairzRelease/" +
+                "processLawnWithQuickstepLawnchairzReleaseManifest/AndroidManifest.xml",
 )
 def playReleaseManifest = layout.buildDirectory.file(
         "intermediates/merged_manifests/lawnWithQuickstepPlayRelease/" +
@@ -559,14 +546,14 @@ def verifyPlaySafeStorageManifests = tasks.register("verifyPlaySafeStorageManife
     group = "verification"
     description = "Verifies that Play release manifests expose Home without restricted storage permissions."
     dependsOn(
-            "processLawnWithQuickstepExpressiveReleaseManifest",
+            "processLawnWithQuickstepLawnchairzReleaseManifest",
             "processLawnWithQuickstepPlayReleaseManifest",
     )
-    inputs.files(expressiveReleaseManifest, playReleaseManifest)
+    inputs.files(lawnchairzReleaseManifest, playReleaseManifest)
 
     doLast {
         def manifests = [
-                expressive: expressiveReleaseManifest.get().asFile,
+                lawnchairz: lawnchairzReleaseManifest.get().asFile,
                 play: playReleaseManifest.get().asFile,
         ]
         def forbiddenPermissions = [
@@ -597,28 +584,28 @@ def verifyPlaySafeStorageManifests = tasks.register("verifyPlaySafeStorageManife
     }
 }
 
-verifyExpressivePlayRelease.configure {
+verifyLawnchairzPlayRelease.configure {
     dependsOn verifyPlaySafeStorageManifests
 }
 
 tasks.configureEach { task ->
-    if (task.name == "bundleLawnWithQuickstepExpressiveRelease") {
-        task.dependsOn verifyExpressivePlayRelease
+    if (task.name == "bundleLawnWithQuickstepLawnchairzRelease") {
+        task.dependsOn verifyLawnchairzPlayRelease
     }
     if (task.name in [
-            "assembleLawnWithQuickstepExpressiveQa",
-            "assembleLawnWithQuickstepExpressiveRelease",
-            "packageLawnWithQuickstepExpressiveQa",
-            "packageLawnWithQuickstepExpressiveRelease",
+            "assembleLawnWithQuickstepLawnchairzQa",
+            "assembleLawnWithQuickstepLawnchairzRelease",
+            "packageLawnWithQuickstepLawnchairzQa",
+            "packageLawnWithQuickstepLawnchairzRelease",
     ]) {
-        task.dependsOn verifyExpressiveDirectSigning
+        task.dependsOn verifyLawnchairzDirectSigning
     }
 }
 
 androidComponents {
     onVariants(selector().all()) { variant ->
         def channel = variant.productFlavors.last().second
-        def productName = channel == "expressive" ? "ExpressiveLauncherL3" : "Lawnchair"
+        def productName = channel == "lawnchairz" ? "LawnchairZ" : "Lawnchair"
         def launcherComponentKey = variant.makeResValueKey("string", "launcher_component")
         variant.resValues.put(
             launcherComponentKey,
@@ -643,9 +630,9 @@ androidComponents {
     }
 }
 
-// Package the same-signed feed helper as generated assets for Expressive only.
+// Package the same-signed feed helper as generated assets for LawnchairZ only.
 // The helper remains a separate Android identity; the launcher stays non-debuggable in Qa/Release.
-apply from: "gradle/expressive-feed-assets.gradle"
+apply from: "gradle/feed-helper-assets.gradle"
 
 baselineProfile {
     saveInSrc = true

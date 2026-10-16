@@ -35,7 +35,7 @@ class BugReportReceiver : BroadcastReceiver() {
             context.getString(
                 productStringId(
                     R.string.lawnchair_bug_report,
-                    R.string.expressive_bug_report,
+                    R.string.product_bug_report,
                 ),
             ),
             report.link ?: report.contents,

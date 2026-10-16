@@ -37,7 +37,7 @@ sealed class SmartspaceMode(
 object LawnchairSmartspace : SmartspaceMode(
     nameResourceId = productStringId(
         R.string.smartspace_mode_lawnchair,
-        R.string.expressive_smartspace_mode,
+        R.string.product_smartspace_mode,
     ),
     layoutResourceId = R.layout.smartspace_container,
 ) {

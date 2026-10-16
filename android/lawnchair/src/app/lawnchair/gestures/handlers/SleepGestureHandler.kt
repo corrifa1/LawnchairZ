@@ -103,7 +103,7 @@ class SleepMethodDeviceAdmin(context: Context) : SleepGestureHandler.SleepMethod
                     launcher.getString(
                         productStringId(
                             R.string.dt2s_admin_hint,
-                            R.string.expressive_dt2s_admin_hint,
+                            R.string.product_dt2s_admin_hint,
                         ),
                     ),
                 )
@@ -112,7 +112,7 @@ class SleepMethodDeviceAdmin(context: Context) : SleepGestureHandler.SleepMethod
                     title = R.string.dt2s_admin_hint_title,
                     action = productStringId(
                         R.string.dt2s_admin_hint,
-                        R.string.expressive_dt2s_admin_hint,
+                        R.string.product_dt2s_admin_hint,
                     ),
                     settingsIntent = intent,
                 ) { close(true) }

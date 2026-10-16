@@ -56,13 +56,13 @@ class SmartspaceProvider @Inject constructor(
             } else {
                 it.targets
             }
-            applyExpressiveSmartspaceTargetPolicy(targets, BuildConfig.IS_EXPRESSIVE_PRODUCT)
+            applyLawnchairzSmartspaceTargetPolicy(targets, BuildConfig.IS_LAWNCHAIRZ_PRODUCT)
         }
     val previewTargets = state
         .map {
-            applyExpressiveSmartspaceTargetPolicy(
+            applyLawnchairzSmartspaceTargetPolicy(
                 it.targets,
-                BuildConfig.IS_EXPRESSIVE_PRODUCT,
+                BuildConfig.IS_LAWNCHAIRZ_PRODUCT,
             )
         }
 
@@ -108,18 +108,18 @@ class SmartspaceProvider @Inject constructor(
  * targets use the date card layout, so promoting them preserves live weather when it is available
  * and naturally falls back to the date-only target when it is not.
  */
-internal fun applyExpressiveSmartspaceTargetPolicy(
+internal fun applyLawnchairzSmartspaceTargetPolicy(
     targets: List<SmartspaceTarget>,
-    isExpressiveProduct: Boolean,
+    isLawnchairzProduct: Boolean,
 ): List<SmartspaceTarget> {
-    if (!isExpressiveProduct) return targets
+    if (!isLawnchairzProduct) return targets
 
     return targets
         .asSequence()
         .filterNot { it.featureType == SmartspaceTarget.FeatureType.FEATURE_ONBOARDING }
         .map {
             if (it.featureType == SmartspaceTarget.FeatureType.FEATURE_WEATHER) {
-                it.copy(score = EXPRESSIVE_DATE_SCORE)
+                it.copy(score = LAWNCHAIRZ_DATE_SCORE)
             } else {
                 it
             }
@@ -127,4 +127,4 @@ internal fun applyExpressiveSmartspaceTargetPolicy(
         .toList()
 }
 
-private const val EXPRESSIVE_DATE_SCORE = SmartspaceScores.SCORE_ONBOARDING + 1f
+private const val LAWNCHAIRZ_DATE_SCORE = SmartspaceScores.SCORE_ONBOARDING + 1f

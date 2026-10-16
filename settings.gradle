@@ -31,7 +31,7 @@ develocity {
     }
 }
 
-rootProject.name = "expressive-launcher-l3"
+rootProject.name = "lawnchairz-l3"
 // Keep the wrapper, local.properties, signing inputs, task paths and build outputs at
 // the repository root while grouping Android source and build configuration together.
 rootProject.buildFileName = "android/build.gradle"
@@ -143,5 +143,5 @@ project(':modules:widgetpicker').projectDir = new File(rootDir, 'android/modules
 
 // Google Discover only accepts a privileged/system launcher or a debuggable bridge process.
 // Keep that narrowly scoped bridge in its own APK so the launcher itself remains non-debuggable.
-include ':expressiveFeed'
-project(':expressiveFeed').projectDir = new File(rootDir, 'android/expressiveFeed')
+include ':lawnchairzFeed'
+project(':lawnchairzFeed').projectDir = new File(rootDir, 'android/lawnchairzFeed')

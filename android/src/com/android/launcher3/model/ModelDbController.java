@@ -637,7 +637,7 @@ public class ModelDbController {
                 // auto-install providers are device/vendor policy, and can otherwise replace the
                 // bundled layout (the Play Store AVD supplied a carrier dock during QA).
                 AutoInstallsLayout loader = shouldUseExternalDefaultLayout(
-                        BuildConfig.IS_EXPRESSIVE_PRODUCT)
+                        BuildConfig.IS_LAWNCHAIRZ_PRODUCT)
                                 ? mLayoutParserFactory.createExternalLayoutParser(
                                         widgetHolder, mOpenHelper)
                                 : null;
@@ -681,8 +681,8 @@ public class ModelDbController {
     }
 
     @VisibleForTesting
-    static boolean shouldUseExternalDefaultLayout(boolean isExpressiveProduct) {
-        return !isExpressiveProduct;
+    static boolean shouldUseExternalDefaultLayout(boolean isLawnchairzProduct) {
+        return !isLawnchairzProduct;
     }
 
     private ConstantItem<Boolean> getEmptyDbCreatedKey() {

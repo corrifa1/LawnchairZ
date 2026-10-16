@@ -145,7 +145,7 @@ fun About(
                             onClick = {},
                             onLongClick = {
                                 // LawnchairZ modification: link the build's commit in LawnchairZ.
-                                val destination = if (BuildConfig.IS_EXPRESSIVE_PRODUCT) {
+                                val destination = if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
                                     "${AboutDestinations.GITHUB_REPOSITORY_URL}/commit/${BuildConfig.COMMIT_HASH}"
                                 } else {
                                     "https://github.com/LawnchairLauncher/lawnchair/commit/${BuildConfig.COMMIT_HASH}"

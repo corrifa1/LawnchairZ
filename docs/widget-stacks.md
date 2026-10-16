@@ -193,8 +193,8 @@ while hidden, there is no visible animation.
 
 ## Tests
 
-`android/tests/expressiveUnit/app/lawnchair/widgetstack/` (run with
-`./gradlew testLawnWithQuickstepExpressiveDebugUnitTest --tests "app.lawnchair.widgetstack.*"`):
+`android/tests/lawnchairzUnit/app/lawnchair/widgetstack/` (run with
+`./gradlew testLawnWithQuickstepLawnchairzDebugUnitTest --tests "app.lawnchair.widgetstack.*"`):
 
 - `WidgetStackInfoTest`: options packing, ordering, visible-child stability, span sync.
 - `WidgetStackLoaderRepairTest`: attaching children, orphans, empty and single-child stacks.

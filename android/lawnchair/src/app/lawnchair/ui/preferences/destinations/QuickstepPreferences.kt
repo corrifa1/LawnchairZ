@@ -143,7 +143,7 @@ private fun QuickSwitchIgnoredWarning(
             text = stringResource(
                 productStringId(
                     R.string.quickswitch_ignored_warning,
-                    R.string.expressive_quickswitch_warning,
+                    R.string.product_quickswitch_warning,
                 ),
             ),
             modifier = modifier.padding(horizontal = 16.dp),

@@ -233,7 +233,7 @@ private fun SponsorDisclaimer(
                 text = stringResource(
                     productStringId(
                         R.string.search_provider_sponsored_description,
-                        R.string.expressive_search_provider_description,
+                        R.string.product_search_provider_description,
                     ),
                     sponsor,
                 ),

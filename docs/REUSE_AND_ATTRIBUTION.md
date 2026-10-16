@@ -85,7 +85,7 @@ in [CODEOWNERS](../.github/CODEOWNERS) for notices, provenance, and the guard it
 CODEOWNERS alone does not enforce approval. These controls protect this repository's
 record and catch accidental omissions. They cannot control a separately hosted copy.
 
-The copy at `android/lawnchair/assets/expressive-NOTICE.txt` uses the existing Lawnchair
+The copy at `android/lawnchair/assets/NOTICE.txt` uses the existing Lawnchair
 asset directory so source builds carry the NOTICE with the app. It must stay identical to
 the root NOTICE.
 

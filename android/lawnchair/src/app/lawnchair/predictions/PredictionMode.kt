@@ -44,7 +44,7 @@ object SystemPredictor : PredictionMode(R.string.prediction_mode_system) {
 object LawnchairPredictor : PredictionMode(
     productStringId(
         R.string.prediction_mode_lawnchair,
-        R.string.expressive_prediction_mode,
+        R.string.product_prediction_mode,
     ),
 ) {
 

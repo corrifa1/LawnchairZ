@@ -70,7 +70,7 @@ sealed class ColorOption {
                 stringResource(
                     productStringId(
                         R.string.managed_by_lawnchair,
-                        R.string.expressive_managed_by_launcher,
+                        R.string.product_managed_by_launcher,
                     ),
                 )
             },

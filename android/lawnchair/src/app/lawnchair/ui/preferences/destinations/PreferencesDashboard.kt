@@ -371,7 +371,7 @@ fun RowScope.PreferencesOverflowMenu(
                         text = stringResource(
                             productStringId(
                                 R.string.debug_restart_launcher,
-                                R.string.expressive_debug_restart_launcher,
+                                R.string.product_debug_restart_launcher,
                             ),
                         ),
                     )
@@ -442,7 +442,7 @@ fun PreferencesSetDefaultLauncherWarning(
                         text = stringResource(
                             productStringId(
                                 R.string.set_default_launcher_tip,
-                                R.string.expressive_set_default_launcher_tip,
+                                R.string.product_set_default_launcher_tip,
                             ),
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

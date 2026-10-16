@@ -85,8 +85,8 @@ internal data class AboutBranding(
 
 /** Keeps LawnchairZ ownership isolated without changing attribution in sibling Lawnchair builds. */
 internal fun aboutBranding(
-    isExpressiveProduct: Boolean,
-): AboutBranding = if (isExpressiveProduct) {
+    isLawnchairzProduct: Boolean,
+): AboutBranding = if (isLawnchairzProduct) {
     AboutBranding(
         coreTeam = productOwners(),
         supportAndPr = emptyList(),
@@ -123,7 +123,7 @@ class AboutViewModel(
 
     init {
         val branding = aboutBranding(
-            isExpressiveProduct = BuildConfig.IS_EXPRESSIVE_PRODUCT,
+            isLawnchairzProduct = BuildConfig.IS_LAWNCHAIRZ_PRODUCT,
         )
         uiState.update {
             it.copy(
@@ -143,7 +143,7 @@ class AboutViewModel(
 
         // LawnchairZ has its own owner card and must never query Lawnchair's activity feed.
         // Other flavors retain their existing attribution and active-contributor behavior.
-        if (!BuildConfig.IS_EXPRESSIVE_PRODUCT) {
+        if (!BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
             viewModelScope.launch(Dispatchers.Default) {
                 val activeContributors = fetchActiveContributors()
                 val updatedCoreTeam = uiState.value.coreTeam.map { member ->
@@ -163,7 +163,7 @@ class AboutViewModel(
 
         // LawnchairZ modification: LawnchairZ has no update channel. Only Lawnchair nightly
         // builds check Lawnchair's own nightly releases.
-        val shouldCheckForUpdates = !BuildConfig.IS_EXPRESSIVE_PRODUCT &&
+        val shouldCheckForUpdates = !BuildConfig.IS_LAWNCHAIRZ_PRODUCT &&
             BuildConfig.APPLICATION_ID.contains("nightly") && prefs2.autoUpdaterNightly.firstCached()
         if (shouldCheckForUpdates) {
             nightlyBuildsRepository.checkForUpdate()

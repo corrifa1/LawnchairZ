@@ -47,7 +47,7 @@ UPSTREAM_NOTICE = (
     "This NOTICE provides attribution information and does not modify the\n"
     "applicable licenses or imply endorsement by the upstream projects.\n"
 )
-PACKAGED_NOTICE = "android/lawnchair/assets/expressive-NOTICE.txt"
+PACKAGED_NOTICE = "android/lawnchair/assets/NOTICE.txt"
 
 # Baseline license bytes from the public source checkout. An intentional license
 # update needs a review of the applicable rights before changing these digests.
@@ -59,9 +59,9 @@ LICENSE_SHA256 = {
         "8e8f5ee54c1431ed9c56a2f80dbce767d20d849ab7314434c1460a06d5e566b7",
 }
 ATTRIBUTED_SOURCES = (
-    "android/lawnchair/src/app/lawnchair/feed/ExpressiveFeedSetup.kt",
-    "android/tests/expressiveUnit/app/lawnchair/backup/NovaBackupExtractionSecurityTest.kt",
-    "android/tests/expressiveUnit/app/lawnchair/ui/preferences/about/NotificationPendingIntentSecurityTest.kt",
+    "android/lawnchair/src/app/lawnchair/feed/FeedHelperSetup.kt",
+    "android/tests/lawnchairzUnit/app/lawnchair/backup/NovaBackupExtractionSecurityTest.kt",
+    "android/tests/lawnchairzUnit/app/lawnchair/ui/preferences/about/NotificationPendingIntentSecurityTest.kt",
     "ci/check_security_manifests.py",
     "gradle/dependency-security.gradle",
 )

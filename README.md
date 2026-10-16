@@ -107,7 +107,7 @@ Expressive runs as a standard Home app; root is not required for everyday use. F
 ```sh
 git clone --recurse-submodules https://github.com/corrifa1/LawnchairZ.git
 cd ExpressiveLauncher
-./gradlew --no-scan assembleLawnWithQuickstepExpressiveDebug
+./gradlew --no-scan assembleLawnWithQuickstepLawnchairzDebug
 ```
 
 Use **JDK 21** and the **Android 37.1 SDK** (`minSdk 31`). The SystemUI submodule is required: ordinary GitHub ZIP downloads omit its contents. The [build guide](docs/BUILDING.md) includes dependency setup, output locations, test commands, and signing instructions.

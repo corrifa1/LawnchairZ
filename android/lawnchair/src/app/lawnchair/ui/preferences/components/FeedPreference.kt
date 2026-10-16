@@ -29,8 +29,8 @@ data class ProviderInfo(
 
 fun getProviders(context: Context) = FeedBridge.getAvailableProviders(context).map {
     ProviderInfo(
-        name = if (BuildConfig.IS_EXPRESSIVE_PRODUCT && it.packageName == FeedBridge.FIRST_PARTY_FEED_PACKAGE) {
-            context.getString(R.string.expressive_feed_title)
+        name = if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT && it.packageName == FeedBridge.FIRST_PARTY_FEED_PACKAGE) {
+            context.getString(R.string.discover_title)
         } else {
             it.loadLabel(context.packageManager).toString()
         },
