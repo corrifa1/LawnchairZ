@@ -1,14 +1,25 @@
 # Third-party notices
 
-LawnchairZ builds on AOSP Launcher3 and Lawnchair. Their copyright headers,
-source notices, component licenses, and prebuilt library provenance remain in this
-source snapshot. This page provides a readable index; each component keeps its
-own applicable license.
+LawnchairZ is a fork of Expressive Launcher, which builds on AOSP Launcher3 and
+Lawnchair. Their copyright headers, source notices, component licenses, and prebuilt
+library provenance remain in this source tree. This page provides a readable index;
+each component keeps its own applicable license.
 
-Expressive's own attribution is recorded alongside its upstream credits in the
-root [NOTICE](../NOTICE). The [reuse guide](REUSE_AND_ATTRIBUTION.md) explains how
+LawnchairZ's attribution, and Expressive Launcher's NOTICE reproduced unchanged, are
+in the root [NOTICE](../NOTICE). The [reuse guide](REUSE_AND_ATTRIBUTION.md) explains how
 to carry relevant notices forward. This index is not a replacement for any
 component's license or the notices in its source files.
+
+## Expressive Launcher
+
+Apache License 2.0, with this notice reproduced in the root [NOTICE](../NOTICE):
+
+```text
+Copyright 2026 Daryl Denson and Expressive Launcher contributors.
+```
+
+- [Expressive Launcher source](https://github.com/denson9874/ExpressiveLauncher)
+- [Fork point and Expressive provenance record](SOURCE_PROVENANCE.md)
 
 ## AOSP Launcher3 and Lawnchair
 

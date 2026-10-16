@@ -1,10 +1,11 @@
 # Reusing LawnchairZ with attribution
 
-LawnchairZ is maintained by [Daryl Denson](https://github.com/denson9874)
-and its contributors at [corrifa1/LawnchairZ](https://github.com/corrifa1/LawnchairZ).
-The project builds on AOSP Launcher3, Lawnchair, and other credited components.
-The [contribution index](SOURCE_PROVENANCE.md#expressive-contribution-index) identifies
-selected Expressive additions separately from their upstream foundation.
+LawnchairZ is maintained by Corey Flynn ([corrifa1](https://github.com/corrifa1)) and its
+contributors at [corrifa1/LawnchairZ](https://github.com/corrifa1/LawnchairZ).
+It is a fork of [Expressive Launcher](https://github.com/denson9874/ExpressiveLauncher) by
+Daryl Denson and Expressive Launcher contributors, which builds on Lawnchair and AOSP
+Launcher3. The [source provenance](SOURCE_PROVENANCE.md) records the fork point and
+separates LawnchairZ contributions from Expressive's and from their upstream foundation.
 
 ## What redistribution requires
 
@@ -23,43 +24,56 @@ For Apache-licensed work, section 4 requires redistributors to:
    location allowed by section 4(d): a distributed NOTICE file, accompanying
    source or documentation, or the usual third-party-notice display.
 
-Those requirements apply as specified in the license. A splash screen, advertising
-credit, clickable link, or a particular About-screen layout is not an additional
-requirement. Private use does not trigger these redistribution conditions merely
-because someone downloads or runs the software.
+The LawnchairZ [NOTICE](../NOTICE) contains Expressive Launcher's NOTICE unchanged.
+Carry both parts forward when you redistribute work that includes them.
+
+## How LawnchairZ keeps upstream credit
+
+- Files from Expressive Launcher keep `Copyright 2026 Daryl Denson and Expressive Launcher
+  contributors.`, their `Developed for Expressive Launcher` line and Expressive's URL.
+  When LawnchairZ changes one, it adds a `Modified by Corey Flynn for LawnchairZ` line.
+- Expressive's `Expressive modification:` comments in AOSP and Lawnchair files stay as
+  written. LawnchairZ marks its own later changes separately.
+- AOSP and Lawnchair copyright headers and the license texts are never changed.
+- New LawnchairZ files carry `Copyright 2026 Corey Flynn and LawnchairZ contributors.`,
+  `SPDX-License-Identifier: Apache-2.0` and the LawnchairZ URL.
 
 ## A practical acknowledgment
 
-When incorporating Expressive contributions, this acknowledgment makes their origin
+When incorporating LawnchairZ contributions, this acknowledgment makes their origin
 easy to find. It supplements the applicable license and notices; it does not replace them:
 
 ```text
-Includes work from LawnchairZ by Daryl Denson and contributors.
+Includes work from LawnchairZ by Corey Flynn and contributors.
 https://github.com/corrifa1/LawnchairZ
-Based on AOSP Launcher3 and Lawnchair; see the included licenses and notices.
+Based on Expressive Launcher, AOSP Launcher3 and Lawnchair; see the included licenses and notices.
 ```
+
+Work that originated in Expressive Launcher should also credit that project, as its
+[reuse guide](https://github.com/denson9874/ExpressiveLauncher/blob/main/docs/REUSE_AND_ATTRIBUTION.md)
+describes.
 
 For source reuse, retain existing headers, record the source commit or release,
 and describe your changes. Preserving commit authors when cherry-picking and
 linking to the original contribution are useful ways to keep a traceable record.
 The project's contribution workflow is described in [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-## Project identity and artwork
+## Project identity
 
-The LawnchairZ name and Bloom identity identify this project. Reusing
-software does not imply endorsement by its maintainers. Apache section 6 does not
-grant trademark permission beyond customary identification of the work's origin
-and reproduction of its notices. An independent fork should identify its own
-maintainer and avoid presenting itself as an official Expressive release.
+The LawnchairZ name identifies this project. It is independent and is not affiliated
+with or endorsed by the Expressive Launcher, Lawnchair, or Android Open Source Project
+maintainers. Apache section 6 does not grant trademark permission beyond customary
+identification of a work's origin and reproduction of its notices.
 
-[APP_ICON.md](APP_ICON.md) records how the Bloom artwork was generated and exported.
-This guide does not claim a registered trademark, exclusive copyright in purely
-generated imagery, or revoke permissions already granted for distributed assets.
+The Expressive Bloom artwork identifies Expressive Launcher. It remains in this
+repository only until LawnchairZ's own icon replaces it, and LawnchairZ does not present
+itself as an Expressive release.
 
 ## What the repository protections do
 
-The attribution check verifies the root and bundled Expressive notices, selected
-source headers, and retained license texts. Run it with:
+The attribution check verifies the root and bundled notices (including the unchanged
+Expressive NOTICE), the Expressive notices in selected Expressive-origin source files,
+and the retained license texts. Run it with:
 
 ```sh
 python3 ci/check_attribution.py
@@ -68,29 +82,27 @@ python3 -m unittest discover -s ci/tests -p 'test_check_attribution.py'
 
 The GitHub workflow runs this check for changes to `main`. The maintainer is listed
 in [CODEOWNERS](../.github/CODEOWNERS) for notices, provenance, and the guard itself.
-GitHub's active [repository rules](https://github.com/corrifa1/LawnchairZ/rules)
-are the authority for enforced branch and tag protections; CODEOWNERS alone does
-not enforce approval. These controls protect this repository's record and catch
-accidental omissions. They cannot control a separately hosted copy.
+CODEOWNERS alone does not enforce approval. These controls protect this repository's
+record and catch accidental omissions. They cannot control a separately hosted copy.
 
 The copy at `android/lawnchair/assets/expressive-NOTICE.txt` uses the existing Lawnchair
-asset directory so source builds can carry Expressive attribution with the app.
-This source change does not retrofit an already published APK. Release validation
-must verify the notice in each newly built distribution.
+asset directory so source builds carry the NOTICE with the app. It must stay identical to
+the root NOTICE.
 
 ## If attribution appears to be missing
 
 Record the other repository or download URL, its exact commit or version, the
-matching Expressive files and revisions, and the notices supplied with that copy.
+matching LawnchairZ files and revisions, and the notices supplied with that copy.
 Check accompanying source, documentation, and third-party notices before concluding
-that attribution was omitted. Contact the Expressive maintainer through the
-[project repository](https://github.com/corrifa1/LawnchairZ) with that
-evidence; avoid posting personal information or unsupported accusations.
+that attribution was omitted. Contact the maintainer through the
+[project repository](https://github.com/corrifa1/LawnchairZ) with that evidence; avoid
+posting personal information or unsupported accusations. Questions about Expressive
+Launcher's own contributions belong with
+[its maintainer](https://github.com/denson9874/ExpressiveLauncher).
 
 Public code remains downloadable and reusable under its applicable licenses.
-Existing Apache grants cannot simply be withdrawn, and this new NOTICE does not
-retroactively change earlier snapshots. Formal infringement claims need an
-assessment of the particular work, ownership, license, and distribution.
+Existing Apache grants cannot simply be withdrawn, and this NOTICE does not
+retroactively change earlier snapshots.
 
 ## Authoritative references
 

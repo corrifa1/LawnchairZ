@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 # SPDX-License-Identifier: Apache-2.0
-# https://github.com/corrifa1/LawnchairZ
+# https://github.com/denson9874/ExpressiveLauncher
+# Modified by Corey Flynn for LawnchairZ: https://github.com/corrifa1/LawnchairZ
 
 """Check the merged LawnchairZ manifests, after variant overlay resolution."""
 

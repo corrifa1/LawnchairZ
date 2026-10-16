@@ -1,3 +1,12 @@
+/*
+ * Copyright 2026 Corey Flynn and LawnchairZ contributors.
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Developed for LawnchairZ.
+ * https://github.com/corrifa1/LawnchairZ
+ * See NOTICE and docs/SOURCE_PROVENANCE.md for project attribution.
+ */
+
 package app.lawnchair.animation
 
 import android.app.Application

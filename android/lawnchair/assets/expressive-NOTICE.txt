@@ -1,6 +1,18 @@
 LawnchairZ
 https://github.com/corrifa1/LawnchairZ
 
+LawnchairZ-specific contributions:
+Copyright 2026 Corey Flynn and LawnchairZ contributors.
+This notice covers their copyrightable contributions, not ownership of
+the upstream projects or every resource in this repository.
+
+LawnchairZ is based on Expressive Launcher. The Expressive Launcher NOTICE
+is reproduced unchanged below.
+
+-----------------------------------------------------------------------
+Expressive Launcher
+https://github.com/denson9874/ExpressiveLauncher
+
 Expressive-specific contributions:
 Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 This notice covers their copyrightable contributions, not ownership of
@@ -16,3 +28,8 @@ docs/SOURCE_PROVENANCE.md in the source repository identified above.
 
 This NOTICE provides attribution information and does not modify the
 applicable licenses or imply endorsement by the upstream projects.
+-----------------------------------------------------------------------
+
+LawnchairZ is an independent project. It is not affiliated with or
+endorsed by the Expressive Launcher, Lawnchair, or Android Open Source
+Project maintainers.

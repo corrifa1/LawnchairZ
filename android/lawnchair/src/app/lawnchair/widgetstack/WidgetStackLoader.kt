@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
+ * Copyright 2026 Corey Flynn and LawnchairZ contributors.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Developed for LawnchairZ.

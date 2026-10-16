@@ -1,7 +1,7 @@
 /*
  * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
  * SPDX-License-Identifier: Apache-2.0
- * https://github.com/corrifa1/LawnchairZ
+ * https://github.com/denson9874/ExpressiveLauncher
  */
 
 package app.lawnchair.ui.preferences.about

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 # SPDX-License-Identifier: Apache-2.0
-# https://github.com/corrifa1/LawnchairZ
+# https://github.com/denson9874/ExpressiveLauncher
+# Modified by Corey Flynn for LawnchairZ: https://github.com/corrifa1/LawnchairZ
 
 """Check that repository attribution and retained license texts stay intact."""
 
@@ -20,9 +21,31 @@ REQUIRED_FILES = (
 NOTICE_MARKERS = (
     "LawnchairZ",
     "https://github.com/corrifa1/LawnchairZ",
-    "Copyright 2026 Daryl Denson and Expressive Launcher contributors.",
+    "Copyright 2026 Corey Flynn and LawnchairZ contributors.",
     "The Android Open Source Project",
     "Lawnchair",
+)
+# LawnchairZ is based on Expressive Launcher. Apache-2.0 section 4(d) requires its NOTICE to be
+# carried forward, so the root NOTICE must reproduce it byte for byte.
+UPSTREAM_NOTICE = (
+    "Expressive Launcher\n"
+    "https://github.com/denson9874/ExpressiveLauncher\n"
+    "\n"
+    "Expressive-specific contributions:\n"
+    "Copyright 2026 Daryl Denson and Expressive Launcher contributors.\n"
+    "This notice covers their copyrightable contributions, not ownership of\n"
+    "the upstream projects or every resource in this repository.\n"
+    "\n"
+    "This project builds on AOSP Launcher3 and Lawnchair.\n"
+    "Copyright (c) 2005-2008, The Android Open Source Project\n"
+    "Copyright (c) 2024, Lawnchair\n"
+    "\n"
+    "Additional copyright and attribution notices remain in the corresponding\n"
+    "source files and component notices. See docs/THIRD_PARTY_NOTICES.md and\n"
+    "docs/SOURCE_PROVENANCE.md in the source repository identified above.\n"
+    "\n"
+    "This NOTICE provides attribution information and does not modify the\n"
+    "applicable licenses or imply endorsement by the upstream projects.\n"
 )
 PACKAGED_NOTICE = "android/lawnchair/assets/expressive-NOTICE.txt"
 
@@ -41,10 +64,11 @@ ATTRIBUTED_SOURCES = (
     "android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotifications.kt",
     "android/lawnchair/src/app/lawnchair/ui/preferences/about/ExpressiveUpdateNotificationControl.kt",
 )
+# Expressive-origin sources keep Expressive Launcher's own notice, even after LawnchairZ changes.
 SOURCE_MARKERS = (
-    "LawnchairZ",
+    "Expressive Launcher",
     "Copyright 2026 Daryl Denson and Expressive Launcher contributors.",
-    "https://github.com/corrifa1/LawnchairZ",
+    "https://github.com/denson9874/ExpressiveLauncher",
     "SPDX-License-Identifier: Apache-2.0",
 )
 
@@ -74,6 +98,8 @@ def check(root: Path) -> list[str]:
         for marker in NOTICE_MARKERS:
             if marker not in texts["NOTICE"]:
                 errors.append(f"NOTICE: missing attribution {marker!r}.")
+        if UPSTREAM_NOTICE not in texts["NOTICE"]:
+            errors.append("NOTICE: must reproduce the Expressive Launcher NOTICE unchanged.")
     if "NOTICE" in contents and PACKAGED_NOTICE in contents:
         if contents["NOTICE"] != contents[PACKAGED_NOTICE]:
             errors.append(f"{PACKAGED_NOTICE}: must exactly match the root NOTICE; update both together.")
