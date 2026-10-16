@@ -100,7 +100,7 @@ that include these notices; earlier published copies retain their existing terms
 
 ### Expressive Bloom branding update
 
-The `main` branch now carries the approved [Expressive Bloom artwork](assets/expressive/expressive-bloom.png), coordinated repository graphics, and updated Android and store icon resources. Builds made from this source use the new branding. The application version remains **1.0.12 / version code 13** in this public source baseline.
+The `main` branch now carries the approved [Expressive Bloom artwork](https://github.com/denson9874/ExpressiveLauncher/blob/73b6592add1b3c572b1cf1eb481d8d8285e664c7/docs/assets/expressive/expressive-bloom.png), coordinated repository graphics, and updated Android and store icon resources. Builds made from this source use the new branding. The application version remains **1.0.12 / version code 13** in this public source baseline.
 
 This branding change does not replace the historical signed APK identified above. Its source tag, package identity, checksum, validation results, and release downloads remain associated with the original build and icon. Each newly published QA or stable build supplies its own version and verification evidence through the existing release process.
 

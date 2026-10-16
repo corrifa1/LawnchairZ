@@ -65,9 +65,9 @@ with or endorsed by the Expressive Launcher, Lawnchair, or Android Open Source P
 maintainers. Apache section 6 does not grant trademark permission beyond customary
 identification of a work's origin and reproduction of its notices.
 
-The Expressive Bloom artwork identifies Expressive Launcher. It remains in this
-repository only until LawnchairZ's own icon replaces it, and LawnchairZ does not present
-itself as an Expressive release.
+The Expressive Bloom artwork identifies Expressive Launcher and is not used by
+LawnchairZ, which has [its own icon](APP_ICON.md). LawnchairZ does not present itself as an
+Expressive release.
 
 ## What the repository protections do
 

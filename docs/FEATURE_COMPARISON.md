@@ -1,6 +1,12 @@
 # Expressive, Lawnchair and Launcher3
 
-LawnchairZ builds on two substantial upstream projects. Launcher3 supplies
+> This is Expressive Launcher's feature comparison, retained from the
+> [fork point](SOURCE_PROVENANCE.md) because it records which features came from
+> Expressive, Lawnchair and Launcher3. Its links point to the current file names.
+> LawnchairZ does not carry Expressive's update channel. For what LawnchairZ adds, see
+> the [README](../README.md).
+
+Expressive Launcher builds on two substantial upstream projects. Launcher3 supplies
 the Home application foundation; Lawnchair adds extensive customization and
 Pixel-inspired features. Expressive combines that work with a focused settings
 experience, its own Discover setup, targeted behavior fixes and verified GitHub
