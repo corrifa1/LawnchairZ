@@ -153,9 +153,9 @@ public class LauncherSettings {
         public static final int ITEM_TYPE_PRIVATE_SPACE_INSTALL_APP_BUTTON = 11;
 
         // LawnchairZ modification: the widget stack item type.
-        // LawnCher: widget stacks. A workspace-only item whose children are widget rows with
-        // container = stack id, ordered by rank. Numbered away from upstream's sequence so that a
-        // future AOSP item type cannot collide with it.
+        // A workspace-only item whose children are widget rows with container = stack id,
+        // ordered by rank. Numbered away from upstream's sequence so that a future AOSP item type
+        // cannot collide with it.
         public static final int ITEM_TYPE_WIDGET_STACK = 100;
 
         /**
@@ -230,7 +230,7 @@ public class LauncherSettings {
                 case ITEM_TYPE_APP_PAIR: return "APP_PAIR";
                 case ITEM_TYPE_PRIVATE_SPACE_INSTALL_APP_BUTTON:
                     return "PRIVATE_SPACE_INSTALL_APP_BUTTON";
-                case ITEM_TYPE_WIDGET_STACK: return "WIDGET_STACK"; // LawnCher: widget stacks
+                case ITEM_TYPE_WIDGET_STACK: return "WIDGET_STACK"; // LawnchairZ: widget stacks
                 default: return String.valueOf(type);
             }
         }

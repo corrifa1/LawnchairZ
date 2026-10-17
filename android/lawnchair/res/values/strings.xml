@@ -1100,7 +1100,7 @@
 
     <string name="please_wait">Please wait…</string>
 
-    <!-- LawnCher: widget stacks -->
+    <!-- LawnchairZ: widget stacks -->
     <string name="widget_stack_label">Widget stack</string>
     <!-- Spoken by TalkBack for a widget stack. %1$s is the visible widget's name. -->
     <string name="widget_stack_description">Widget stack, %1$s</string>

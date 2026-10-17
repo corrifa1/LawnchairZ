@@ -264,7 +264,7 @@ public class QuickstepModelDelegate extends ModelDelegate {
             ItemInfo containerInfo = itemsIdMap.get(info.container);
 
             // LawnchairZ modification: stats logging handles widgets inside a stack.
-            // LawnCher: widget stacks are parents too, but not collections
+            // Widget stacks are parents too, but not collections
             if (containerInfo instanceof app.lawnchair.widgetstack.WidgetStackInfo) {
                 return null;
             }

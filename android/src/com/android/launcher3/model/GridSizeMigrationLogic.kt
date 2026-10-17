@@ -446,7 +446,7 @@ class GridSizeMigrationLogic {
                             // with their widgets.
                             if (
                                 entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER ||
-                                    // LawnCher: widget stacks
+                                    // LawnchairZ: widget stacks
                                     entry.itemType ==
                                         LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK
                             ) {

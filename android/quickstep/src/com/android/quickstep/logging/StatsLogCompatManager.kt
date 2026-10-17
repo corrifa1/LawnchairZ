@@ -220,7 +220,7 @@ class StatsLogCompatManager private constructor(context: Context) : StatsLogMana
                         info.buildProto(
                             // LawnchairZ modification: stats logging handles widgets inside a
                             // stack.
-                            // LawnCher: stacked widgets have a WidgetStackInfo parent
+                            // Stacked widgets have a WidgetStackInfo parent
                             dataModel.itemsIdMap[info.container] as? CollectionInfo,
                             context,
                         )

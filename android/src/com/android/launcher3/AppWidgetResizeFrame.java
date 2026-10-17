@@ -86,11 +86,11 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
     private final List<Rect> mSystemGestureExclusionRects = new ArrayList<>(HANDLE_COUNT);
 
     // LawnchairZ modification: widget stacks are resized, created and edited from this frame.
-    // LawnCher: widget stacks. Widened from LauncherAppWidgetHostView so stacks can be resized.
+    // Widened from LauncherAppWidgetHostView so stacks can be resized.
     private NavigableAppWidgetHostView mWidgetView;
-    // LawnCher: widget stacks. Non-null while resizing a stack.
+    // LawnchairZ: widget stacks. Non-null while resizing a stack.
     @Nullable private app.lawnchair.widgetstack.WidgetStackResize mStackResize;
-    // LawnCher: widget stacks. The "Create stack" / "Edit stack" button, if shown.
+    // LawnchairZ: widget stacks. The "Create stack" / "Edit stack" button, if shown.
     @Nullable private View mStackButton;
     private CellLayout mCellLayout;
     private DragLayer mDragLayer;
@@ -260,7 +260,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
                 && lahv.hasEnforcedCornerRadius()) {
             enforcedCornerRadius = lahv.getEnforcedCornerRadius();
         } else if (mWidgetView instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
-            // LawnCher: widget stacks
+            // LawnchairZ: widget stacks
             enforcedCornerRadius = stack.getCornerRadius();
         }
         if (enforcedCornerRadius >= 0) {
@@ -288,7 +288,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
                 widgetView.getAppWidgetInfo();
         mDragLayer = dragLayer;
         InvariantDeviceProfile idp = LauncherAppState.getIDP(cellLayout.getContext());
-        // LawnCher: widget stacks resize within the range all of their widgets support.
+        // LawnchairZ: widget stacks resize within the range all of their widgets support.
         mStackResize = widgetView instanceof app.lawnchair.widgetstack.WidgetStackView stack
                 ? app.lawnchair.widgetstack.WidgetStackResize.forStack(
                         stack, idp.numColumns, idp.numRows)
@@ -383,7 +383,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             }
         }
 
-        // LawnCher: widget stacks. "Edit stack" on stacks, "Create stack" on widgets.
+        // LawnchairZ: widget stacks. "Edit stack" on stacks, "Create stack" on widgets.
         mStackButton = app.lawnchair.widgetstack.WidgetStackResize.attachFrameButton(
                 this, mWidgetView, mLauncher);
 
@@ -568,7 +568,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
             mDirectionVector[1] = mTopBorderActive ? -1 : 1;
         }
 
-        // LawnCher: widget stacks. In preset mode, snap to the preset nearest the whole drag.
+        // LawnchairZ: widget stacks. In preset mode, snap to the preset nearest the whole drag.
         if (mStackResize != null && mStackResize.isPreset()) {
             int[] cells = {
                     lp.useTmpCoords ? lp.getTmpCellX() : lp.getCellX(),
@@ -655,7 +655,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
      * Returns the rect of this view when the frame is snapped around the widget, with the bounds
      * relative to the {@link DragLayer}.
      */
-    // LawnCher: widget stacks. The resize transition relies on the pre-layout listener that only
+    // LawnchairZ: widget stacks. The resize transition relies on the pre-layout listener that only
     // LauncherAppWidgetHostView offers; stacks use their measured bounds instead.
     private boolean usesResizeTransition() {
         return FeatureFlags.ENABLE_WIDGET_TRANSITION_FOR_RESIZING.get()
@@ -842,7 +842,7 @@ public class AppWidgetResizeFrame extends AbstractFloatingView implements View.O
 
     @Override
     public boolean onControllerInterceptTouchEvent(MotionEvent ev) {
-        // LawnCher: widget stacks. Let a tap on the stack button reach it; it sits by the border.
+        // LawnchairZ: widget stacks. Let a tap on the stack button reach it; it sits by the border.
         if (mStackButton != null) {
             mStackButton.getHitRect(sTmpRect);
             if (sTmpRect.contains((int) ev.getX() - getLeft(), (int) ev.getY() - getTop())) {

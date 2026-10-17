@@ -120,7 +120,6 @@ class WorkspaceItemProcessor(
                 Favorites.ITEM_TYPE_APPWIDGET,
                 Favorites.ITEM_TYPE_CUSTOM_APPWIDGET -> processWidget()
                 // LawnchairZ modification: loads widget stacks and their widgets.
-                // LawnCher: widget stacks
                 Favorites.ITEM_TYPE_WIDGET_STACK ->
                     app.lawnchair.widgetstack.WidgetStackLoader.processStackRow(
                         c,
@@ -556,7 +555,7 @@ class WorkspaceItemProcessor(
         appWidgetInfo.options = c.options
         appWidgetInfo.user = c.user
         appWidgetInfo.sourceContainer = c.appWidgetSource
-        // LawnCher: widget stacks order their widgets by rank.
+        // LawnchairZ: widget stacks order their widgets by rank.
         appWidgetInfo.rank = c.rank
         appWidgetInfo.restoreStatus = c.restoreFlag
         if (appWidgetInfo.spanX <= 0 || appWidgetInfo.spanY <= 0) {
@@ -571,7 +570,7 @@ class WorkspaceItemProcessor(
         }
         if (
             !c.isOnWorkspaceOrHotseat &&
-                // LawnCher: widget stacks. Children of a stack have the stack id as container.
+                // LawnchairZ: widget stacks. Children of a stack have the stack id as container.
                 !app.lawnchair.widgetstack.WidgetStackLoader.isValidWidgetContainer(c.container)
         ) {
             c.markDeleted(
@@ -730,7 +729,7 @@ class WorkspaceItemProcessor(
 
         // Remove dead items
         val itemsDeleted = c.commitDeleted()
-        // LawnCher: widget stacks. Attach children to their stacks and repair leftovers.
+        // LawnchairZ: widget stacks. Attach children to their stacks and repair leftovers.
         app.lawnchair.widgetstack.WidgetStackLoaderRepair.repair(loadedItems, modelDbController)
 
         processFolderItems()

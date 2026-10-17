@@ -99,7 +99,7 @@ public abstract class BaseAccessibilityDelegate<T extends Context & ActivityCont
 
     protected boolean itemSupportsAccessibleDrag(ItemInfo item) {
         // LawnchairZ modification: accessible drag rules for widget stacks.
-        // LawnCher: widget stacks move as a whole; their widgets move out instead.
+        // Widget stacks move as a whole; their widgets move out instead.
         if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
             return false;
         }

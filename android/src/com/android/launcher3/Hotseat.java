@@ -128,7 +128,7 @@ public class Hotseat extends FrameLayout implements Insettable {
 
     private final ActivityContext mActivity;
 
-    // Expressive modification: dock items whose rank doesn't fit the current grid (e.g. the
+    // LawnchairZ: dock overflow. Dock items whose rank doesn't fit the current grid (e.g. the
     // unfolded-only slots while folded). They are kept as views instead of being stacked onto
     // the first page, so unfolding can show them without waiting for a model rebind.
     private final ArrayList<View> mOverflowItems = new ArrayList<>();
@@ -358,8 +358,9 @@ public class Hotseat extends FrameLayout implements Insettable {
     }
 
     /**
-     * Expressive modification: keeps a dock item whose rank is outside the current grid hidden,
-     * so it can be shown again when the grid grows (see {@link #relayoutForDeviceProfile()}).
+     * LawnchairZ: dock overflow. Keeps a dock item whose rank is outside the current grid
+     * hidden, so it can be shown again when the grid grows
+     * (see {@link #relayoutForDeviceProfile()}).
      */
     public void addOverflowItem(View child) {
         if (child.getParent() instanceof ViewGroup parent) {
@@ -371,10 +372,10 @@ public class Hotseat extends FrameLayout implements Insettable {
     }
 
     /**
-     * Expressive modification: when the dock grid changes (e.g. folding or unfolding), lays the
-     * existing dock views out again for the new grid right away. Launcher still rebinds the model
-     * afterwards, but that is asynchronous: without this, unfolded-only icons only appeared once
-     * the rebind finished, and icons that no longer fit stayed visible until then.
+     * LawnchairZ: dock overflow. When the dock grid changes (e.g. folding or unfolding), lays
+     * the existing dock views out again for the new grid right away. Launcher still rebinds the
+     * model afterwards, but that is asynchronous: without this, unfolded-only icons only appeared
+     * once the rebind finished, and icons that no longer fit stayed visible until then.
      */
     public void relayoutForDeviceProfile() {
         if (mWorkspace == null || !gridDiffersFromDeviceProfile()) {
@@ -420,7 +421,7 @@ public class Hotseat extends FrameLayout implements Insettable {
     }
 
     public void resetLayout(boolean hasVerticalHotseat) {
-        // Expressive modification: a reset is followed by a full (re)bind or a relayout, which
+        // LawnchairZ: dock overflow. A reset is followed by a full (re)bind or a relayout, which
         // decide again which items overflow.
         mOverflowItems.clear();
         ActivityContext activityContext = ActivityContext.lookupContext(getContext());

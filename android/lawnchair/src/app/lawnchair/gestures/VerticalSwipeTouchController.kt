@@ -98,7 +98,7 @@ class VerticalSwipeTouchController(
         if (isIconSwipe) {
             return false
         }
-        // LawnCher: widget stacks page on vertical swipes instead
+        // LawnchairZ: widget stacks page on vertical swipes instead
         if (WidgetStackTouch.isTouchOnPageableStack(launcher, ev)) {
             return false
         }

@@ -68,7 +68,6 @@ public class PortraitStatesTouchController extends AbstractStateChangeTouchContr
                 }
         }
         // LawnchairZ modification: vertical swipes on a widget stack page the stack instead.
-        // LawnCher: widget stacks page on vertical swipes instead
         if (app.lawnchair.widgetstack.WidgetStackTouch.isTouchOnPageableStack(mLauncher, ev)) {
             return false;
         }

@@ -1006,7 +1006,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         } else if (resultCode == RESULT_CANCELED) {
             mAppWidgetHolder.deleteAppWidgetId(appWidgetId);
             animationType = Workspace.CANCEL_TWO_STAGE_WIDGET_DROP_ANIMATION;
-            // LawnCher: widget stacks. Drop a stacked widget whose setup was canceled.
+            // LawnchairZ: widget stacks. Drop a stacked widget whose setup was canceled.
             app.lawnchair.widgetstack.WidgetStackController.onAddCanceled(
                     this, appWidgetId, requestArgs);
         }
@@ -1509,7 +1509,7 @@ public class Launcher extends StatefulActivity<LauncherState>
         launcherInfo.minSpanX = itemInfo.minSpanX;
         launcherInfo.minSpanY = itemInfo.minSpanY;
         launcherInfo.user = appWidgetInfo.getProfile();
-        // LawnCher: widget stacks. A widget added for a stack joins it instead of taking cells.
+        // LawnchairZ: widget stacks. A widget added for a stack joins it instead of taking cells.
         if (app.lawnchair.widgetstack.WidgetStackController.completeAddToStack(
                 this, launcherInfo, itemInfo, showPendingWidget)) {
             return;
@@ -2087,12 +2087,12 @@ public class Launcher extends StatefulActivity<LauncherState>
                 getModelWriter().deleteCollectionAndContentsFromDatabase(ci);
             }
         } else if (itemInfo instanceof LauncherAppWidgetInfo
-                // LawnCher: widget stacks manage their own children
+                // LawnchairZ: widget stacks manage their own children
                 && app.lawnchair.widgetstack.WidgetStackController.isStackChild(itemInfo)) {
             app.lawnchair.widgetstack.WidgetStackController.removeChild(
                     this, v, (LauncherAppWidgetInfo) itemInfo, deleteFromDb);
         } else if (itemInfo instanceof app.lawnchair.widgetstack.WidgetStackInfo stack) {
-            // LawnCher: widget stacks. Removing a stack removes every widget in it.
+            // LawnchairZ: widget stacks. Removing a stack removes every widget in it.
             app.lawnchair.widgetstack.WidgetStackController.removeStack(
                     this, v, stack, deleteFromDb);
         } else if (itemInfo instanceof LauncherAppWidgetInfo) {
@@ -2283,7 +2283,7 @@ public class Launcher extends StatefulActivity<LauncherState>
                 view = getAppWidgetHolder().attachViewToHostAndGetAttachedView(lv);
             } else if (enableWorkspaceInflation()
                     && view instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
-                // LawnCher: widget stacks. Their widgets were inflated off the main thread too.
+                // LawnchairZ: widget stacks. Their widgets were inflated off the main thread too.
                 stack.attachPagesToHost(getAppWidgetHolder());
             }
             workspace.addInScreenFromBind(view, item);
@@ -2322,7 +2322,7 @@ public class Launcher extends StatefulActivity<LauncherState>
      * Add the views for a widget to the workspace.
      */
     public void bindAppWidget(LauncherAppWidgetInfo item) {
-        // LawnCher: widget stacks. A stack child is shown by its stack, not in a cell.
+        // LawnchairZ: widget stacks. A stack child is shown by its stack, not in a cell.
         if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
             app.lawnchair.widgetstack.WidgetStackController.bindChild(this, item);
             return;

@@ -83,7 +83,7 @@ fun ExperimentalFeaturesPreferences(
             )
             // LawnchairZ modification: switches for widget stacks, the fold bridge and the launcher
             // animations.
-            // LawnCher: widget stacks
+            // LawnchairZ: widget stacks
             val widgetStacksAdapter = prefs2.widgetStacks.getAdapter()
             SwitchPreference(
                 adapter = widgetStacksAdapter,

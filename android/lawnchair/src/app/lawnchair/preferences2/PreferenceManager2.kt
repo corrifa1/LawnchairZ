@@ -350,14 +350,14 @@ class PreferenceManager2 @Inject constructor(
     )
 
     // LawnchairZ modification: preferences for widget stacks and the closing-animation speed.
-    // LawnCher: widget stacks. Turning this off hides the ways to create stacks; existing stacks
+    // LawnchairZ: widget stacks. Turning this off hides the ways to create stacks; existing stacks
     // keep working.
     val widgetStacks = preference(
         key = booleanPreferencesKey(name = "widget_stacks"),
         defaultValue = false,
     )
 
-    // LawnCher: widget stacks. Developer comparison between free resizing and preset sizes.
+    // LawnchairZ: widget stacks. Developer comparison between free resizing and preset sizes.
     val widgetStackPresetSizes = preference(
         key = booleanPreferencesKey(name = "widget_stack_preset_sizes"),
         defaultValue = false,

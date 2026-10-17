@@ -335,7 +335,7 @@ public class GridSizeMigrationDBController {
                 // LawnchairZ modification: grid migration keeps widget stacks together with their
                 // widgets.
                 if (entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER
-                        // LawnCher: widget stacks
+                        // LawnchairZ: widget stacks
                         || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK) {
                     entry.mFolderItems.values().forEach(ids -> ids.forEach(toBeRemoved::add));
                 }
@@ -349,7 +349,7 @@ public class GridSizeMigrationDBController {
         int id = copyEntryAndUpdate(helper, entry, srcTableName, destTableName, idsInUse);
         if (entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_FOLDER
                 || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_APP_PAIR
-                // LawnCher: widget stacks carry their children like folders do
+                // LawnchairZ: widget stacks carry their children like folders do
                 || entry.itemType == LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK) {
             for (Set<Integer> itemIds : entry.mFolderItems.values()) {
                 for (int itemId : itemIds) {
@@ -656,7 +656,7 @@ public class GridSizeMigrationDBController {
                             }
                             break;
                         }
-                        // LawnCher: widget stacks
+                        // LawnchairZ: widget stacks
                         case LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK: {
                             if (!app.lawnchair.widgetstack.WidgetStackMigration.loadStackEntry(
                                     entry, mDb, mTableName, widgetManagerHelper)) {

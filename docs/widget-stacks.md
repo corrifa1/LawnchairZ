@@ -32,8 +32,8 @@ off by default. Turning it off hides the ways to create stacks; existing stacks 
 ## Architecture
 
 Nearly all code lives in `android/lawnchair/src/app/lawnchair/widgetstack/`. Launcher3 files get
-small hooks marked `// LawnCher: widget stacks` (58 at the time of writing), so rebases stay
-manageable.
+small hooks marked `// LawnchairZ: widget stacks`, or covered by the file's `LawnchairZ
+modification:` notice right above them, so rebases stay manageable.
 
 | File | Role |
 | --- | --- |
