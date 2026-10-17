@@ -60,6 +60,11 @@ class PreferenceManager @Inject constructor(
     }
     private val reloadGrid: () -> Unit = { idp.onPreferencesChanged(context) }
 
+    // LawnchairZ: duo continuity. The grid and database don't change, so a rebind is enough.
+    private val rebindWorkspace: () -> Unit = {
+        LauncherAppState.INSTANCE.get(context).model.rebindCallbacks()
+    }
+
     private val deviceType = dc.info.deviceType
 
     private val recreate = {
@@ -105,6 +110,9 @@ class PreferenceManager @Inject constructor(
 
     // Space between side dock icons: 0 = icons touch, 1 = one workspace row per icon.
     val sideDockSpacing = FloatPref("pref_sideDockSpacing", 0.4f, reloadGrid)
+
+    // LawnchairZ: duo continuity. One of the UNFOLDED_LAYOUT_* values.
+    val unfoldedLayout = StringPref("pref_unfoldedLayout", UNFOLDED_LAYOUT_PAIRS, rebindWorkspace)
     val workspaceColumns = IntPref("pref_workspaceColumns", calculatedGridSpec.workspaceColumns)
     val workspaceRows = IntPref("pref_workspaceRows", calculatedGridSpec.workspaceRows)
     val workspaceIncreaseMaxGridSize = BoolPref("pref_workspace_increase_max_grid_size", false)
@@ -246,6 +254,9 @@ class PreferenceManager @Inject constructor(
         const val DOCK_POSITION_BOTTOM = "bottom"
         const val DOCK_POSITION_RIGHT = "right"
         const val DOCK_POSITION_LEFT = "left"
+
+        const val UNFOLDED_LAYOUT_PAIRS = "pairs"
+        const val UNFOLDED_LAYOUT_CONTINUITY = "continuity"
 
         @JvmField
         val INSTANCE = DaggerSingletonObject(LauncherAppComponent::getPreferenceManager)

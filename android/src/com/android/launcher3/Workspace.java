@@ -145,6 +145,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import app.lawnchair.fold.duo.DuoContinuity;
 import app.lawnchair.hotseat.HotseatPagedView;
 import app.lawnchair.preferences2.PreferenceCacheExtensionsKt;
 import static app.lawnchair.util.LawnchairUtilsKt.toBitmap;
@@ -205,6 +206,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     @Thunk
     final IntArray mScreenOrder = new IntArray();
+
+    // LawnchairZ: duo continuity. Companion screens the cover screen doesn't bind.
+    private final IntArray mDuoHiddenCompanions = new IntArray();
 
     @Thunk
     boolean mDeferRemoveExtraEmptyScreen = false;
@@ -720,6 +724,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         removeAllViews();
         mScreenOrder.clear();
         mWorkspaceScreens.clear();
+        mDuoHiddenCompanions.clear(); // LawnchairZ: duo continuity.
 
         // Ensure there is always at least one page during bind lifecycle.
         bindAndInitFirstWorkspaceScreen();
@@ -1055,7 +1060,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     }
 
     public IntSet getCurrentPageScreenIds() {
-        return IntSet.wrap(getScreenIdForPageIndex(getCurrentPage()));
+        // LawnchairZ: duo continuity. A pair stands for its cover (dock-side) screen.
+        return IntSet.wrap(DuoContinuity.currentScreenFor(
+                getContext(), getScreenIdForPageIndex(getCurrentPage())));
     }
 
     public int getScreenIdForPageIndex(int index) {
@@ -3551,7 +3558,21 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 persistableOrder.add(screenId);
             }
         }
-        return persistableOrder;
+        // LawnchairZ: duo continuity. Save pairs un-swapped and keep the companions the cover
+        // screen doesn't bind.
+        return DuoContinuity.persistableOrder(getContext(), persistableOrder, mDuoHiddenCompanions);
+    }
+
+    /**
+     * LawnchairZ: duo continuity. Remembers the companion screens that the cover screen leaves
+     * unbound, so the saved screen order keeps them.
+     */
+    public void addDuoHiddenCompanions(IntArray companions) {
+        for (int i = 0; i < companions.size(); i++) {
+            if (!mDuoHiddenCompanions.contains(companions.get(i))) {
+                mDuoHiddenCompanions.add(companions.get(i));
+            }
+        }
     }
 
     private IntSet getPersistedWorkspaceScreenIds() {
@@ -3627,8 +3648,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 reordered.add(existingId);
             }
         }
+        // LawnchairZ: duo continuity. Unfolded, put the cover page in the pane next to the dock.
+        IntArray arranged = DuoContinuity.arrangeForViews(
+                getContext(), isTwoPanelEnabled(), mIsRtl, reordered);
         mScreenOrder.clear();
-        mScreenOrder.addAll(reordered);
+        mScreenOrder.addAll(arranged);
         applyScreenOrderToChildViews();
     }
 
