@@ -602,6 +602,8 @@ class LawnchairLauncher : QuickstepLauncher() {
         // Show the right dock icons for the new grid (fold/unfold) without waiting for the
         // asynchronous model rebind that follows.
         hotseat?.relayoutForDeviceProfile()
+        // LawnchairZ: duo continuity. Same in-place path, so a fold is still one rebind.
+        workspace?.onDuoDeviceProfileChanged()
     }
 
     override fun onScreenOnChanged(isOn: Boolean) {

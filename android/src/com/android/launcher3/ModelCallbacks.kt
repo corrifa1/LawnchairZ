@@ -8,6 +8,7 @@ import android.util.Pair
 import androidx.annotation.AnyThread
 import androidx.annotation.UiThread
 import androidx.annotation.VisibleForTesting
+import app.lawnchair.fold.duo.DuoContinuity
 import com.android.launcher3.LauncherConstants.TraceEvents.DISPLAY_WORKSPACE_TRACE_METHOD_NAME
 import com.android.launcher3.LauncherConstants.TraceEvents.SINGLE_TRACE_COOKIE
 import com.android.launcher3.LauncherSettings.Favorites.CONTAINER_DESKTOP
@@ -265,8 +266,16 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         if (visibleIds.isEmpty) {
             return result
         }
-        val actualIds = orderedScreenIds.clone()
-        val firstId = visibleIds.first()
+        // LawnchairZ: duo continuity. The cover screen binds only dock-side screens, so a page
+        // seen unfolded stands for its pair's dock-side screen.
+        val hidesCompanions =
+            DuoContinuity.hidesCompanions(launcher, launcher.deviceProfile.deviceProperties.isTwoPanels)
+        val actualIds =
+            if (hidesCompanions) DuoContinuity.coverScreens(orderedScreenIds)
+            else orderedScreenIds.clone()
+        val firstId =
+            if (hidesCompanions) DuoContinuity.currentScreenFor(launcher, visibleIds.first())
+            else visibleIds.first()
         val pairId = launcher.workspace.getScreenPair(firstId)
         // Double check that actual screenIds contains the visibleId, as empty screens are hidden
         // in single panel.
@@ -331,7 +340,20 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         }
 
         launcher.workspace.mScreenOrder.forEach { newScreens.remove(it) }
-        if (!newScreens.isEmpty) bindAddScreens(newScreens.array)
+        if (!newScreens.isEmpty) {
+            bindAddScreens(newScreens.array)
+            // LawnchairZ: duo continuity. Keep the cover page in the pane next to the dock.
+            val deviceProperties = launcher.deviceProfile.deviceProperties
+            if (
+                DuoContinuity.swapsViewOrder(
+                    launcher,
+                    deviceProperties.isTwoPanels,
+                    Utilities.isRtl(launcher.resources),
+                )
+            ) {
+                launcher.workspace.reorderBoundWorkspaceScreens(launcher.workspace.mScreenOrder.clone())
+            }
+        }
 
         // We add the items without animation on non-visible pages, and with
         // animations on the new page (which we will try and snap to).
@@ -360,6 +382,11 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
                 }
                 orderedScreenIds = screenIds.array
             }
+        } else if (DuoContinuity.hidesCompanions(launcher, isTwoPanels = false)) {
+            // LawnchairZ: duo continuity. The cover screen binds only the dock-side screens. Keep
+            // the companions it leaves out, so they stay in the saved screen order.
+            launcher.workspace.addDuoHiddenCompanions(DuoContinuity.hiddenCompanions(orderedScreenIds))
+            orderedScreenIds = DuoContinuity.coverScreens(orderedScreenIds)
         }
         orderedScreenIds
             .filter { screenId -> screenId != FIRST_SCREEN_ID }
@@ -460,9 +487,20 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         val currentAppWidgets = ArrayList<ItemInfo>()
         val otherAppWidgets = ArrayList<ItemInfo>()
 
+        // LawnchairZ: duo continuity. The cover screen doesn't bind companion screens, so their
+        // items are not inflated; remember which companions have items.
+        val hidesCompanions =
+            DuoContinuity.hidesCompanions(launcher, launcher.deviceProfile.deviceProperties.isTwoPanels)
+        val occupiedCompanions = LIntArray()
         val currentScreenCheck = currentScreenContentFilter(currentScreenIds)
         itemIdMap.forEach { item: ItemInfo ->
-            if (currentScreenCheck.test(item)) {
+            if (
+                hidesCompanions &&
+                    item.container == CONTAINER_DESKTOP &&
+                    DuoContinuity.isCompanionScreen(item.screenId)
+            ) {
+                if (!occupiedCompanions.contains(item.screenId)) occupiedCompanions.add(item.screenId)
+            } else if (currentScreenCheck.test(item)) {
                 (if (WIDGET_FILTER.test(item)) currentAppWidgets else currentWorkspaceItems).add(
                     item
                 )
@@ -481,7 +519,10 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         }
 
         // Bind workspace screens
-        executeCallbacksTask { bindScreens(orderedScreenIds) }
+        executeCallbacksTask {
+            launcher.workspace.setDuoOccupiedCompanions(occupiedCompanions) // LawnchairZ: duo continuity.
+            bindScreens(orderedScreenIds)
+        }
 
         // Load items on the current page.
         if (Flags.enableWorkspaceInflation()) {

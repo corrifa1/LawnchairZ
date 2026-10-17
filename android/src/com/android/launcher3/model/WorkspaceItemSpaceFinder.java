@@ -20,6 +20,7 @@ import static com.android.launcher3.WorkspaceLayoutManager.FIRST_SCREEN_ID;
 import android.content.Context;
 import android.util.LongSparseArray;
 
+import app.lawnchair.fold.duo.DuoContinuity;
 import app.lawnchair.preferences2.PreferenceManager2;
 import com.android.launcher3.BuildConfig;
 import com.android.launcher3.BuildConfigs;
@@ -104,8 +105,15 @@ public class WorkspaceItemSpaceFinder {
             screensToExclude.add(FIRST_SCREEN_ID);
         }
 
+        // LawnchairZ: duo continuity. New items go to the cover (dock-side) pages, never into a
+        // companion the user hasn't seen on the cover screen.
+        boolean duoContinuity = DuoContinuity.isEnabled(context);
+
         for (int screen = 0; screen < screenCount; screen++) {
             screenId = workspaceScreens.get(screen);
+            if (duoContinuity && DuoContinuity.isCompanionScreen(screenId)) {
+                continue;
+            }
             if (!screensToExclude.contains(screenId) && findNextAvailableIconSpaceInScreen(
                     screenItems.get(screenId), coordinates, spanX, spanY)) {
                 // We found a space for it
@@ -117,6 +125,8 @@ public class WorkspaceItemSpaceFinder {
         if (!found) {
             // Still no position found. Add a new screen to the end.
             screenId = mModel.getModelDbController().getNewScreenId();
+            // LawnchairZ: duo continuity. A new page is a dock-side (even) screen.
+            screenId = DuoContinuity.nextDockSideScreenId(context, screenId, workspaceScreens::contains);
 
             // Save the screen id for binding in the workspace
             workspaceScreens.add(screenId);

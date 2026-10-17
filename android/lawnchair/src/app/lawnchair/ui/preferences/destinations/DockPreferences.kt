@@ -179,6 +179,21 @@ fun GridSettings(prefs: PreferenceManager, prefs2: PreferenceManager2) {
                 showAsPercentage = true,
             )
         }
+        // LawnchairZ: duo continuity. Foldables only.
+        if (isFoldable) {
+            ListPreference(
+                adapter = prefs.unfoldedLayout.getAdapter(),
+                entries = listOf(
+                    ListPreferenceEntry(PreferenceManager.UNFOLDED_LAYOUT_PAIRS) {
+                        stringResource(R.string.unfolded_layout_pairs)
+                    },
+                    ListPreferenceEntry(PreferenceManager.UNFOLDED_LAYOUT_CONTINUITY) {
+                        stringResource(R.string.unfolded_layout_continuity)
+                    },
+                ),
+                label = stringResource(id = R.string.unfolded_layout),
+            )
+        }
         // A side dock shows the same icons on both fold screens and has one column, so the
         // unfolded count, rows, pages and bottom space only apply to a bottom dock. Their values
         // are kept for when the dock moves back.
