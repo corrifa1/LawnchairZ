@@ -266,8 +266,16 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         if (visibleIds.isEmpty) {
             return result
         }
-        val actualIds = orderedScreenIds.clone()
-        val firstId = visibleIds.first()
+        // LawnchairZ: duo continuity. The cover screen binds only dock-side screens, so a page
+        // seen unfolded stands for its pair's dock-side screen.
+        val hidesCompanions =
+            DuoContinuity.hidesCompanions(launcher, launcher.deviceProfile.deviceProperties.isTwoPanels)
+        val actualIds =
+            if (hidesCompanions) DuoContinuity.coverScreens(orderedScreenIds)
+            else orderedScreenIds.clone()
+        val firstId =
+            if (hidesCompanions) DuoContinuity.currentScreenFor(launcher, visibleIds.first())
+            else visibleIds.first()
         val pairId = launcher.workspace.getScreenPair(firstId)
         // Double check that actual screenIds contains the visibleId, as empty screens are hidden
         // in single panel.

@@ -209,6 +209,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     // LawnchairZ: duo continuity. Companion screens the cover screen doesn't bind.
     private final IntArray mDuoHiddenCompanions = new IntArray();
+    private Boolean mDuoWasTwoPanels = null;
 
     @Thunk
     boolean mDeferRemoveExtraEmptyScreen = false;
@@ -724,7 +725,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         removeAllViews();
         mScreenOrder.clear();
         mWorkspaceScreens.clear();
-        mDuoHiddenCompanions.clear(); // LawnchairZ: duo continuity.
+        // LawnchairZ: duo continuity.
+        mDuoHiddenCompanions.clear();
+        mDuoWasTwoPanels = isTwoPanelEnabled();
 
         // Ensure there is always at least one page during bind lifecycle.
         bindAndInitFirstWorkspaceScreen();
@@ -1063,6 +1066,34 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         // LawnchairZ: duo continuity. A pair stands for its cover (dock-side) screen.
         return IntSet.wrap(DuoContinuity.currentScreenFor(
                 getContext(), getScreenIdForPageIndex(getCurrentPage())));
+    }
+
+    /**
+     * LawnchairZ: duo continuity. Called when the device profile changes, before the model rebinds
+     * the workspace for the other screen. Keeps the views that are still on screen from showing the
+     * wrong page for that moment.
+     */
+    public void onDuoDeviceProfileChanged() {
+        boolean twoPanels = isTwoPanelEnabled();
+        Boolean wasTwoPanels = mDuoWasTwoPanels;
+        mDuoWasTwoPanels = twoPanels;
+        if (wasTwoPanels == null || wasTwoPanels == twoPanels
+                || !DuoContinuity.isEnabled(getContext())) {
+            return;
+        }
+        if (twoPanels) {
+            // Unfolding: the views are the cover screen's dock-side pages, which would pair up
+            // wrongly. Hide them until the rebind brings the real pairs.
+            for (int i = 0; i < getChildCount(); i++) {
+                getChildAt(i).setVisibility(INVISIBLE);
+            }
+        } else {
+            // Folding: the views are the unfolded pairs. Show the dock-side page, not the companion.
+            int page = DuoContinuity.pageAfterInPlaceFold(mScreenOrder, getCurrentPage());
+            if (page != getCurrentPage()) {
+                setCurrentPage(page);
+            }
+        }
     }
 
     public int getScreenIdForPageIndex(int index) {

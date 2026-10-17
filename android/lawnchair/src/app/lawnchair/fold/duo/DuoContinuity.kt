@@ -90,7 +90,12 @@ object DuoContinuity {
      */
     @JvmStatic
     fun currentScreenFor(context: Context, screenId: Int): Int =
-        if (isEnabled(context)) DuoPairing.dockSideScreenOf(screenId) else screenId
+        if (isEnabled(context)) DuoFoldMapping.coverScreenAfterFold(screenId) else screenId
+
+    /** See [DuoFoldMapping.pageAfterInPlaceFold]. */
+    @JvmStatic
+    fun pageAfterInPlaceFold(viewOrder: LauncherIntArray, currentPage: Int): Int =
+        DuoFoldMapping.pageAfterInPlaceFold(toList(viewOrder), currentPage)
 
     private fun toList(array: LauncherIntArray): List<Int> =
         List(array.size()) { array.get(it) }
