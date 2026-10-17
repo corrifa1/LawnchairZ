@@ -39,10 +39,11 @@ class FeedBridge(private val context: Context) {
     private val requiresBridge = context.applicationInfo.flags and (FLAG_DEBUGGABLE or FLAG_SYSTEM) == 0
     private val prefs by lazy { PreferenceManager.getInstance(context) }
     private val bridgePackages: List<BridgeInfo> by lazy {
-        // LawnchairZ modification: Expressive's build flag and helper package are now LawnchairZ's.
+        // LawnchairZ modification: Expressive's build flag and helper package are now LawnchairZ's,
+        // and the comment below names LawnchairZ.
         if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
             // Lawnfeed's bridge rejects application IDs outside its built-in Lawnchair allowlist.
-            // Expressive therefore uses its own same-signed companion instead of advertising an
+            // LawnchairZ therefore uses its own same-signed companion instead of advertising an
             // installed-but-unusable third-party bridge as a working feed.
             listOf(SameSignatureBridgeInfo(FIRST_PARTY_FEED_PACKAGE))
         } else {
@@ -65,8 +66,9 @@ class FeedBridge(private val context: Context) {
 
     private fun customBridgeOrNull(customPackage: String = prefs.feedProvider.get()): CustomBridgeInfo? {
         if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT && customPackage in lawnchairzIncompatibleProviders) {
-            // These providers are valid for their own launcher identities but reject Expressive.
+            // These providers are valid for their own launcher identities but reject LawnchairZ.
             // Ignore a stale selection so upgrading users can move to the same-signed companion.
+            // LawnchairZ modification: the comment above names LawnchairZ instead of Expressive.
             return null
         }
         return if (customPackage.isNotBlank()) {

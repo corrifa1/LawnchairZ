@@ -159,9 +159,10 @@ internal constructor(
             statsLogManager.logger().log(LAUNCHER_LAUNCH_ASSISTANT_FAILED_SERVICE_ERROR)
             return false
         }
-        // Contextual Search is a System API protected by a signature permission. Expressive is a
+        // Contextual Search is a System API protected by a signature permission. LawnchairZ is a
         // normal Home-role app, so it must fail closed instead of invoking the service and relying
         // on a SecurityException. Platform-signed launcher builds continue to work when granted.
+        // LawnchairZ modification: the comment above names LawnchairZ instead of Expressive.
         if (!hasContextualSearchPermission()) {
             Log.i(TAG, "Contextual Search invocation failed: permission unavailable")
             statsLogManager.logger().log(LAUNCHER_LAUNCH_ASSISTANT_FAILED_SERVICE_ERROR)

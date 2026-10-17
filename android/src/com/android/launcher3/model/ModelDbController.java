@@ -633,10 +633,11 @@ public class ModelDbController {
 
             LauncherWidgetHolder widgetHolder = mOpenHelper.newLauncherWidgetHolder();
             try {
-                // Expressive promises Pixel-style first-run defaults. System-image partner and
+                // LawnchairZ promises Pixel-style first-run defaults. System-image partner and
                 // auto-install providers are device/vendor policy, and can otherwise replace the
                 // bundled layout (the Play Store AVD supplied a carrier dock during QA).
-                // LawnchairZ modification: Expressive's build flag is now IS_LAWNCHAIRZ_PRODUCT.
+                // LawnchairZ modification: Expressive's build flag is now IS_LAWNCHAIRZ_PRODUCT,
+                // and the comment above names LawnchairZ.
                 AutoInstallsLayout loader = shouldUseExternalDefaultLayout(
                         BuildConfig.IS_LAWNCHAIRZ_PRODUCT)
                                 ? mLayoutParserFactory.createExternalLayoutParser(

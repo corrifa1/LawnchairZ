@@ -105,10 +105,12 @@ class SmartspaceProvider @Inject constructor(
 }
 
 /**
- * Keeps Expressive's local Smartspace fallback useful from the first frame. Pixel Launcher leads
+ * Keeps LawnchairZ's local Smartspace fallback useful from the first frame. Pixel Launcher leads
  * with the date; onboarding and setup prompts must not displace that glanceable content. Weather
  * targets use the date card layout, so promoting them preserves live weather when it is available
  * and naturally falls back to the date-only target when it is not.
+ *
+ * LawnchairZ modification: names LawnchairZ instead of Expressive.
  */
 internal fun applyLawnchairzSmartspaceTargetPolicy(
     targets: List<SmartspaceTarget>,
