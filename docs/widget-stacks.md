@@ -21,6 +21,9 @@ off by default. Turning it off hides the ways to create stacks; existing stacks 
 - **Edit**: long-press the stack → **Edit stack**, or the pencil on its resize frame. Reorder with a
   long-press drag, remove (with undo), move a widget to the home screen, open a widget's settings,
   and toggle Smart Rotate.
+- **Resize**: long-press → **Resize** opens the resize frame (lifting the finger under the menu
+  doesn't, since the menu holds the drag back). The item is hidden when the stack can't change size
+  or the home screen is locked. Dragging a stack and dropping it also opens the frame.
 - **Delete**: long-press → **Delete stack** asks first and removes every widget in it. Dragging a
   stack to **Remove** deletes it with the usual undo.
 - A stack left with one widget turns back into that widget.
@@ -29,8 +32,8 @@ off by default. Turning it off hides the ways to create stacks; existing stacks 
 ## Architecture
 
 Nearly all code lives in `android/lawnchair/src/app/lawnchair/widgetstack/`. Launcher3 files get
-small hooks marked `// LawnCher: widget stacks` (58 at the time of writing), so rebases stay
-manageable.
+small hooks marked `// LawnchairZ: widget stacks`, or covered by the file's `LawnchairZ
+modification:` notice right above them, so rebases stay manageable.
 
 | File | Role |
 | --- | --- |
@@ -106,7 +109,7 @@ upstream ships its own schema 33, the next rebase must renumber ours.
 | Mostly vertical drag (past touch slop, \|dy\| > \|dx\|) | The stack pages, unless the view under the finger can scroll in that direction (e.g. a list widget), in which case the widget owns the whole gesture. The decision is made once per gesture; there is no mid-gesture handover. |
 | Horizontal drag | The workspace pages (or opens the feed). |
 | Tap | The child widget. |
-| Long-press | A child's long-press is forwarded to the stack, which is picked up and shows Edit / Delete. |
+| Long-press | A child's long-press is forwarded to the stack, which is picked up and shows Edit / Resize / Delete. Only a still finger counts: once the finger moves past touch slop (paging, or scrolling a widget that disallowed intercepts), or while the stack is settling, the forwarded long-press is cancelled. `WidgetStackView.dispatchTouchEvent` tracks this because it sees every event even after a scrolling child stops `onInterceptTouchEvent` from running. |
 | Touch during a paging animation | Catches the page mid-flight. |
 
 The app-drawer swipe (`PortraitStatesTouchController`), notification swipe
@@ -128,7 +131,11 @@ stack's span changes, so they all render at the stack's exact size.
 The resize frame limits a stack to the span range every child supports: the largest of the
 children's minimum spans and the smallest of their maximum spans, per axis, and only the resize
 directions every child allows. If the children share no size on an axis, that axis is locked to
-the current span. A stack containing a non-resizable widget therefore cannot be resized.
+the current span. A stack containing a non-resizable widget therefore cannot be resized, unless
+the launcher's widget options widen it the same way they widen a single widget
+(`WidgetStackSizing.applyResizeOptions`): **Enforce widget resizing** allows both directions, and
+**Remove size constraints** allows 1×1 up to the whole grid. Preset mode snaps within that wider
+range too.
 
 Two modes, switchable under the experimental toggle (**Preset stack sizes**):
 
@@ -186,8 +193,8 @@ while hidden, there is no visible animation.
 
 ## Tests
 
-`android/tests/expressiveUnit/app/lawnchair/widgetstack/` (run with
-`./gradlew testLawnWithQuickstepExpressiveDebugUnitTest --tests "app.lawnchair.widgetstack.*"`):
+`android/tests/lawnchairzUnit/app/lawnchair/widgetstack/` (run with
+`./gradlew testLawnWithQuickstepLawnchairzDebugUnitTest --tests "app.lawnchair.widgetstack.*"`):
 
 - `WidgetStackInfoTest`: options packing, ordering, visible-child stability, span sync.
 - `WidgetStackLoaderRepairTest`: attaching children, orphans, empty and single-child stacks.

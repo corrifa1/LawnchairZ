@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
+ * Copyright 2026 Corey Flynn and LawnchairZ contributors.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Developed for LawnchairZ.
@@ -45,6 +45,10 @@ class WidgetStackResize internal constructor(
 
     /** Whether the stack snaps to preset sizes rather than resizing freely. */
     val isPreset: Boolean get() = presets != null
+
+    /** Whether the resize frame would show any handle on a [countX] x [countY] grid. */
+    fun canResize(countX: Int, countY: Int): Boolean =
+        WidgetStackSizing.canResize(WidgetStackSizing.Rules(range, resizeMode), countX, countY)
 
     /**
      * Preset mode: works out the stack's cells `[cellX, cellY, spanX, spanY]` from the whole drag
@@ -146,7 +150,11 @@ class WidgetStackResize internal constructor(
             return button
         }
 
-        /** Builds the rules for [stack] on a [countX] x [countY] grid. */
+        /**
+         * Builds the rules for [stack] on a [countX] x [countY] grid: the range every child
+         * supports, widened by the "Enforce widget resizing" and "Remove size constraints"
+         * options like a single widget's.
+         */
         @JvmStatic
         fun forStack(stack: WidgetStackView, countX: Int, countY: Int): WidgetStackResize {
             val infos = stack.pageViews.mapNotNull {
@@ -159,10 +167,18 @@ class WidgetStackResize internal constructor(
                 countX, countY, current,
             )
             val resizeMode = infos.fold(AppWidgetProviderInfo.RESIZE_BOTH) { mode, it -> mode and it.resizeMode }
-            val preset = PreferenceManager2.getInstance(stack.context).widgetStackPresetSizes.firstCached()
+            val prefs2 = PreferenceManager2.getInstance(stack.context)
+            val rules = WidgetStackSizing.applyResizeOptions(
+                WidgetStackSizing.Rules(range, resizeMode),
+                countX,
+                countY,
+                force = prefs2.forceWidgetResize.firstCached(),
+                unlimited = prefs2.widgetUnlimitedSize.firstCached(),
+            )
+            val preset = prefs2.widgetStackPresetSizes.firstCached()
             return WidgetStackResize(
-                range,
-                resizeMode,
+                rules.range,
+                rules.resizeMode,
                 if (preset) WidgetStackSizing.presetSizes(countX, countY) else null,
             )
         }

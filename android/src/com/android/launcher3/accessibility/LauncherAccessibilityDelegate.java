@@ -84,7 +84,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
     protected static final int RESIZE = R.id.action_resize;
     public static final int DEEP_SHORTCUTS = R.id.action_deep_shortcuts;
     public static final int CLOSE = R.id.action_close;
-    // LawnCher: widget stacks
+    // LawnchairZ modification: accessibility actions for widget stacks and their widgets.
     protected static final int EDIT_WIDGET_STACK = R.id.action_edit_widget_stack;
 
     public LauncherAccessibilityDelegate(Launcher launcher) {
@@ -152,7 +152,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
             out.add(mActions.get(CLOSE));
         }
 
-        // LawnCher: widget stacks
+        // LawnchairZ: widget stacks
         if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
             out.add(mActions.get(MOVE_TO_WORKSPACE));
         } else if (item instanceof app.lawnchair.widgetstack.WidgetStackInfo) {
@@ -238,7 +238,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
             return btv != null && PopupContainerWithArrow.showForIcon(btv) != null;
         } else if (action == EDIT_WIDGET_STACK
                 && item instanceof app.lawnchair.widgetstack.WidgetStackInfo stack) {
-            // LawnCher: widget stacks
+            // LawnchairZ: widget stacks
             app.lawnchair.widgetstack.WidgetStackEditor.show(mContext, stack);
             return true;
         } else if (action == CLOSE) {
@@ -535,7 +535,7 @@ public class LauncherAccessibilityDelegate extends BaseAccessibilityDelegate<Lau
      * @return true if the item could be successfully added
      */
     public boolean moveToWorkspace(ItemInfo item) {
-        // LawnCher: widget stacks. A stacked widget moves out of its stack, not a folder.
+        // LawnchairZ: widget stacks. A stacked widget moves out of its stack, not a folder.
         if (app.lawnchair.widgetstack.WidgetStackController.isStackChild(item)) {
             boolean moved = app.lawnchair.widgetstack.WidgetStackController.moveChildToWorkspace(
                     mContext, (LauncherAppWidgetInfo) item);

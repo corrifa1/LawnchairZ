@@ -64,7 +64,8 @@ data class BugReport(
             context.getText(
                 productStringId(
                     R.string.lawnchair_bug_report,
-                    R.string.expressive_bug_report,
+                    // LawnchairZ modification: the expressive_* product string is now product_*.
+                    R.string.product_bug_report,
                 ),
             ),
         )

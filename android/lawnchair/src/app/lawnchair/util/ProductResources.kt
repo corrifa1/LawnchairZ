@@ -7,5 +7,6 @@ import com.android.launcher3.BuildConfig
 @StringRes
 fun productStringId(
     @StringRes lawnchairResourceId: Int,
-    @StringRes expressiveResourceId: Int,
-): Int = if (BuildConfig.STANDARD_HOME_ONLY) expressiveResourceId else lawnchairResourceId
+    // LawnchairZ modification: expressiveResourceId was renamed to productResourceId.
+    @StringRes productResourceId: Int,
+): Int = if (BuildConfig.STANDARD_HOME_ONLY) productResourceId else lawnchairResourceId

@@ -606,9 +606,10 @@ public class ModelWriter {
                 if (item.container != Favorites.CONTAINER_DESKTOP &&
                         item.container != Favorites.CONTAINER_HOTSEAT) {
                     // Item is in a collection, make sure this collection exists
+                    // LawnchairZ modification: a widget stack is a valid parent.
                     ItemInfo parent = mBgDataModel.itemsIdMap.get(item.container);
                     if (!(parent instanceof CollectionInfo)
-                            // LawnCher: widget stacks are parents too
+                            // LawnchairZ: widget stacks are parents too
                             && !(parent instanceof app.lawnchair.widgetstack.WidgetStackInfo)) {
                         // An items container is being set to a that of an item which is not in
                         // the list of collections.

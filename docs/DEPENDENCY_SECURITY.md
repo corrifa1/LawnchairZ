@@ -52,5 +52,6 @@ After updating the catalog or constraints:
 4. Run the attribution guard and its existing tests.
 
 The public source and developer-build checks do not establish that an existing
-signed APK contains these changes. Official QA and release delivery continue to
-use the Jenkins pipeline described in the build guide.
+signed APK contains these changes. Rebuild QA and release APKs with your own
+signing identity as described in
+[the build guide](BUILDING.md#build-with-your-own-signing-identity).

@@ -1,6 +1,7 @@
 # Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 # SPDX-License-Identifier: Apache-2.0
-# https://github.com/corrifa1/LawnchairZ
+# https://github.com/denson9874/ExpressiveLauncher
+# Modified by Corey Flynn for LawnchairZ: https://github.com/corrifa1/LawnchairZ
 
 name: CodeQL
 
@@ -73,7 +74,7 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - name: Build Expressive Java and Kotlin for analysis
+      - name: Build LawnchairZ Java and Kotlin for analysis
         if: matrix.language == 'java-kotlin'
         shell: bash
         # Debug also builds the Feed helper, without official signing credentials.
@@ -82,7 +83,7 @@ jobs:
           ./gradlew --no-daemon --no-scan --no-build-cache \
             --no-configuration-cache --max-workers=2 \
             -Pkotlin.compiler.execution.strategy=in-process \
-            clean assembleLawnWithQuickstepExpressiveDebug
+            clean assembleLawnWithQuickstepLawnchairzDebug
 
       - name: Compile standalone Swift tools for analysis
         if: matrix.language == 'swift'

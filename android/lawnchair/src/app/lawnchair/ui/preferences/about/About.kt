@@ -16,11 +16,8 @@
 
 package app.lawnchair.ui.preferences.about
 
-import android.app.Activity
 import android.content.Intent
-import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,21 +35,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -82,78 +73,21 @@ fun About(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val hapticFeedback = LocalHapticFeedback.current
     val applicationIcon = remember(context) {
         context.packageManager.getApplicationIcon(context.applicationInfo)
     }
     val applicationIconPainter = rememberDrawablePainter(applicationIcon)
-    val dailyContent = rememberDailyAboutContent()
-
-    // Keying this short interaction to the local day prevents a tap sequence from mixing two
-    // different daily snark packs when the screen remains open across midnight.
-    val easterEggTapCountSaver = remember(dailyContent.dayKey) {
-        dailyScopedIntSaver(dailyContent.dayKey) {
-            it in 0 until ABOUT_EASTER_EGG_TAP_COUNT
-        }
-    }
-    val celebrationVisibilitySaver = remember(dailyContent.dayKey) {
-        dailyScopedBooleanSaver(dailyContent.dayKey)
-    }
-    var easterEggTapCount by rememberSaveable(
-        dailyContent.dayKey,
-        stateSaver = easterEggTapCountSaver,
-    ) { mutableIntStateOf(0) }
-    var showThankYouCelebration by rememberSaveable(
-        dailyContent.dayKey,
-        stateSaver = celebrationVisibilitySaver,
-    ) {
-        mutableStateOf(false)
-    }
-    val onAboutHeroTap = {
-        val tapResult = nextAboutEasterEggTap(
-            currentTapCount = easterEggTapCount,
-            dailyMessageResIds = dailyContent.snarkPack.messageResIds,
-        )
-        easterEggTapCount = tapResult.nextTapCount
-        Toast.makeText(context, tapResult.messageResId, Toast.LENGTH_SHORT).show()
-        if (tapResult.showCelebration) {
-            hapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
-            showThankYouCelebration = true
-        }
-    }
-
     val sheetState = rememberModalBottomSheetState(true)
     var openBottomSheet by remember { mutableStateOf(false) }
-    var promptRequestedByNotification by remember {
-        mutableStateOf(
-            (context as? Activity)?.intent?.getBooleanExtra(
-                EXTRA_OPEN_EXPRESSIVE_UPDATE_PROMPT,
-                false,
-            ) == true,
-        )
-    }
     val scope = rememberCoroutineScope()
-    val expressiveUpdateConfig = remember { installedExpressiveUpdateConfig() }
 
     val prefs: PreferenceManager = PreferenceManager.getInstance(context)
-
-    LaunchedEffect(promptRequestedByNotification, uiState.updateState) {
-        if (promptRequestedByNotification && uiState.updateState is UpdateState.Available) {
-            ExpressiveUpdateNotifications.cancel(context)
-            (context as? Activity)?.intent?.removeExtra(EXTRA_OPEN_EXPRESSIVE_UPDATE_PROMPT)
-            promptRequestedByNotification = false
-            openBottomSheet = true
-            sheetState.show()
-        }
-    }
 
     if (openBottomSheet) {
         val updateState = uiState.updateState
         if (updateState is UpdateState.Available) {
             ChangesDialog(
                 changelogState = updateState.changelogState,
-                releaseNotes = updateState.releaseNotes,
-                updateName = updateState.name,
                 onDismiss = {
                     scope.launch {
                         sheetState.hide()
@@ -162,19 +96,7 @@ fun About(
                     }
                 },
                 onDownload = {
-                    if (updateState.releaseNotes != null) {
-                        viewModel.downloadAndInstallUpdate()
-                    } else {
-                        viewModel.downloadUpdate()
-                    }
-                },
-                snoozeOptions = if (updateState.releaseNotes != null) {
-                    ExpressiveUpdateSnoozeOption.entries
-                } else {
-                    emptyList()
-                },
-                onSnooze = { option ->
-                    viewModel.snoozeUpdate(updateState, option)
+                    viewModel.downloadUpdate()
                 },
                 sheetState = sheetState,
             )
@@ -192,15 +114,10 @@ fun About(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable(
-                            onClickLabel = stringResource(R.string.about_easter_egg_tap_label),
-                            onClick = onAboutHeroTap,
-                        )
-                        .testTag(ABOUT_EASTER_EGG_TARGET_TAG)
                         .padding(top = 8.dp, bottom = 8.dp),
                 ) {
                     Image(
-                        // The Expressive flavor supplies a layer-list app icon. painterResource
+                        // The product flavor supplies a layer-list app icon. painterResource
                         // crashes on that XML type, while DrawablePainter correctly supports it.
                         painter = applicationIconPainter,
                         contentDescription = null,
@@ -225,10 +142,11 @@ fun About(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.combinedClickable(
-                            onClick = onAboutHeroTap,
+                            onClick = {},
                             onLongClick = {
-                                val destination = if (BuildConfig.IS_EXPRESSIVE_PRODUCT) {
-                                    AboutDestinations.GITHUB_PROFILE_URL
+                                // LawnchairZ modification: link the build's commit in LawnchairZ.
+                                val destination = if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
+                                    "${AboutDestinations.GITHUB_REPOSITORY_URL}/commit/${BuildConfig.COMMIT_HASH}"
                                 } else {
                                     "https://github.com/LawnchairLauncher/lawnchair/commit/${BuildConfig.COMMIT_HASH}"
                                 }
@@ -244,18 +162,9 @@ fun About(
                 }
             }
             item {
-                DailySparkCard(
-                    content = dailyContent,
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                )
-            }
-            item {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                if (expressiveUpdateConfig != null) {
-                    ExpressiveUpdateNotificationControl(config = expressiveUpdateConfig)
-                }
                 UpdateSection(
                     updateState = uiState.updateState,
                     onInstall = {
@@ -303,6 +212,20 @@ fun About(
                 ContributorRow(
                     member = it,
                 )
+            }
+            if (uiState.credits.isNotEmpty()) {
+                preferenceGroupItems(
+                    items = uiState.credits,
+                    isFirstChild = false,
+                    heading = { stringResource(id = R.string.about_based_on) },
+                    key = { _, it -> it.labelResId },
+                ) { _, it ->
+                    HorizontalLawnchairLink(
+                        iconResId = it.iconResId,
+                        label = stringResource(id = it.labelResId),
+                        url = it.url,
+                    )
+                }
             }
             if (uiState.supportAndPr.isNotEmpty()) {
                 preferenceGroupItems(
@@ -369,10 +292,5 @@ fun About(
                 }
             }
         }
-
-        AboutThankYouCelebration(
-            visible = showThankYouCelebration,
-            onDismiss = { showThankYouCelebration = false },
-        )
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
+ * Copyright 2026 Corey Flynn and LawnchairZ contributors.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Developed for LawnchairZ.
@@ -50,6 +50,41 @@ object WidgetStackSizing {
         }
         return SpanRange(minX, minY, maxX, maxY)
     }
+
+    /** A stack's span range and resize directions (AppWidgetProviderInfo.RESIZE_* flags). */
+    data class Rules(val range: SpanRange, val resizeMode: Int)
+
+    /**
+     * Applies the launcher's widget resize options to the rules its children allow, the same
+     * way AppWidgetResizeFrame does for a single widget: [force] ("Enforce widget resizing")
+     * allows both directions, and [unlimited] ("Remove size constraints") allows any span from
+     * one cell to the whole grid in every direction the stack can resize.
+     */
+    fun applyResizeOptions(children: Rules, countX: Int, countY: Int, force: Boolean, unlimited: Boolean): Rules {
+        var mode = if (force) RESIZE_BOTH else children.resizeMode
+        var range = children.range
+        if (unlimited) {
+            range = SpanRange(1, 1, countX.coerceAtLeast(1), countY.coerceAtLeast(1))
+            if (mode != RESIZE_NONE) mode = RESIZE_BOTH
+        }
+        return Rules(range, mode)
+    }
+
+    /** Whether [rules] let the stack change size in at least one direction, as the frame decides. */
+    fun canResize(rules: Rules, countX: Int, countY: Int): Boolean {
+        val r = rules.range
+        val horizontal = rules.resizeMode and RESIZE_HORIZONTAL != 0 &&
+            r.minX < countX && r.maxX > 1 && r.minX < r.maxX
+        val vertical = rules.resizeMode and RESIZE_VERTICAL != 0 &&
+            r.minY < countY && r.maxY > 1 && r.minY < r.maxY
+        return horizontal || vertical
+    }
+
+    // AppWidgetProviderInfo's flags, kept here so the rules stay plain JVM code.
+    const val RESIZE_NONE = 0
+    const val RESIZE_HORIZONTAL = 1
+    const val RESIZE_VERTICAL = 2
+    const val RESIZE_BOTH = RESIZE_HORIZONTAL or RESIZE_VERTICAL
 
     /**
      * Preset sizes, iOS-style small, medium and large (2x2, 4x2, 4x4), narrowed to fit grids with

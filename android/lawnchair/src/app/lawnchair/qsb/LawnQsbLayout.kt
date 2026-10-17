@@ -258,17 +258,9 @@ class LawnQsbLayout(context: Context, attrs: AttributeSet?) : FrameLayout(contex
 
                         val actions = QsbActions(
                             onQsbClick = {
-                                val launcher = context.launcher
-                                launcher.lifecycleScope.launch {
-                                    if (prefs2.matchHotseatQsbStyle.firstCached()) {
-                                        val searchUiManager = launcher.appsView.searchUiManager
-                                        searchUiManager.setDirectFocus(true)
-                                        searchUiManager.editText?.showKeyboard()
-                                        launcher.animateToAllApps()
-                                    } else {
-                                        searchProvider.launch(launcher)
-                                    }
-                                }
+                                // LawnchairZ modification: search and its options moved to the
+                                // companion so the side dock's search button can share them.
+                                launchHotseatSearch(context.launcher, searchProvider)
                             },
                             onQsbLongClick = ::openOptions,
                             onStartIconClick = null,
@@ -333,20 +325,7 @@ class LawnQsbLayout(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     }
 
     private fun openOptions() {
-        val launcher = context.launcher
-        val pos = Rect()
-        launcher.dragLayer.getDescendantRectRelativeToSelf(composeView, pos)
-        OptionsPopupView.show<LawnchairLauncher>(launcher, RectF(pos), listOf(getCustomizeOption()), true)
-    }
-
-    private fun getCustomizeOption() = OptionsPopupView.OptionItem(
-        context,
-        R.string.action_customize,
-        R.drawable.ic_setting,
-        StatsLogManager.LauncherEvent.IGNORE,
-    ) {
-        context.startActivity(PreferenceActivity.createIntent(context, Search()))
-        true
+        openHotseatSearchOptions(context.launcher, composeView)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -389,6 +368,36 @@ class LawnQsbLayout(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     }
 
     companion object {
+
+        /** What tapping the dock search bar does. Also used by the side dock's [SideDockSearchButton]. */
+        fun launchHotseatSearch(launcher: LawnchairLauncher, searchProvider: QsbSearchProvider) {
+            launcher.lifecycleScope.launch {
+                if (PreferenceManager2.getInstance(launcher).matchHotseatQsbStyle.firstCached()) {
+                    val searchUiManager = launcher.appsView.searchUiManager
+                    searchUiManager.setDirectFocus(true)
+                    searchUiManager.editText?.showKeyboard()
+                    launcher.animateToAllApps()
+                } else {
+                    searchProvider.launch(launcher)
+                }
+            }
+        }
+
+        /** Opens the dock search bar's long-press menu (Customize) anchored at [anchor]. */
+        fun openHotseatSearchOptions(launcher: LawnchairLauncher, anchor: View) {
+            val pos = Rect()
+            launcher.dragLayer.getDescendantRectRelativeToSelf(anchor, pos)
+            val customize = OptionsPopupView.OptionItem(
+                launcher,
+                R.string.action_customize,
+                R.drawable.ic_setting,
+                StatsLogManager.LauncherEvent.IGNORE,
+            ) {
+                launcher.startActivity(PreferenceActivity.createIntent(launcher, Search()))
+                true
+            }
+            OptionsPopupView.show<LawnchairLauncher>(launcher, RectF(pos), listOf(customize), true)
+        }
         private const val LENS_PACKAGE = "com.google.ar.lens"
         private const val LENS_ACTIVITY = "com.google.vr.apps.ornament.app.lens.LensLauncherActivity"
 

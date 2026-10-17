@@ -34,7 +34,7 @@ import app.lawnchair.preferences2.preferenceManager2
 import app.lawnchair.theme.color.ColorMode
 import app.lawnchair.ui.preferences.LocalIsExpandedScreen
 import app.lawnchair.ui.preferences.components.FeedPreference
-import app.lawnchair.ui.preferences.components.ExpressiveFeedPreferences
+import app.lawnchair.ui.preferences.components.DiscoverPreferences
 import app.lawnchair.ui.preferences.components.GestureHandlerPreference
 import app.lawnchair.ui.preferences.components.HomeLayoutSettings
 import app.lawnchair.ui.preferences.components.NavigationActionPreference
@@ -117,8 +117,9 @@ fun HomeScreenPreferences(
                 },
             )
         }
-        if (BuildConfig.IS_EXPRESSIVE_PRODUCT) {
-            ExpressiveFeedPreferences()
+        // LawnchairZ modification: Discover settings renamed; closing-animation speed slider added.
+        if (BuildConfig.IS_LAWNCHAIRZ_PRODUCT) {
+            DiscoverPreferences()
         } else {
             val feedAvailable = OverlayCallbackImpl.minusOneAvailable(LocalContext.current)
             val enableFeedAdapter = prefs2.enableFeed.getAdapter()

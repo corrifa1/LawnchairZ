@@ -101,7 +101,9 @@ class OnboardingProvider(context: Context) :
                         title = context.getString(
                             productStringId(
                                 R.string.onboarding_welcome,
-                                R.string.expressive_onboarding_welcome,
+                                // LawnchairZ modification: the expressive_* product string is now
+                                // product_*.
+                                R.string.product_onboarding_welcome,
                             ),
                         ),
                         subtitle = context.getString(R.string.onboarding_swipe_up),
@@ -121,7 +123,7 @@ class OnboardingProvider(context: Context) :
                         title = context.getString(
                             productStringId(
                                 R.string.onboarding_open_settings_title,
-                                R.string.expressive_onboarding_open_settings_title,
+                                R.string.product_onboarding_open_settings_title,
                             ),
                         ),
                         subtitle = context.getString(R.string.onboarding_open_settings_subtitle),
@@ -143,7 +145,7 @@ class OnboardingProvider(context: Context) :
                         title = context.getString(
                             productStringId(
                                 R.string.onboarding_major_upgrade_title,
-                                R.string.expressive_onboarding_major_upgrade_title,
+                                R.string.product_onboarding_major_upgrade_title,
                             ),
                         ),
                         subtitle = context.getString(R.string.onboarding_major_upgrade_subtitle),

@@ -2,19 +2,15 @@ package app.lawnchair.ui.preferences.about
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.provider.Settings
 import android.util.Log
 import androidx.core.content.FileProvider
-import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import app.lawnchair.util.getApkVersionComparison
 import com.android.launcher3.BuildConfig
 import com.android.launcher3.Utilities
 import java.io.File
 import java.io.IOException
-import java.security.MessageDigest
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.outputStream
@@ -29,7 +25,6 @@ import kotlinx.coroutines.launch
 internal class NightlyBuildsRepository(
     val applicationContext: Context,
     val api: GitHubService,
-    private val expressiveUpdateConfig: ExpressiveUpdateConfig? = null,
 ) {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -44,11 +39,9 @@ internal class NightlyBuildsRepository(
         coroutineScope.launch(Dispatchers.Default) {
             updateState.update { UpdateState.Checking }
             try {
-                if (expressiveUpdateConfig != null) {
-                    checkExpressiveUpdate(expressiveUpdateConfig)
-                } else {
-                    checkNightlyUpdate()
-                }
+                // LawnchairZ modification: Expressive's update checker was removed; only the
+                // Lawnchair nightly check remains.
+                checkNightlyUpdate()
             } catch (e: Exception) {
                 when (e) {
                     is IOException -> {
@@ -60,39 +53,6 @@ internal class NightlyBuildsRepository(
                     }
                 }
                 updateState.update { UpdateState.Failed }
-            }
-        }
-    }
-
-    private suspend fun checkExpressiveUpdate(config: ExpressiveUpdateConfig) {
-        when (
-            val decision = fetchExpressiveUpdateDecision(
-                api = api,
-                config = config,
-                currentVersionCode = BuildConfig.VERSION_CODE.toLong(),
-                currentPackageName = BuildConfig.APPLICATION_ID,
-            )
-        ) {
-            is ExpressiveUpdateDecision.Available -> {
-                val update = decision.manifest
-                updateState.update {
-                    UpdateState.Available(
-                        name = "LawnchairZ ${update.versionName} (${config.channel.wireName.uppercase()})",
-                        url = update.apkUrl,
-                        changelogState = null,
-                        expectedSha256 = update.sha256,
-                        expectedSizeBytes = update.sizeBytes,
-                        expectedVersionCode = update.versionCode,
-                        expectedPackageName = update.packageName,
-                        releaseNotes = update.releaseNotes,
-                    )
-                }
-            }
-
-            ExpressiveUpdateDecision.UpToDate -> updateState.update { UpdateState.UpToDate }
-
-            is ExpressiveUpdateDecision.Rejected -> {
-                throw IOException("Rejected Expressive update manifest: ${decision.reason}")
             }
         }
     }
@@ -263,10 +223,6 @@ internal class NightlyBuildsRepository(
                 apkFilePath.deleteIfExists()
                 return null
             }
-            if (!applicationContext.validateExpressiveUpdateApk(apkFile, update)) {
-                apkFilePath.deleteIfExists()
-                return null
-            }
 
             apkFile
         } catch (e: Exception) {
@@ -279,55 +235,6 @@ internal class NightlyBuildsRepository(
         private const val TAG = "NightlyBuildsRepository"
     }
 }
-
-private fun Context.validateExpressiveUpdateApk(
-    apkFile: File,
-    update: UpdateState.Available,
-): Boolean {
-    if (update.expectedPackageName == null && update.expectedVersionCode == null) return true
-
-    val candidate = packageManager.getPackageArchiveInfo(
-        apkFile.absolutePath,
-        PackageManager.GET_SIGNING_CERTIFICATES,
-    ) ?: return false.also { Log.e("UpdateCheck", "Unable to parse downloaded APK") }
-    if (candidate.packageName != update.expectedPackageName) {
-        Log.e("UpdateCheck", "Downloaded APK package does not match the update manifest")
-        return false
-    }
-    if (PackageInfoCompat.getLongVersionCode(candidate) != update.expectedVersionCode) {
-        Log.e("UpdateCheck", "Downloaded APK version does not match the update manifest")
-        return false
-    }
-
-    val installed = packageManager.getPackageInfo(
-        packageName,
-        PackageManager.GET_SIGNING_CERTIFICATES,
-    )
-    if (!signingLineageAccepts(installed.signingDigests(), candidate.signingDigests())) {
-        Log.e("UpdateCheck", "Downloaded APK signing certificate does not match the installed app")
-        return false
-    }
-    return true
-}
-
-private fun PackageInfo.signingDigests(): Set<String> {
-    val info = signingInfo ?: return emptySet()
-    val signatures = if (info.hasMultipleSigners()) {
-        info.apkContentsSigners
-    } else {
-        info.signingCertificateHistory
-    }
-    return signatures.mapTo(mutableSetOf()) { signature ->
-        MessageDigest.getInstance("SHA-256")
-            .digest(signature.toByteArray())
-            .joinToString("") { "%02x".format(it) }
-    }
-}
-
-internal fun signingLineageAccepts(
-    installedDigests: Set<String>,
-    candidateLineageDigests: Set<String>,
-): Boolean = installedDigests.isNotEmpty() && candidateLineageDigests.containsAll(installedDigests)
 
 private fun Context.hasInstallPermission(): Boolean {
     return if (Utilities.ATLEAST_O) {

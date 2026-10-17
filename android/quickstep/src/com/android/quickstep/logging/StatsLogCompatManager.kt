@@ -218,7 +218,10 @@ class StatsLogCompatManager private constructor(context: Context) : StatsLogMana
                     event,
                     applyOverwrites(
                         info.buildProto(
-                            dataModel.itemsIdMap[info.container] as CollectionInfo?,
+                            // LawnchairZ modification: stats logging handles widgets inside a
+                            // stack.
+                            // Stacked widgets have a WidgetStackInfo parent
+                            dataModel.itemsIdMap[info.container] as? CollectionInfo,
                             context,
                         )
                     ),

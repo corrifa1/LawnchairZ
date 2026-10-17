@@ -1,0 +1,18 @@
+package com.android.launcher3.model
+
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
+
+class DefaultWorkspaceSourcePolicyTest {
+
+    // LawnchairZ modification: renamed for LawnchairZ.
+    @Test
+    fun lawnchairzProduct_usesBundledPixelStyleLayout() {
+        assertThat(ModelDbController.shouldUseExternalDefaultLayout(true)).isFalse()
+    }
+
+    @Test
+    fun otherProducts_preserveExternalLayoutPriority() {
+        assertThat(ModelDbController.shouldUseExternalDefaultLayout(false)).isTrue()
+    }
+}

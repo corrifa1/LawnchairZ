@@ -68,6 +68,8 @@ class VerticalSwipeTouchController(
         if (noIntercept) {
             return false
         }
+        // LawnchairZ modification: launcher drags and pageable widget stacks keep their vertical
+        // swipes.
         // A launcher drag (e.g. a long-pressed widget or icon) owns the rest of this gesture
         if (launcher.dragController.isDragging) {
             noIntercept = true
@@ -96,7 +98,7 @@ class VerticalSwipeTouchController(
         if (isIconSwipe) {
             return false
         }
-        // LawnCher: widget stacks page on vertical swipes instead
+        // LawnchairZ: widget stacks page on vertical swipes instead
         if (WidgetStackTouch.isTouchOnPageableStack(launcher, ev)) {
             return false
         }

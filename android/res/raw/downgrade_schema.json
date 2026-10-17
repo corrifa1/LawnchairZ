@@ -3,7 +3,7 @@
 
   // Maximum DB version supported by this schema
   "version" : 33,
-  // LawnCher: widget stacks (itemType 100). Older builds do not know stacks, so keep each stack's
+  // LawnchairZ: widget stacks (itemType 100). Older builds do not know stacks, so keep each stack's
   // visible child (rank in options bits 8-15, nearest rank wins) as a plain widget in the stack's
   // cells, then drop the other children and the stacks. Freed widget ids are reclaimed by
   // removeGhostWidgets on the next load.

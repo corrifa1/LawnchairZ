@@ -1,6 +1,7 @@
 # Copyright 2026 Daryl Denson and Expressive Launcher contributors.
 # SPDX-License-Identifier: Apache-2.0
-# https://github.com/corrifa1/LawnchairZ
+# https://github.com/denson9874/ExpressiveLauncher
+# Modified by Corey Flynn for LawnchairZ: https://github.com/corrifa1/LawnchairZ
 
 """Exercise attribution loss against a small, isolated repository fixture."""
 
@@ -29,14 +30,15 @@ class AttributionTest(unittest.TestCase):
         for relative in attribution.LICENSE_SHA256:
             self.write(relative, (REPOSITORY / relative).read_bytes())
         self.notice = ("LawnchairZ\nhttps://github.com/corrifa1/LawnchairZ\n"
-                       "Copyright 2026 Daryl Denson and Expressive Launcher contributors.\n"
-                       "The Android Open Source Project\nLawnchair\n")
+                       "Copyright 2026 Corey Flynn and LawnchairZ contributors.\n\n"
+                       + attribution.UPSTREAM_NOTICE)
         self.write("NOTICE", self.notice)
         self.write(attribution.PACKAGED_NOTICE, self.notice)
         self.header = ("/* Copyright 2026 Daryl Denson and Expressive Launcher contributors.\n"
                        " * SPDX-License-Identifier: Apache-2.0\n"
-                       " * Developed for LawnchairZ.\n"
-                       " * https://github.com/corrifa1/LawnchairZ\n */\n")
+                       " * Developed for Expressive Launcher.\n"
+                       " * https://github.com/denson9874/ExpressiveLauncher\n"
+                       " * Modified by Corey Flynn for LawnchairZ: https://github.com/corrifa1/LawnchairZ\n */\n")
         for relative in attribution.ATTRIBUTED_SOURCES:
             self.write(relative, self.header + "package fixture\n")
 
@@ -77,7 +79,7 @@ class AttributionTest(unittest.TestCase):
                 self.write(relative, original)
 
     def test_notice_project_name_does_not_replace_contributor_copyright(self):
-        copyright = "Copyright 2026 Daryl Denson and Expressive Launcher contributors."
+        copyright = "Copyright 2026 Corey Flynn and LawnchairZ contributors."
         stripped = self.notice.replace(copyright, "")
         self.assertIn("LawnchairZ", stripped)
         self.write("NOTICE", stripped)
@@ -88,13 +90,29 @@ class AttributionTest(unittest.TestCase):
     def test_source_project_name_does_not_replace_contributor_copyright(self):
         copyright = "Copyright 2026 Daryl Denson and Expressive Launcher contributors."
         stripped = self.header.replace(copyright, "")
-        self.assertIn("LawnchairZ", stripped)
+        self.assertIn("Expressive Launcher", stripped)
         for relative in attribution.ATTRIBUTED_SOURCES:
             with self.subTest(path=relative):
                 self.write(relative, stripped + "package fixture\n")
                 self.assertTrue(any(relative in error and copyright in error
                                     for error in attribution.check(self.root)))
                 self.write(relative, self.header + "package fixture\n")
+
+    def test_rebranding_the_upstream_notice_fails(self):
+        # The blanket rename once rewrote Expressive's NOTICE header to LawnchairZ's.
+        rebranded = self.notice.replace(
+            "Expressive Launcher\nhttps://github.com/denson9874/ExpressiveLauncher\n", "")
+        self.write("NOTICE", rebranded)
+        self.write(attribution.PACKAGED_NOTICE, rebranded)
+        self.assertIn("NOTICE: must reproduce the Expressive Launcher NOTICE unchanged.",
+                      attribution.check(self.root))
+
+    def test_rebranding_an_expressive_source_header_fails(self):
+        relative = attribution.ATTRIBUTED_SOURCES[0]
+        rebranded = self.header.replace("https://github.com/denson9874/ExpressiveLauncher\n", "")
+        self.write(relative, rebranded + "package fixture\n")
+        self.assertTrue(any(relative in error and "denson9874/ExpressiveLauncher" in error
+                            for error in attribution.check(self.root)))
 
     def test_packaged_notice_must_match_exact_bytes(self):
         self.write(attribution.PACKAGED_NOTICE, self.notice.replace("\n", "\r\n"))

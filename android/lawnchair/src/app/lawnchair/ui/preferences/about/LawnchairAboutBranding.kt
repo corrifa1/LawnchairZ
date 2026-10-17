@@ -2,7 +2,8 @@ package app.lawnchair.ui.preferences.about
 
 import com.android.launcher3.R
 
-/** Branding retained exclusively for the non-Expressive Lawnchair build flavors. */
+// LawnchairZ modification: names LawnchairZ instead of Expressive.
+/** Branding retained exclusively for the non-LawnchairZ Lawnchair build flavors. */
 internal val lawnchairTeam = listOf(
     TeamMember(
         name = "Amogh Lele",

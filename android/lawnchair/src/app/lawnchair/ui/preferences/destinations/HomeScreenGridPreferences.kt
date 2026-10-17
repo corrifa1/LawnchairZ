@@ -188,7 +188,9 @@ fun HomeScreenGridPreferences(
                                         description = stringResource(
                                             productStringId(
                                                 R.string.unfolded_grid_description,
-                                                R.string.expressive_unfolded_grid_description,
+                                                // LawnchairZ modification: the expressive_* product
+                                                // string is now product_*.
+                                                R.string.product_unfolded_grid_description,
                                             ),
                                         ),
                                     )

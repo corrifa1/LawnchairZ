@@ -97,6 +97,14 @@ class PreferenceManager @Inject constructor(
     val hotseatColumnsUnfolded = IntPref("pref_hotseatColumnsUnfolded", calculatedGridSpec.hotseatColumnsUnfolded, reloadGrid)
     val hotseatRows = IntPref("pref_hotseatRows", 1, reloadGrid)
     val dockPages = IntPref("pref_dockPages", 1, reloadGrid)
+
+    // LawnchairZ modification: preferences for the side dock, return animation, animation speed and
+    // fold bridge.
+    // LawnchairZ: side dock (iPhone Duo-style). One of the DOCK_POSITION_* values.
+    val dockPosition = StringPref("pref_dockPosition", DOCK_POSITION_BOTTOM, reloadGrid)
+
+    // Space between side dock icons: 0 = icons touch, 1 = one workspace row per icon.
+    val sideDockSpacing = FloatPref("pref_sideDockSpacing", 0.4f, reloadGrid)
     val workspaceColumns = IntPref("pref_workspaceColumns", calculatedGridSpec.workspaceColumns)
     val workspaceRows = IntPref("pref_workspaceRows", calculatedGridSpec.workspaceRows)
     val workspaceIncreaseMaxGridSize = BoolPref("pref_workspace_increase_max_grid_size", false)
@@ -234,6 +242,10 @@ class PreferenceManager @Inject constructor(
 
     companion object {
         private const val CURRENT_VERSION = 2
+
+        const val DOCK_POSITION_BOTTOM = "bottom"
+        const val DOCK_POSITION_RIGHT = "right"
+        const val DOCK_POSITION_LEFT = "left"
 
         @JvmField
         val INSTANCE = DaggerSingletonObject(LauncherAppComponent::getPreferenceManager)

@@ -81,7 +81,9 @@ fun ExperimentalFeaturesPreferences(
                 label = stringResource(R.string.show_deck_layout),
                 description = stringResource(R.string.show_deck_layout_description),
             )
-            // LawnCher: widget stacks
+            // LawnchairZ modification: switches for widget stacks, the fold bridge and the launcher
+            // animations.
+            // LawnchairZ: widget stacks
             val widgetStacksAdapter = prefs2.widgetStacks.getAdapter()
             SwitchPreference(
                 adapter = widgetStacksAdapter,

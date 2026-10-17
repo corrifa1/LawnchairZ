@@ -136,9 +136,13 @@ class DeviceProfileOverrides @Inject constructor(
             numDockPages = prefs.dockPages.get().coerceIn(1, 5),
 
             foldableShownHotseatIcons = if (deviceType == InvariantDeviceProfile.TYPE_MULTI_DISPLAY) {
-                val folded = prefs.hotseatColumns.get()
-                val unfolded = previewOverrides.foldableDatabaseHotseatIcons ?: prefs.hotseatColumnsUnfolded.get()
-                folded.coerceAtMost(unfolded)
+                // LawnchairZ modification: a side dock shows the folded dock icon count on both
+                // fold screens.
+                shownHotseatIconsOnFoldable(
+                    folded = prefs.hotseatColumns.get(),
+                    unfolded = previewOverrides.foldableDatabaseHotseatIcons ?: prefs.hotseatColumnsUnfolded.get(),
+                    sideDock = prefs.dockPosition.get() != PreferenceManager.DOCK_POSITION_BOTTOM,
+                )
             } else {
                 -1
             },
@@ -231,5 +235,14 @@ class DeviceProfileOverrides @Inject constructor(
     companion object {
         @JvmField
         val INSTANCE = DaggerSingletonObject(LauncherAppComponent::getDPO)
+
+        /**
+         * Dock icons shown on a foldable. A bottom dock shows at most the unfolded count folded;
+         * LawnchairZ's side dock shows the folded ("Dock icons") count on both screens. The
+         * database is grown in [Options.applyUi] when this exceeds the unfolded count, so no dock
+         * item is dropped either way.
+         */
+        fun shownHotseatIconsOnFoldable(folded: Int, unfolded: Int, sideDock: Boolean): Int =
+            if (sideDock) folded else folded.coerceAtMost(unfolded)
     }
 }

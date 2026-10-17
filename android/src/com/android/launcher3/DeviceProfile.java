@@ -125,6 +125,17 @@ public class DeviceProfile {
     public boolean isPredictiveBackSwipe;
     public final boolean isQsbInline;
 
+    // LawnchairZ modification: side dock (iPhone Duo-style) layout.
+    // LawnchairZ: side dock. True when the user put the dock on a side of the screen
+    // (iPhone Duo-style) in any orientation; isVerticalBarLayout() stays the stock
+    // landscape-phone flag that overview, all apps and quickstep read.
+    public final boolean isSideDock;
+    private final boolean mSideDockOnLeft;
+    // Space between side dock icons, 0..1 (see getHotseatLayoutPadding).
+    private final float mSideDockSpacing;
+    // Whether the side dock shows the dock search bar as a button below its icons.
+    private boolean mSideDockHasSearch;
+
     // Device properties in current orientation
 
     public final boolean isLeftRightSplit;
@@ -315,6 +326,9 @@ public class DeviceProfile {
         mIconSizeSteps = null;
         isPredictiveBackSwipe = false;
         isQsbInline = false;
+        isSideDock = false;
+        mSideDockOnLeft = false;
+        mSideDockSpacing = 0f;
         isLeftRightSplit = false;
         mIsScalableGrid = false;
         mTypeIndex = 0;
@@ -405,6 +419,16 @@ public class DeviceProfile {
                 || (enableBubbleBar() && enableBubbleBarOnPhones());
         isTaskbarPresent = isTaskBarEnabled && (mDeviceProperties.isTablet() || (taskbarOrBubbleBarOnPhones && isGestureMode))
                 && wmProxy.isTaskbarDrawnInProcess();
+
+        // LawnchairZ: side dock. Not with the taskbar (its alignment with the dock assumes a
+        // bottom dock), in multi-window, or with fixed landscape.
+        String dockPosition = PreferenceManager.getInstance(context).getDockPosition().get();
+        isSideDock = !PreferenceManager.DOCK_POSITION_BOTTOM.equals(dockPosition)
+                && PreferenceCacheExtensionsKt.firstCached(preferenceManager2.isHotseatEnabled())
+                && !isTaskbarPresent && !isMultiWindowMode && !inv.isFixedLandscape;
+        mSideDockOnLeft = isSideDock && PreferenceManager.DOCK_POSITION_LEFT.equals(dockPosition);
+        mSideDockSpacing = Utilities.boundToRange(
+                PreferenceManager.getInstance(context).getSideDockSpacing().get(), 0f, 1f);
 
         // Some more constants.
         context = getContext(context, info, inv.isFixedLandscape
@@ -519,6 +543,12 @@ public class DeviceProfile {
         boolean isQsbEnable = hotseatMode.getLayoutResourceId() != R.layout.empty_view;
 
         numShownHotseatIcons = displayOptionSpec.numShownHotseatIcons;
+        if (isSideDock) {
+            // LawnchairZ: side dock. Same dock on both fold screens (iPhone Duo): two panels
+            // would otherwise show the larger unfolded count. The database size is untouched,
+            // so the extra ranks stay as hidden overflow items.
+            numShownHotseatIcons = Math.min(numShownHotseatIcons, inv.numShownHotseatIcons);
+        }
         numHotseatRows = Math.max(1, Math.min(2, PreferenceManager.getInstance(context).getHotseatRows().get()));
         numHotseatPages = Math.max(1, Math.min(5, PreferenceManager.getInstance(context).getDockPages().get()));
         mHotseatColumnSpan = inv.numColumns;
@@ -534,13 +564,13 @@ public class DeviceProfile {
                     HotseatSpecsProvider.create(new ResourceHelper(context,
                             displayOptionSpec.hotseatSpecsId));
             mResponsiveHotseatSpec =
-                    isVerticalBarLayout() ? hotseatSpecsProvider.getCalculatedSpec(
+                    hasVerticalHotseat() ? hotseatSpecsProvider.getCalculatedSpec(
                             responsiveAspectRatio, DimensionType.WIDTH, mDeviceProperties.getWidthPx())
                             : hotseatSpecsProvider.getCalculatedSpec(responsiveAspectRatio,
                                     DimensionType.HEIGHT, mDeviceProperties.getHeightPx());
             hotseatQsbSpace = mResponsiveHotseatSpec.getHotseatQsbSpace();
             hotseatBarBottomSpace =
-                    isVerticalBarLayout() ? 0 : mResponsiveHotseatSpec.getEdgePadding();
+                    hasVerticalHotseat() ? 0 : mResponsiveHotseatSpec.getEdgePadding();
 
             ResponsiveCellSpecsProvider workspaceCellSpecs = ResponsiveCellSpecsProvider.create(
                     new ResourceHelper(context, displayOptionSpec.workspaceCellSpecsId));
@@ -562,21 +592,24 @@ public class DeviceProfile {
                 inv,
                 isTaskbarPresent,
                 shouldApplyWidePortraitDimens,
-                isVerticalBarLayout(),
+                hasVerticalHotseat(),
                 mResponsiveHotseatSpec,
                 workspacePageIndicatorHeight,
                 hotseatMode
         );
 
+        // LawnchairZ: side dock. The dock's search bar becomes a button below the dock icons.
+        mSideDockHasSearch = isSideDock && hotseatProfile.getQsbHeight() > 0;
+
         // Whether QSB might be inline in appropriate orientation (e.g. landscape).
-        isQsbInline = isQsbInline(
+        isQsbInline = !isSideDock && isQsbInline(
                 inv,
                 hotseatProfile,
                 mDeviceProperties,
                 mIsScalableGrid
         );
 
-        if (!isVerticalBarLayout()) {
+        if (!hasVerticalHotseat()) {
             // Have a little space between the inset and the QSB
             if (!isQsbEnable && mInsets.bottom + minQsbMargin > hotseatBarBottomSpace) {
                 int availableSpace = hotseatQsbSpace - (mInsets.bottom - hotseatBarBottomSpace);
@@ -615,11 +648,11 @@ public class DeviceProfile {
         // for the available height to be correct
         if (mIsResponsiveGrid) {
             int availableResponsiveWidth =
-                    mDeviceProperties.getAvailableWidthPx() - (isVerticalBarLayout() ? hotseatBarSizePx : 0);
+                    mDeviceProperties.getAvailableWidthPx() - (hasVerticalHotseat() ? hotseatBarSizePx : 0);
             int numWorkspaceColumns = getPanelCount() * inv.numColumns;
             // don't use availableHeightPx because it subtracts mInsets.bottom
             int availableResponsiveHeight = mDeviceProperties.getHeightPx() - mInsets.top
-                    - (isVerticalBarLayout() ? 0 : hotseatBarSizePx);
+                    - (hasVerticalHotseat() ? 0 : hotseatBarSizePx);
             float responsiveAspectRatio = (float) mDeviceProperties.getWidthPx() / mDeviceProperties.getHeightPx();
 
             ResponsiveSpecsProvider workspaceSpecs = ResponsiveSpecsProvider.create(
@@ -707,7 +740,7 @@ public class DeviceProfile {
         // Hotseat and QSB width depends on updated cellSize and workspace padding
         recalculateHotseatWidthAndBorderSpace();
 
-        if (mIsResponsiveGrid && isVerticalBarLayout()) {
+        if (mIsResponsiveGrid && hasVerticalHotseat()) {
             hotseatBorderSpace = cellLayoutBorderSpacePx.y;
         }
 
@@ -914,7 +947,7 @@ public class DeviceProfile {
         // Extra height needed for additional dock rows
         int extraRowsHeight = (numHotseatRows - 1) * hotseatCellHeightPx;
 
-        if (isVerticalBarLayout()) {
+        if (hasVerticalHotseat()) {
             hotseatBarSizePx = hotseatIconSizePx + getHotseatProfile().getBarEdgePaddingPx()
                     + getHotseatProfile().getBarWorkspaceSpacePx()
                     + space;
@@ -947,7 +980,8 @@ public class DeviceProfile {
      * necessary.
      */
     public void recalculateHotseatWidthAndBorderSpace() {
-        if (!mIsScalableGrid) return;
+        // LawnchairZ: side dock. The side dock is one column; this only sizes a horizontal dock.
+        if (!mIsScalableGrid || isSideDock) return;
 
         updateHotseatWidthAndBorderSpace(inv.numColumns);
         int numWorkspaceColumns = getPanelCount() * inv.numColumns;
@@ -1680,6 +1714,10 @@ public class DeviceProfile {
      */
     public float getCellLayoutSpringLoadShrunkBottom(Context context) {
         int topOfHotseat = hotseatBarSizePx + getHotseatProfile().getSpringLoadedBarTopMarginPx();
+        if (isSideDock && !isVerticalBarLayout()) {
+            // LawnchairZ: side dock. Nothing sits below the workspace but the page indicator.
+            return mDeviceProperties.getHeightPx() - mInsets.bottom - workspacePadding.bottom;
+        }
         return mDeviceProperties.getHeightPx() - (isVerticalBarLayout()
                 ? getVerticalHotseatLastItemBottomOffset(context) : topOfHotseat);
     }
@@ -1738,7 +1776,7 @@ public class DeviceProfile {
                 padding.top = mResponsiveWorkspaceHeightSpec.getStartPaddingPx();
                 padding.bottom = Math.max(0,
                         mResponsiveWorkspaceHeightSpec.getEndPaddingPx() - mInsets.bottom);
-                if (isSeascape()) {
+                if (isDockOnLeft()) {
                     padding.left =
                             hotseatBarSizePx + mResponsiveWorkspaceWidthSpec.getEndPaddingPx();
                     padding.right = mResponsiveWorkspaceWidthSpec.getStartPaddingPx();
@@ -1750,13 +1788,32 @@ public class DeviceProfile {
             } else {
                 padding.top = 0;
                 padding.bottom = edgeMarginPx;
-                if (isSeascape()) {
+                if (isDockOnLeft()) {
                     padding.left = hotseatBarSizePx;
                     padding.right = getHotseatProfile().getBarEdgePaddingPx();
                 } else {
                     padding.left = getHotseatProfile().getBarEdgePaddingPx();
                     padding.right = hotseatBarSizePx;
                 }
+            }
+        } else if (isSideDock) {
+            // LawnchairZ: side dock in portrait, or on a two-panel screen. The dock takes width
+            // from the outer edge of the screen; the bottom keeps room for the page indicator.
+            // Two panels split the remaining width evenly (see getCellLayoutWidth()).
+            int paddingTop = workspaceTopPadding + (mIsScalableGrid ? 0 : edgeMarginPx);
+            int paddingBottom = workspaceBottomPadding + edgeMarginPx;
+            if (!mIsResponsiveGrid) {
+                paddingBottom +=
+                        workspacePageIndicatorHeight - mWorkspacePageIndicatorOverlapWorkspace;
+            }
+            paddingTop = Math.round(paddingTop * workspacePaddingVerticalFactor);
+            paddingBottom = Math.round(paddingBottom * workspacePaddingVerticalFactor);
+            if (isDockOnLeft()) {
+                padding.set(hotseatBarSizePx, paddingTop, desiredWorkspaceHorizontalMarginPx,
+                        paddingBottom);
+            } else {
+                padding.set(desiredWorkspaceHorizontalMarginPx, paddingTop, hotseatBarSizePx,
+                        paddingBottom);
             }
         } else {
             // Pad the bottom of the workspace with hotseat bar
@@ -1871,14 +1928,33 @@ public class DeviceProfile {
      */
     public Rect getHotseatLayoutPadding(Context context) {
         Rect hotseatBarPadding = new Rect();
-        if (isVerticalBarLayout()) {
+        if (hasVerticalHotseat()) {
             // The hotseat icons will be placed in the middle of the hotseat cells.
             // Changing the hotseatCellHeightPx is not affecting hotseat icon positions
             // in vertical bar layout.
             int paddingTop = Math.max((int) (mInsets.top + cellLayoutPaddingPx.top), 0);
             int paddingBottom = Math.max((int) (mInsets.bottom + cellLayoutPaddingPx.bottom), 0);
 
-            if (isSeascape()) {
+            if (isSideDock) {
+                // LawnchairZ: side dock. Keep the search button's slot at the bottom free, then
+                // center a compact column instead of spreading the icons over the whole screen.
+                // Each icon gets between its own size (spacing 0) and one workspace row
+                // (spacing 1).
+                if (mSideDockHasSearch) {
+                    paddingBottom += getSideDockSearchButtonSizePx() + 2 * edgeMarginPx;
+                }
+                int slot = calculateSideDockSlot(getCellSize().y + cellLayoutBorderSpacePx.y,
+                        getIconSizeWithOverlap(iconSizePx), mSideDockSpacing);
+                int columnHeight = numShownHotseatIcons * slot;
+                int extra = mDeviceProperties.getHeightPx() - paddingTop - paddingBottom
+                        - columnHeight;
+                if (extra > 0) {
+                    paddingTop += extra / 2;
+                    paddingBottom += extra - extra / 2;
+                }
+            }
+
+            if (isDockOnLeft()) {
                 hotseatBarPadding.set(mInsets.left + getHotseatProfile().getBarEdgePaddingPx(),
                         paddingTop, getHotseatProfile().getBarWorkspaceSpacePx(), paddingBottom);
             } else {
@@ -2115,7 +2191,17 @@ public class DeviceProfile {
      * @return the bounds for which the open folders should be contained within
      */
     public Rect getAbsoluteOpenFolderBounds() {
-        if (isVerticalBarLayout()) {
+        if (isSideDock && !isVerticalBarLayout()) {
+            // LawnchairZ: side dock. Below the drop target bar, beside the dock.
+            int left = mInsets.left + edgeMarginPx + (isDockOnLeft() ? hotseatBarSizePx : 0);
+            int right = mInsets.left + mDeviceProperties.getAvailableWidthPx() - edgeMarginPx
+                    - (isDockOnLeft() ? 0 : hotseatBarSizePx);
+            return new Rect(left,
+                    mInsets.top + getDropTargetProfile().getBarSizePx() + edgeMarginPx,
+                    right,
+                    mInsets.top + mDeviceProperties.getAvailableHeightPx()
+                            - workspacePageIndicatorHeight - edgeMarginPx);
+        } else if (isVerticalBarLayout()) {
             // Folders should only appear right of the drop target bar and left of the hotseat
             return new Rect(
                     mInsets.left + getDropTargetProfile().getBarSizePx() + edgeMarginPx,
@@ -2131,6 +2217,16 @@ public class DeviceProfile {
                     mInsets.top + mDeviceProperties.getAvailableHeightPx() - hotseatTop
                             - workspacePageIndicatorHeight - edgeMarginPx);
         }
+    }
+
+    /**
+     * LawnchairZ: side dock. Height of one side dock icon's slot: between the icon's own size
+     * ({@code spacing} 0) and one workspace row ({@code spacing} 1), never more than a row.
+     */
+    public static int calculateSideDockSlot(int rowPitch, int iconSlot, float spacing) {
+        int minSlot = Math.min(rowPitch, iconSlot);
+        float clampedSpacing = Math.max(0f, Math.min(1f, spacing));
+        return minSlot + Math.round((rowPitch - minSlot) * clampedSpacing);
     }
 
     public static int calculateCellWidth(int width, int borderSpacing, int countX) {
@@ -2153,6 +2249,61 @@ public class DeviceProfile {
     public boolean isSeascape() {
         return mDeviceProperties.getRotationHint() == Surface.ROTATION_270
                 && (isVerticalBarLayout() || inv.isFixedLandscape);
+    }
+
+    /**
+     * LawnchairZ: side dock. Whether the dock is one column on a side of the screen: the stock
+     * landscape-phone layout or the user's side dock. Use this, not isVerticalBarLayout(), for
+     * the dock's own geometry.
+     */
+    public boolean hasVerticalHotseat() {
+        return isVerticalBarLayout() || isSideDock;
+    }
+
+    /**
+     * LawnchairZ: side dock. Size of the search button below the side dock's icons (the dock
+     * search bar's provider icon), or 0 when there is none.
+     */
+    public int getSideDockSearchButtonSizePx() {
+        return mSideDockHasSearch ? iconSizePx : 0;
+    }
+
+    /**
+     * LawnchairZ: side dock. Bounds of the search button in drag layer coordinates: centered in
+     * the dock column, at the bottom edge of the screen. Empty when there is no button.
+     */
+    public Rect getSideDockSearchButtonBounds(Context context) {
+        int size = getSideDockSearchButtonSizePx();
+        if (size <= 0) {
+            return new Rect();
+        }
+        Rect dockPadding = getHotseatLayoutPadding(context);
+        int dockLeft;
+        int dockRight;
+        if (isDockOnLeft()) {
+            dockLeft = 0;
+            dockRight = hotseatBarSizePx + mInsets.left;
+        } else {
+            dockRight = mDeviceProperties.getWidthPx();
+            dockLeft = dockRight - hotseatBarSizePx - mInsets.right;
+        }
+        int centerX = (dockLeft + dockPadding.left + dockRight - dockPadding.right) / 2;
+        int bottom = mDeviceProperties.getHeightPx() - mInsets.bottom - edgeMarginPx;
+        return new Rect(centerX - size / 2, bottom - size, centerX - size / 2 + size, bottom);
+    }
+
+    /** LawnchairZ: side dock. Whether a vertical dock sits on the left edge. */
+    public boolean isDockOnLeft() {
+        return isSideDock ? mSideDockOnLeft : isSeascape();
+    }
+
+    /**
+     * LawnchairZ: side dock. Whether the vertical dock lists dock ranks from the top. The side
+     * dock reads top to bottom, like the bottom dock reads left to right; the stock landscape
+     * dock keeps rank 0 at the bottom.
+     */
+    public boolean isVerticalHotseatTopDown() {
+        return isSideDock;
     }
 
     public boolean shouldFadeAdjacentWorkspaceScreens() {
@@ -2195,6 +2346,10 @@ public class DeviceProfile {
         writer.println(prefix + "\tisGestureMode:" + mDeviceProperties.isGestureMode());
 
         writer.println(prefix + "\tisLandscape:" + mDeviceProperties.isLandscape());
+        // LawnchairZ: side dock. Only printed when on, so the default dump is unchanged.
+        if (isSideDock) {
+            writer.println(prefix + "\tisSideDock:true dockOnLeft:" + isDockOnLeft());
+        }
         writer.println(prefix + "\tisMultiWindowMode:" + mDeviceProperties.isMultiWindowMode());
         writer.println(prefix + "\tisTwoPanels:" + mDeviceProperties.isTwoPanels());
         writer.println(prefix + "\tisLeftRightSplit:" + isLeftRightSplit);

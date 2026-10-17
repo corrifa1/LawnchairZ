@@ -18,6 +18,7 @@ import java.io.File
  * @param supportAndPr A list of [TeamMember] objects representing support and public relations.
  * @param topLinks A list of [Link] objects representing useful external links (e.g., social media, website).
  * @param bottomLinks A list of [Link] objects representing community destinations.
+ * @param credits A list of [Link] objects for the projects this build is based on (LawnchairZ).
  * @param updateState The current [UpdateState] of the application's update checker.
  */
 data class AboutUiState(
@@ -27,6 +28,9 @@ data class AboutUiState(
     val supportAndPr: List<TeamMember> = emptyList(),
     val topLinks: List<Link> = emptyList(),
     val bottomLinks: List<Link> = emptyList(),
+    // LawnchairZ modification: credits for the projects LawnchairZ builds on; Expressive's update
+    // fields were removed.
+    val credits: List<Link> = emptyList(),
     val updateState: UpdateState = UpdateState.Hidden,
 )
 
@@ -115,9 +119,6 @@ sealed interface UpdateState {
         val changelogState: ChangelogState?,
         val expectedSha256: String? = null,
         val expectedSizeBytes: Long? = null,
-        val expectedVersionCode: Long? = null,
-        val expectedPackageName: String? = null,
-        val releaseNotes: String? = null,
     ) : UpdateState
 
     /**

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Compile-time fallbacks. Non-LawnchairZ variants select their existing translated IDs. -->
+    <string name="product_managed_by_launcher" translatable="false">Managed by LawnchairZ L3</string>
+    <string name="product_accessibility_service_description" translatable="false">LawnchairZ L3 accessibility service</string>
+    <string name="product_debug_restart_launcher" translatable="false">Restart LawnchairZ L3</string>
+    <string name="product_set_default_launcher_tip" translatable="false">Set LawnchairZ L3 as your default Home app</string>
+    <string name="product_onboarding_open_settings_title" translatable="false">Set up LawnchairZ L3</string>
+    <string name="product_onboarding_major_upgrade_title" translatable="false">Meet LawnchairZ L3</string>
+    <string name="product_onboarding_welcome" translatable="false">Welcome to LawnchairZ L3</string>
+    <string name="product_smartspace_widget_toggle_description" translatable="false">At a Glance can be added to Home with the LawnchairZ L3 widget</string>
+    <string name="product_dt2s_admin_hint" translatable="false">Enable LawnchairZ L3 as a device admin app to put the device to sleep.</string>
+    <string name="product_generic_a11y_hint" translatable="false">To %1$s, enable the LawnchairZ L3 accessibility service.</string>
+    <string name="product_generic_a11y_disclaimer" translatable="false">LawnchairZ L3 uses performGlobalAction only for the selected gesture action.</string>
+    <string name="product_bug_report" translatable="false">LawnchairZ L3 bug report</string>
+    <string name="product_unfolded_grid_description" translatable="false">LawnchairZ L3 pairs two pages to fill the larger display</string>
+    <string name="product_search_provider_description" translatable="false">Search results are provided by %1$s.</string>
+    <string name="product_quickswitch_warning" translatable="false">These settings are unavailable in this standard Home app</string>
+    <string name="product_prediction_mode" translatable="false">LawnchairZ</string>
+    <string name="product_smartspace_mode" translatable="false">LawnchairZ</string>
+    <string name="product_hotseat_mode" translatable="false">LawnchairZ</string>
+</resources>

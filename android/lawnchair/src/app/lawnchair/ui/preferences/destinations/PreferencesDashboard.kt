@@ -26,6 +26,7 @@ import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -100,6 +101,7 @@ import com.android.launcher3.util.MSDLPlayerWrapper
 import com.android.launcher3.util.PackageManagerHelper
 import com.google.android.msdl.data.model.MSDLToken
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PreferencesDashboard(
     currentRoute: PreferenceRootRoute,
@@ -214,50 +216,55 @@ fun PreferencesDashboard(
             )
 
             ExpandAndShrink(visible = advancedExpanded) {
-                PreferenceCategory(
-                    label = stringResource(R.string.dock_label),
-                    description = stringResource(R.string.dock_description),
-                    iconResource = R.drawable.ic_dock,
-                    onNavigate = { onNavigate(Dock) },
-                    isSelected = currentRoute is Dock,
-                )
-
-                PreferenceCategory(
-                    label = stringResource(R.string.folders_label),
-                    description = stringResource(R.string.folders_description),
-                    iconResource = R.drawable.ic_folder,
-                    onNavigate = { onNavigate(Folders) },
-                    isSelected = currentRoute is Folders,
-                )
-
-                PreferenceCategory(
-                    label = stringResource(id = R.string.gestures_label),
-                    description = stringResource(R.string.gestures_description),
-                    iconResource = R.drawable.ic_gestures,
-                    onNavigate = { onNavigate(Gestures) },
-                    isSelected = currentRoute is Gestures,
-                )
-
-                ExpandAndShrink(
-                    visible = !BuildConfig.STANDARD_HOME_ONLY &&
-                        (LawnchairApp.isRecentsEnabled || BuildConfig.DEBUG),
-                ) {
+                // LawnchairZ modification: every Advanced settings row is shown, not only Backup
+                // and restore.
+                // AnimatedVisibility stacks its children like a Box, so the rows need their own
+                // column, spaced like the rest of the group.
+                Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
                     PreferenceCategory(
-                        label = stringResource(id = R.string.quickstep_label),
-                        description = stringResource(id = R.string.quickstep_description),
-                        iconResource = R.drawable.ic_quickstep,
-                        onNavigate = { onNavigate(Quickstep) },
-                        isSelected = currentRoute is Quickstep,
+                        label = stringResource(R.string.dock_label),
+                        description = stringResource(R.string.dock_description),
+                        iconResource = R.drawable.ic_dock,
+                        onNavigate = { onNavigate(Dock) },
+                        isSelected = currentRoute is Dock,
+                    )
+
+                    PreferenceCategory(
+                        label = stringResource(R.string.folders_label),
+                        description = stringResource(R.string.folders_description),
+                        iconResource = R.drawable.ic_folder,
+                        onNavigate = { onNavigate(Folders) },
+                        isSelected = currentRoute is Folders,
+                    )
+
+                    PreferenceCategory(
+                        label = stringResource(id = R.string.gestures_label),
+                        description = stringResource(R.string.gestures_description),
+                        iconResource = R.drawable.ic_gestures,
+                        onNavigate = { onNavigate(Gestures) },
+                        isSelected = currentRoute is Gestures,
+                    )
+
+                    if (!BuildConfig.STANDARD_HOME_ONLY &&
+                        (LawnchairApp.isRecentsEnabled || BuildConfig.DEBUG)
+                    ) {
+                        PreferenceCategory(
+                            label = stringResource(id = R.string.quickstep_label),
+                            description = stringResource(id = R.string.quickstep_description),
+                            iconResource = R.drawable.ic_quickstep,
+                            onNavigate = { onNavigate(Quickstep) },
+                            isSelected = currentRoute is Quickstep,
+                        )
+                    }
+
+                    PreferenceCategory(
+                        label = stringResource(R.string.backup_and_restore_label),
+                        description = stringResource(R.string.backup_and_restore_description),
+                        iconResource = R.drawable.backup_restore,
+                        onNavigate = { onNavigate(BackupAndRestore) },
+                        isSelected = currentRoute is BackupAndRestore,
                     )
                 }
-
-                PreferenceCategory(
-                    label = stringResource(R.string.backup_and_restore_label),
-                    description = stringResource(R.string.backup_and_restore_description),
-                    iconResource = R.drawable.backup_restore,
-                    onNavigate = { onNavigate(BackupAndRestore) },
-                    isSelected = currentRoute is BackupAndRestore,
-                )
             }
 
             PreferenceCategory(
@@ -366,7 +373,7 @@ fun RowScope.PreferencesOverflowMenu(
                         text = stringResource(
                             productStringId(
                                 R.string.debug_restart_launcher,
-                                R.string.expressive_debug_restart_launcher,
+                                R.string.product_debug_restart_launcher,
                             ),
                         ),
                     )
@@ -437,7 +444,7 @@ fun PreferencesSetDefaultLauncherWarning(
                         text = stringResource(
                             productStringId(
                                 R.string.set_default_launcher_tip,
-                                R.string.expressive_set_default_launcher_tip,
+                                R.string.product_set_default_launcher_tip,
                             ),
                         ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,

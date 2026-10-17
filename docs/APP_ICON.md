@@ -1,31 +1,33 @@
-# Expressive Bloom app icon
+# LawnchairZ app icon
 
-The approved Expressive Bloom artwork is the app identity for LawnchairZ.
-Its violet, cobalt, coral and mint petals sit on an ink-indigo background (`#141329`).
+The LawnchairZ icon shows a striped folding lawn chair on the inner screen of an open
+foldable phone: two dark halves angled toward the viewer, a hinge gap, sky, grass and sun,
+on a pale green background (`#E4F3E7`).
 
-![Expressive Bloom](assets/expressive/expressive-bloom.png)
+![LawnchairZ icon in circle and squircle masks, full colour and themed](assets/lawnchairz/lawnchairz-icon-preview.png)
 
-The Expressive resource overlay supplies the application icon, Preferences icon,
-round icon and themed icon for all Expressive Debug, QA and Release builds.
-Separate upstream Lawnchair product flavors keep their own resource overlays.
+It is original artwork for LawnchairZ. It replaces Expressive Launcher's Bloom icon, which
+identifies Expressive, and it does not use Lawnchair's logo.
 
-## Assets and export
+## Files
 
-- `docs/assets/expressive/expressive-bloom.png`: approved opaque artwork for repository branding.
-- `docs/assets/expressive/expressive-bloom-foreground.png`: transparent foreground artwork.
-- `android/expressive/res/drawable-xxxhdpi/ic_launcher_expressive_foreground.png`: 432px color layer.
-- `android/expressive/res/drawable-xxxhdpi/ic_launcher_expressive_monochrome.png`: matching white alpha silhouette.
-- `fastlane/metadata/android/en-US/images/icon.png`: 512px listing artwork.
+- `docs/assets/lawnchairz/lawnchairz-icon.svg`: source artwork, background and foreground.
+- `docs/assets/lawnchairz/lawnchairz-icon-monochrome.svg`: single-colour source for themed icons.
+- `docs/assets/lawnchairz/lawnchairz-icon-preview.png`: the icon at 32–160 px in circle and
+  squircle masks, in colour and themed, on light and dark backgrounds.
+- `android/lawnchairz/res/drawable/ic_launcher_lawnchairz_foreground.xml`: vector foreground layer.
+- `android/lawnchairz/res/drawable/ic_launcher_lawnchairz_monochrome.xml`: vector themed-icon layer.
+- `android/lawnchairz/res/values/colors.xml`: `lawnchairz_launcher_icon_background`.
 
-Run `swift scripts/export-expressive-icon.swift` from the repository root on macOS to
-export the Android and listing assets from the approved source PNGs. The checked-in
-exports are sufficient for Android builds on other platforms; Swift is not a build dependency.
+The adaptive icons in `android/lawnchairz/res/drawable/ic_launcher_home.xml` and
+`mipmap-anydpi-v26/` combine these layers for the app, Preferences, round and themed
+icons. Upstream Lawnchair flavors keep their own icons.
 
-The Android layers use a 108dp canvas at xxxhdpi. The visible mark is centered within
-the 66dp safe circle, with an extra pixel for edge antialiasing. A separate monochrome
-silhouette allows wallpaper-based tinting without including the opaque background.
-See [Android adaptive icon requirements](https://developer.android.com/develop/ui/compose/system/icon_design_adaptive).
+## Editing the icon
 
-The artwork was generated with the built-in image-generation tool and approved in
-the design task. Exporting resources preserves the artwork; future APKs consume the
-same checked-in layers through the shared Expressive source set.
+The Android layers are hand-written `VectorDrawable`s on a 108dp canvas, with the artwork
+inside the 66dp safe zone. They match the SVG sources path for path: the screen clip is
+a `<clip-path>` group, and the themed layer's frame is an even-odd path, because
+`VectorDrawable` has no masks. When you change the artwork, update the SVG and the
+matching vector together. See
+[Android adaptive icon requirements](https://developer.android.com/develop/ui/compose/system/icon_design_adaptive).

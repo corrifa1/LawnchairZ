@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
+ * Copyright 2026 Corey Flynn and LawnchairZ contributors.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Developed for LawnchairZ.
@@ -13,7 +13,7 @@ package app.lawnchair.animation
 data class AppReturnConditions(
     /** `pref_appReturnAnimation` is on. */
     val featureEnabled: Boolean,
-    /** Expressive is the system recents provider, so the real recents animation handles it. */
+    /** LawnchairZ is the system recents provider, so the real recents animation handles it. */
     val isRecentsProvider: Boolean,
     /** The intent that brought us home carried a GestureNavContract and GNC is enabled. */
     val gestureNavContractHandled: Boolean,

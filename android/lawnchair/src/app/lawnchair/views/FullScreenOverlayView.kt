@@ -43,6 +43,7 @@ class FullScreenOverlayView @JvmOverloads constructor(
         clipToOutline = true
     }
 
+    // LawnchairZ modification: the closing overlay can be dismissed early and its speed adjusted.
     /** Removes the overlay right away, e.g. when the animation that owns it is cancelled. */
     fun dismiss() {
         (parent as? ViewGroup)?.removeView(this)

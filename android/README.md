@@ -6,9 +6,9 @@ together so upstream changes can still be compared and imported.
 
 | Area | What lives here |
 | --- | --- |
-| [lawnchair/](lawnchair/) | Launcher customization, settings, search, and Expressive behavior. |
+| [lawnchair/](lawnchair/) | Launcher customization, settings, search, and LawnchairZ behavior. |
 | [src/](src/) · [quickstep/](quickstep/) | Launcher3 core and shared Quickstep implementation. |
-| [expressive/](expressive/) · [expressiveFeed/](expressiveFeed/) | Expressive branding, product manifest, and bundled Discover helper. |
+| [lawnchairz/](lawnchairz/) · [lawnchairzFeed/](lawnchairzFeed/) | LawnchairZ branding, product manifest, and bundled Discover helper. |
 | [tests/](tests/) · [baseline-profile/](baseline-profile/) | App regression tests, instrumentation, and benchmark/profile generation. |
 | [res/](res/) · [protos/](protos/) · [schemas/](schemas/) | Shared resources, protobuf definitions, and Room database schemas. |
 | [systemUI/](systemUI/) · [platform_frameworks_libs_systemui/](platform_frameworks_libs_systemui/) | SystemUI integration and its pinned upstream submodule. |
@@ -18,13 +18,13 @@ together so upstream changes can still be compared and imported.
 ## Build from the repository root
 
 ```sh
-./gradlew assembleLawnWithQuickstepExpressiveDebug
-./gradlew testLawnWithQuickstepExpressiveDebugUnitTest
+./gradlew assembleLawnWithQuickstepLawnchairzDebug
+./gradlew testLawnWithQuickstepLawnchairzDebugUnitTest
 ```
 
 Open the repository root in Android Studio. The root [settings.gradle](../settings.gradle)
 maps existing project names to this folder, so task names stay the same, including
-`:baseline-profile:assembleLawnWithQuickstepExpressiveBenchmark`. The wrapper,
+`:baseline-profile:assembleLawnWithQuickstepLawnchairzBenchmark`. The wrapper,
 version catalog, `local.properties`, and `keystore.properties` remain at the root.
 Launcher APKs and test reports are still written under the root `build/` folder;
 library and helper outputs live in each module's `build/` folder.

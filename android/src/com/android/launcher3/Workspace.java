@@ -297,7 +297,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private static final int DRAG_MODE_ADD_TO_FOLDER = 2;
     private static final int DRAG_MODE_REORDER = 3;
     protected int mDragMode = DRAG_MODE_NONE;
-    // LawnCher: widget stacks. Hover-to-stack state, like folder creation.
+    // LawnchairZ modification: creating and dropping onto widget stacks, and side dock padding.
+    // LawnchairZ: widget stacks. Hover-to-stack state, like folder creation.
     private final app.lawnchair.widgetstack.WidgetStackDropHelper mWidgetStackDrop =
             new app.lawnchair.widgetstack.WidgetStackDropHelper();
     @Thunk
@@ -396,8 +397,10 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             // In portrait, we want the pages spaced such that there is no
             // overhang of the previous / next page into the current page viewport.
             // We assume symmetrical padding in portrait mode.
+            // LawnchairZ: side dock. Not with a side dock, which pads one side only.
             int maxInsets = Math.max(insets.left, insets.right);
-            int maxPadding = Math.max(grid.edgeMarginPx, padding.left + 1);
+            int maxPadding = Math.max(grid.edgeMarginPx,
+                    Math.max(padding.left, padding.right) + 1);
             setPageSpacing(Math.max(maxInsets, maxPadding));
         }
 
@@ -417,6 +420,13 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             lp.leftMargin = padding.left + grid.workspaceCellPaddingXPx;
             lp.rightMargin = padding.right + grid.workspaceCellPaddingXPx;
             lp.bottomMargin = padding.bottom;
+        } else if (grid.isSideDock) {
+            // LawnchairZ: side dock. Center the dots under the grid, beside the dock, just above
+            // the bottom inset.
+            lp.leftMargin = padding.left;
+            lp.rightMargin = padding.right;
+            lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
+            lp.bottomMargin = grid.getInsets().bottom + grid.edgeMarginPx;
         } else {
             lp.leftMargin = lp.rightMargin = 0;
             lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM;
@@ -580,7 +590,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (ENFORCE_DRAG_EVENT_ORDER) {
             enforceDragParity("onDragEnd", 0, 0);
         }
-        mWidgetStackDrop.reset(); // LawnCher: widget stacks
+        mWidgetStackDrop.reset(); // LawnchairZ: widget stacks
 
         updateChildrenLayersEnabled();
         StateManager<LauncherState, Launcher> stateManager = mLauncher.getStateManager();
@@ -1963,7 +1973,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             }
         } else if (child instanceof app.lawnchair.widgetstack.WidgetStackView stack
                 && !dragOptions.isAccessibleDrag) {
-            // LawnCher: widget stacks get an Edit / Delete menu, like an app icon's.
+            // LawnchairZ: widget stacks get an Edit / Delete menu, like an app icon's.
             dragOptions.preDragCondition =
                     app.lawnchair.widgetstack.WidgetStackPopup.show(mLauncher, stack);
         }
@@ -2280,7 +2290,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 float distance = dropTargetLayout.getDistanceFromWorkspaceCellVisualCenter(
                         mDragViewVisualCenter[0], mDragViewVisualCenter[1], mTargetCell);
 
-                // LawnCher: widget stacks. A widget dropped onto a matching widget or a stack
+                // LawnchairZ: widget stacks. A widget dropped onto a matching widget or a stack
                 // after hovering joins it.
                 if (mWidgetStackDrop.onDrop(mLauncher, cell, d)) {
                     if (!mLauncher.isInState(EDIT_MODE)) {
@@ -2381,7 +2391,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
                     if (container != CONTAINER_HOTSEAT
                             && (cell instanceof LauncherAppWidgetHostView
-                            // LawnCher: widget stacks resize like widgets
+                            // LawnchairZ: widget stacks resize like widgets
                             || cell instanceof app.lawnchair.widgetstack.WidgetStackView)) {
 
                         // We post this call so that the widget has a chance to be placed
@@ -2494,7 +2504,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private Runnable getWidgetResizeFrameRunnable(DragOptions options,
             NavigableAppWidgetHostView hostView, CellLayout cellLayout, boolean force) {
         AppWidgetProviderInfo pInfo = hostView.getAppWidgetInfo();
-        // LawnCher: widget stacks have no provider of their own; the frame works out their range.
+        // LawnchairZ: widget stacks have no provider of their own; the frame works out their range.
         boolean isStack = hostView instanceof app.lawnchair.widgetstack.WidgetStackView;
         boolean shouldResize = isStack || force
                 || (pInfo != null && pInfo.resizeMode != AppWidgetProviderInfo.RESIZE_NONE);
@@ -2551,7 +2561,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
         mCreateUserFolderOnDrop = false;
         mAddToExistingFolderOnDrop = false;
-        mWidgetStackDrop.reset(); // LawnCher: widget stacks
+        mWidgetStackDrop.reset(); // LawnchairZ: widget stacks
 
         mDropToLayout = null;
         mDragViewVisualCenter = d.getVisualCenter(mDragViewVisualCenter);
@@ -2563,7 +2573,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (ENFORCE_DRAG_EVENT_ORDER) {
             enforceDragParity("onDragExit", -1, 0);
         }
-        // LawnCher: widget stacks. Keep an armed target for the drop, which follows the exit.
+        // LawnchairZ: widget stacks. Keep an armed target for the drop, which follows the exit.
         mWidgetStackDrop.onDragExit();
 
         // Here we store the final page that will be dropped to, if the workspace in fact
@@ -2709,7 +2719,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
     private boolean isDragWidget(DragObject d) {
         return (d.dragInfo instanceof LauncherAppWidgetInfo ||
                 d.dragInfo instanceof PendingAddWidgetInfo
-                // LawnCher: widget stacks are workspace-only, like widgets
+                // LawnchairZ: widget stacks are workspace-only, like widgets
                 || d.dragInfo instanceof app.lawnchair.widgetstack.WidgetStackInfo);
     }
 
@@ -2763,7 +2773,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
             manageFolderFeedback(targetCellDistance, d);
 
-            // LawnCher: widget stacks. Hovering the middle of a matching widget or a stack
+            // LawnchairZ: widget stacks. Hovering the middle of a matching widget or a stack
             // offers to stack instead of reordering.
             if (mWidgetStackDrop.onDragOver(mLauncher, mDragTargetLayout, d,
                     mDragViewVisualCenter)) {
@@ -3847,7 +3857,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                         mLauncher.removeItem(child, info, persistChanges);
                     }
                 } else if (child instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
-                    // LawnCher: widget stacks
+                    // LawnchairZ: widget stacks
                     app.lawnchair.widgetstack.WidgetStackController.removeMatchingChildren(
                             mLauncher, stack, matcher, persistChanges);
                 }
@@ -3904,7 +3914,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 if (op.evaluate((ItemInfo) item.getTag(), item)) {
                     return item;
                 }
-                // LawnCher: widget stacks. Their widgets are items too.
+                // LawnchairZ: widget stacks. Their widgets are items too.
                 if (item instanceof app.lawnchair.widgetstack.WidgetStackView stack) {
                     View match = stack.mapOverPages(op);
                     if (match != null) return match;

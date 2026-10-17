@@ -91,7 +91,7 @@ class DbEntry : ItemInfo(), Comparable<DbEntry> {
         when (itemType) {
             ITEM_TYPE_FOLDER,
             ITEM_TYPE_APP_PAIR -> return getFolderMigrationId()
-            // LawnCher: widget stacks
+            // LawnchairZ modification: grid migration ids for widget stacks.
             LauncherSettings.Favorites.ITEM_TYPE_WIDGET_STACK ->
                 return app.lawnchair.widgetstack.WidgetStackMigration.migrationId(this)
             ITEM_TYPE_APPWIDGET ->

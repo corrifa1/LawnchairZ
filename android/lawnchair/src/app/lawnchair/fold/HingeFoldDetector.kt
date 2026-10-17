@@ -1,5 +1,5 @@
 /*
- * Copyright 2026 Daryl Denson and Expressive Launcher contributors.
+ * Copyright 2026 Corey Flynn and LawnchairZ contributors.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Developed for LawnchairZ.
@@ -15,13 +15,16 @@ package app.lawnchair.fold
  * It fires once the hinge has closed by [minDrop] from the most open angle seen since the last
  * [reset] (or the last firing), as long as the angle is at most [maxTriggerAngle]. Measuring the
  * drop from wherever the hinge was means a fold is caught both from flat and after the device was
- * held half-folded, while small wobbles in Flex mode don't count. Readings at or below
- * [closedAngle] never fire: the fold is already done.
+ * held half-folded, while small wobbles in Flex mode don't count.
+ *
+ * A drop all the way to closed still fires. Some hinge sensors only report a few coarse positions
+ * (the Galaxy Z Fold reports 0, 90 or 180 degrees, about every 200 ms), so a normal fold can go
+ * from fully open straight to 0 with nothing in between, and that reading can still arrive before
+ * the system decides what the fold does.
  */
 class HingeFoldDetector(
     private val minDrop: Float = DEFAULT_MIN_DROP,
     private val maxTriggerAngle: Float = DEFAULT_MAX_TRIGGER_ANGLE,
-    private val closedAngle: Float = DEFAULT_CLOSED_ANGLE,
 ) {
     private var mostOpen = Float.NaN
 
@@ -31,7 +34,7 @@ class HingeFoldDetector(
             mostOpen = angle
             return false
         }
-        if (angle <= maxTriggerAngle && angle > closedAngle && mostOpen - angle >= minDrop) {
+        if (angle <= maxTriggerAngle && mostOpen - angle >= minDrop) {
             mostOpen = angle
             return true
         }
@@ -46,6 +49,5 @@ class HingeFoldDetector(
     companion object {
         const val DEFAULT_MIN_DROP = 20f
         const val DEFAULT_MAX_TRIGGER_ANGLE = 140f
-        const val DEFAULT_CLOSED_ANGLE = 5f
     }
 }

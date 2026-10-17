@@ -1,9 +1,9 @@
 # Build LawnchairZ
 
-This guide covers the public source for **LawnchairZ 1.0.12 / version code 13**,
-exported from product revision `ad7a5c336423df6edb198a700a050117808c96f6`.
-Use the [GitHub releases](https://github.com/corrifa1/LawnchairZ/releases)
-for official signed APKs. A local build is useful for development and testing.
+This guide covers building LawnchairZ from source. LawnchairZ has no published
+releases yet, so a local build is how you get it. Its default version is still the
+one inherited from Expressive Launcher (**1.0.12 / version code 13**); see
+[source provenance](SOURCE_PROVENANCE.md).
 
 ## Requirements
 
@@ -34,7 +34,7 @@ See the [Android source guide](../android/README.md) for the folder map.
 
 ```sh
 git clone --recurse-submodules https://github.com/corrifa1/LawnchairZ.git
-cd ExpressiveLauncher
+cd LawnchairZ
 ```
 
 For an existing clone, or after changing revisions:
@@ -59,48 +59,48 @@ Confirm the Java runtime, then use the project wrapper:
 ```sh
 java -version
 ./gradlew --version
-./gradlew assembleLawnWithQuickstepExpressiveDebug
+./gradlew assembleLawnWithQuickstepLawnchairzDebug
 ```
 
 The developer APK is written to:
 
 ```text
-build/outputs/apk/lawnWithQuickstepExpressive/debug/*.apk
+build/outputs/apk/lawnWithQuickstepLawnchairz/debug/*.apk
 ```
 
 On Windows, run the equivalent commands with `gradlew.bat`.
 The task name contains `WithQuickstep` because Lawnchair shares those implementation
-classes. Expressive's installable product is a standard Home app: Android SystemUI
+classes. LawnchairZ is a standard Home app: Android SystemUI
 continues to provide system gesture navigation and Recents. Root and QuickSwitch
 are not required.
 
 The default developer application ID is `dev.launcher.lawnchairz.l3.debug`.
-Official QA APKs use that same ID with a different, durable signing certificate.
-**A locally debug-signed APK cannot update an official signed QA installation.**
-Use a separate development emulator for the default developer build so that your
-existing launcher installation and Home data remain available.
+QA builds use that same ID with your release certificate, so **a debug-signed APK and a
+QA APK cannot update each other**. Android only updates an installed launcher in place,
+keeping its Home layout and settings, when the application ID and signer match and the
+version code does not go down. Never uninstall your daily launcher to switch builds.
 
 ## Run the app tests
 
-Run the complete Expressive unit-test suite:
+Run the complete LawnchairZ unit-test suite:
 
 ```sh
-./gradlew testLawnWithQuickstepExpressiveDebugUnitTest
+./gradlew testLawnWithQuickstepLawnchairzDebugUnitTest
 ```
 
 For example, run only the At a Glance setup and widget-binding regression tests:
 
 ```sh
-./gradlew testLawnWithQuickstepExpressiveDebugUnitTest \
+./gradlew testLawnWithQuickstepLawnchairzDebugUnitTest \
   --tests app.lawnchair.smartspace.provider.SmartspaceSetupCoordinatorTest \
   --tests app.lawnchair.HeadlessWidgetBindingTest
 ```
 
 Results are written to
-`build/reports/tests/testLawnWithQuickstepExpressiveDebugUnitTest/` and
-`build/test-results/testLawnWithQuickstepExpressiveDebugUnitTest/`.
+`build/reports/tests/testLawnWithQuickstepLawnchairzDebugUnitTest/` and
+`build/test-results/testLawnWithQuickstepLawnchairzDebugUnitTest/`.
 The suite includes Android-resource/Robolectric tests under
-[tests/expressiveUnit](../android/tests/expressiveUnit). Unit-test success does not replace
+[tests/lawnchairzUnit](../android/tests/lawnchairzUnit). Unit-test success does not replace
 installation, upgrade and visible feature testing on an Android device or emulator.
 
 ## Build with your own signing identity
@@ -115,33 +115,25 @@ cp keystore.properties.example keystore.properties
 Edit the ignored `keystore.properties` with your own keystore path, alias and
 passwords, following [the example](../keystore.properties.example). The supported
 keys are `storeFile`, `storePassword`, `keyAlias` and `keyPassword`. The build can
-also read a properties file selected by `EXPRESSIVE_KEYSTORE_PROPERTIES`.
+also read a properties file selected by `LAWNCHAIRZ_KEYSTORE_PROPERTIES`, or the
+`LAWNCHAIRZ_RELEASE_STORE_FILE`, `_STORE_PASSWORD`, `_KEY_ALIAS` and `_KEY_PASSWORD`
+environment variables. The older `EXPRESSIVE_*` names still work.
 Signing keys and credentials are not included in this repository and must remain
 outside commits and exports.
 
 With your configuration present:
 
 ```sh
-./gradlew assembleLawnWithQuickstepExpressiveQa
+./gradlew assembleLawnWithQuickstepLawnchairzQa
 ```
 
 The result is a minified, non-debuggable APK under
-`build/outputs/apk/lawnWithQuickstepExpressive/qa/`. Your own signer does not confer
-the ability to update official Expressive APKs. For independently distributed
-forks, configure your own application identity, update endpoints and signing
-lineage using the product properties in [build.gradle](../android/build.gradle).
+`build/outputs/apk/lawnWithQuickstepLawnchairz/qa/`. Forks should configure their own
+application identity and signing lineage with the `lawnchairz*` Gradle properties in
+[build.gradle](../android/build.gradle) (for example `-PlawnchairzApplicationId=...`).
 
-## Official delivery and port status
+## Port status
 
-Official QA delivery uses the project's Jenkins build and publication pipeline:
-full tests, signed assembly, isolated upgrade validation, artifact sealing and
-GitHub publication. Building the source locally does not publish a release. The
-inherited GitHub workflow files are retained for reference under
-[docs/reference/upstream-github](reference/upstream-github); they are not the
-active Expressive release service.
-
-Expressive runs on Android 17 while retaining its Lawnchair-derived Launcher3
+LawnchairZ runs on Android 17 while retaining its Lawnchair-derived Launcher3
 foundation. The separate full AOSP Android 17 core port is **not complete**.
 [The port notes](ANDROID17_PORT.md) record its provenance and remaining gates.
-This guide describes the current source and developer build, not a completed
-Play Store or stable-production certification.

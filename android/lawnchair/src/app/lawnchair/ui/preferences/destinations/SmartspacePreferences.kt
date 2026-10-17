@@ -90,7 +90,9 @@ fun SmartspacePreferences(
                 description = stringResource(
                     productStringId(
                         R.string.smartspace_widget_toggle_description,
-                        R.string.expressive_smartspace_widget_toggle_description,
+                        // LawnchairZ modification: the expressive_* product string is now
+                        // product_*.
+                        R.string.product_smartspace_widget_toggle_description,
                     ),
                 ).takeIf { modeIsLawnchair },
             ) {

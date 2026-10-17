@@ -83,7 +83,7 @@ public class DeleteDropTarget extends ButtonDropTarget {
 
         return (info instanceof LauncherAppWidgetInfo)
                 || (info instanceof CollectionInfo)
-                // LawnCher: widget stacks
+                // LawnchairZ modification: widget stacks can be removed here.
                 || (info instanceof app.lawnchair.widgetstack.WidgetStackInfo);
     }
 
