@@ -11,6 +11,7 @@ import android.content.Context
 import app.lawnchair.preferences.PreferenceManager
 import com.android.launcher3.InvariantDeviceProfile
 import com.android.launcher3.util.IntArray as LauncherIntArray
+import java.util.function.IntPredicate
 
 /**
  * What the workspace asks about Duo continuity. Reads the "Unfolded layout" preference and turns
@@ -91,6 +92,37 @@ object DuoContinuity {
     @JvmStatic
     fun currentScreenFor(context: Context, screenId: Int): Int =
         if (isEnabled(context)) DuoFoldMapping.coverScreenAfterFold(screenId) else screenId
+
+    @JvmStatic
+    fun isCompanionScreen(screenId: Int): Boolean = DuoPairing.isCompanionScreen(screenId)
+
+    /** The other screen of the pair. */
+    @JvmStatic
+    fun pairedScreenOf(screenId: Int): Int = DuoPairing.pairedScreenOf(screenId)
+
+    /** The page index for a saved default home page. Unchanged when the mode is off. */
+    @JvmStatic
+    fun defaultPageFromStored(context: Context, stored: Int, isTwoPanels: Boolean): Int =
+        if (isEnabled(context)) DuoFoldMapping.storedToDefaultPage(stored, isTwoPanels) else stored
+
+    /** The value to save for a default home page at [pageIndex]. Unchanged when the mode is off. */
+    @JvmStatic
+    fun defaultPageToStored(context: Context, pageIndex: Int, isTwoPanels: Boolean): Int =
+        if (isEnabled(context)) DuoFoldMapping.defaultPageToStored(pageIndex, isTwoPanels) else pageIndex
+
+    /** A new dock-side screen id at or after [candidate] that nothing in [taken] uses. */
+    @JvmStatic
+    fun nextDockSideScreenId(context: Context, candidate: Int, taken: IntPredicate): Int =
+        if (isEnabled(context)) {
+            DuoPairing.nextDockSideScreenId(candidate) { taken.test(it) }
+        } else {
+            candidate
+        }
+
+    /** Whether the companion keeps an empty cover page from being dropped. */
+    @JvmStatic
+    fun coverPairIsRemovable(companionHasItems: Boolean, companionIsSaved: Boolean): Boolean =
+        DuoPairing.coverPairIsRemovable(companionHasItems, companionIsSaved)
 
     /** See [DuoFoldMapping.pageAfterInPlaceFold]. */
     @JvmStatic

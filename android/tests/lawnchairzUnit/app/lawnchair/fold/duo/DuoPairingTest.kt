@@ -108,14 +108,53 @@ class DuoPairingTest {
     }
 
     @Test
-    fun arrangePairs_leavesExtrasAndUnpairedScreensAlone() {
+    fun arrangePairs_leavesUnpairedScreensAlone() {
         assertThat(DuoPairing.arrangePairs(listOf(0, 1, 2, extra), swap = true))
             .containsExactly(1, 0, 2, extra).inOrder()
-        assertThat(DuoPairing.arrangePairs(listOf(0, 1, extra, extraSecond), swap = true))
-            .containsExactly(1, 0, extra, extraSecond).inOrder()
         assertThat(DuoPairing.arrangePairs(listOf(0, 2, 1, 3), swap = true))
             .containsExactly(0, 2, 1, 3).inOrder()
         assertThat(DuoPairing.arrangePairs(emptyList(), swap = true)).isEmpty()
+    }
+
+    @Test
+    fun arrangePairs_theExtraScreensArePairedWithTheFirstOneDockSide() {
+        assertThat(DuoPairing.arrangePairs(listOf(0, 1, extra, extraSecond), swap = true))
+            .containsExactly(1, 0, extraSecond, extra).inOrder()
+        assertThat(DuoPairing.arrangePairs(listOf(0, 1, extraSecond, extra), swap = false))
+            .containsExactly(0, 1, extra, extraSecond).inOrder()
+    }
+
+    @Test
+    fun extraScreenConstants_matchTheWorkspace() {
+        assertThat(DuoPairing.EXTRA_SCREEN)
+            .isEqualTo(com.android.launcher3.WorkspaceLayoutManager.EXTRA_EMPTY_SCREEN_ID)
+        assertThat(DuoPairing.EXTRA_SECOND_SCREEN)
+            .isEqualTo(com.android.launcher3.WorkspaceLayoutManager.EXTRA_EMPTY_SCREEN_SECOND_ID)
+    }
+
+    // New pages
+
+    @Test
+    fun nextDockSideScreenId_roundsUpToAnEvenScreen() {
+        assertThat(DuoPairing.nextDockSideScreenId(3) { false }).isEqualTo(4)
+        assertThat(DuoPairing.nextDockSideScreenId(4) { false }).isEqualTo(4)
+        assertThat(DuoPairing.nextDockSideScreenId(0) { false }).isEqualTo(0)
+    }
+
+    @Test
+    fun nextDockSideScreenId_skipsPairsWithATakenScreen() {
+        // 4 is free but its companion 5 is a hidden companion that exists.
+        assertThat(DuoPairing.nextDockSideScreenId(3) { it == 5 }).isEqualTo(6)
+        assertThat(DuoPairing.nextDockSideScreenId(4) { it == 4 || it == 6 }).isEqualTo(8)
+    }
+
+    // Removing empty pages on the cover
+
+    @Test
+    fun coverPairIsRemovable_onlyWhenTheCompanionHasNothing() {
+        assertThat(DuoPairing.coverPairIsRemovable(companionHasItems = false, companionIsSaved = false)).isTrue()
+        assertThat(DuoPairing.coverPairIsRemovable(companionHasItems = true, companionIsSaved = false)).isFalse()
+        assertThat(DuoPairing.coverPairIsRemovable(companionHasItems = false, companionIsSaved = true)).isFalse()
     }
 
     // Cover screen

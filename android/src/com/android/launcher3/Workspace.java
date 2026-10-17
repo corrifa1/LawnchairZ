@@ -209,6 +209,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
 
     // LawnchairZ: duo continuity. Companion screens the cover screen doesn't bind.
     private final IntArray mDuoHiddenCompanions = new IntArray();
+    private final IntArray mDuoOccupiedCompanions = new IntArray();
     private Boolean mDuoWasTwoPanels = null;
 
     @Thunk
@@ -727,6 +728,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         mWorkspaceScreens.clear();
         // LawnchairZ: duo continuity.
         mDuoHiddenCompanions.clear();
+        mDuoOccupiedCompanions.clear();
         mDuoWasTwoPanels = isTwoPanelEnabled();
 
         // Ensure there is always at least one page during bind lifecycle.
@@ -794,6 +796,15 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                         dragObject.dragInfo).screenId);
                 CellLayout pagePair = mWorkspaceScreens.get(pagePairScreenId);
                 dragSourceChildCount += pagePair.getShortcutsAndWidgets().getChildCount();
+            } else if (DuoContinuity.hidesCompanions(getContext(), false)
+                    && !mLauncher.isHotseatLayout((View) mDragSourceInternal.getParent())) {
+                // LawnchairZ: duo continuity. The companion isn't bound on the cover screen; if it
+                // has items, this isn't the last item of the pair.
+                int sourceScreenId = getCellPosMapper().mapModelToPresenter(
+                        dragObject.dragInfo).screenId;
+                if (mDuoOccupiedCompanions.contains(DuoContinuity.pairedScreenOf(sourceScreenId))) {
+                    dragSourceChildCount++;
+                }
             }
 
             // When the drag view content is a LauncherAppWidgetHostView, we should increment the
@@ -823,6 +834,23 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 insertNewWorkspaceScreen(extraEmptyPageId);
             }
         });
+        arrangeDuoScreens(); // LawnchairZ: duo continuity.
+    }
+
+    /**
+     * LawnchairZ: duo continuity. Puts the two screens of each pair, including the extra empty
+     * ones, in the order the views are shown in. A no-op unless the pairs are swapped.
+     */
+    private void arrangeDuoScreens() {
+        if (DuoContinuity.swapsViewOrder(getContext(), isTwoPanelEnabled(), mIsRtl)) {
+            reorderBoundWorkspaceScreens(mScreenOrder.clone());
+        }
+    }
+
+    /** LawnchairZ: duo continuity. Remembers which hidden companions have items. */
+    public void setDuoOccupiedCompanions(IntArray companions) {
+        mDuoOccupiedCompanions.clear();
+        mDuoOccupiedCompanions.addAll(companions);
     }
 
 
@@ -844,6 +872,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 insertNewWorkspaceScreen(extraEmptyPageId);
             }
         });
+        arrangeDuoScreens(); // LawnchairZ: duo continuity.
     }
 
     /**
@@ -904,6 +933,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             mWorkspaceScreens.put(newScreenId, screen);
             mScreenOrder.add(newScreenId);
         }
+        arrangeDuoScreens(); // LawnchairZ: duo continuity.
     }
 
     public void removeExtraEmptyScreen(boolean stripEmptyScreens) {
@@ -994,13 +1024,20 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         }
 
         IntSet extraEmptyPageIds = new IntSet();
-        forEachExtraEmptyPageId(extraEmptyPageId ->
-                extraEmptyPageIds.add(commitExtraEmptyScreen(extraEmptyPageId)));
+        int[] firstCommittedId = {-1}; // LawnchairZ: duo continuity.
+        forEachExtraEmptyPageId(extraEmptyPageId -> {
+            int committedId = commitExtraEmptyScreen(extraEmptyPageId, firstCommittedId[0]);
+            if (firstCommittedId[0] < 0) {
+                firstCommittedId[0] = committedId;
+            }
+            extraEmptyPageIds.add(committedId);
+        });
+        arrangeDuoScreens(); // LawnchairZ: duo continuity.
 
         return extraEmptyPageIds;
     }
 
-    private int commitExtraEmptyScreen(int emptyScreenId) {
+    private int commitExtraEmptyScreen(int emptyScreenId, int firstCommittedId) {
         CellLayout cl = mWorkspaceScreens.get(emptyScreenId);
         mWorkspaceScreens.remove(emptyScreenId);
         mScreenOrder.removeValue(emptyScreenId);
@@ -1011,6 +1048,16 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         // skip those IDs manually.
         while (mWorkspaceScreens.containsKey(newScreenId)) {
             newScreenId++;
+        }
+        // LawnchairZ: duo continuity. A new page is a dock-side (even) screen, and its companion
+        // is the next id, so a new page never lands in the companion slot.
+        if (DuoContinuity.isEnabled(getContext())) {
+            if (emptyScreenId == EXTRA_EMPTY_SCREEN_SECOND_ID && firstCommittedId >= 0) {
+                newScreenId = DuoContinuity.pairedScreenOf(firstCommittedId);
+            } else {
+                newScreenId = DuoContinuity.nextDockSideScreenId(getContext(), newScreenId,
+                        id -> mWorkspaceScreens.containsKey(id) || mDuoHiddenCompanions.contains(id));
+            }
         }
 
         mWorkspaceScreens.put(newScreenId, cl);
@@ -1191,6 +1238,20 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                     removeScreensIterator.remove();
                 }
             }
+        } else if (DuoContinuity.hidesCompanions(getContext(), false)) {
+            // LawnchairZ: duo continuity. The cover screen binds only dock-side pages, so the same
+            // rule needs the model's word for the companion: it keeps the page if it has items or
+            // is a page the user kept.
+            Iterator<Integer> removeScreensIterator = removeScreens.iterator();
+            while (removeScreensIterator.hasNext()) {
+                int companion = DuoContinuity.pairedScreenOf(removeScreensIterator.next());
+                if (mDuoHiddenCompanions.contains(companion)
+                        && !DuoContinuity.coverPairIsRemovable(
+                                mDuoOccupiedCompanions.contains(companion),
+                                persistedScreenIds.contains(companion))) {
+                    removeScreensIterator.remove();
+                }
+            }
         }
 
         // We enforce at least one page (two pages on two panel home) to add new items to.
@@ -1204,6 +1265,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
             CellLayout cl = mWorkspaceScreens.get(id);
             mWorkspaceScreens.remove(id);
             mScreenOrder.removeValue(id);
+            // LawnchairZ: duo continuity. The pair goes, so its empty companion does too.
+            mDuoHiddenCompanions.removeValue(DuoContinuity.pairedScreenOf(id));
 
             if (getChildCount() > minScreens) {
                 // If this isn't the last page, just remove it
@@ -1223,6 +1286,7 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
                 mScreenOrder.add(extraScreenId);
             }
         }
+        arrangeDuoScreens(); // LawnchairZ: duo continuity.
 
         if (pageShift >= 0) {
             setCurrentPage(currentPage - pageShift);
@@ -1232,7 +1296,9 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         updateAccessibilityViewPageDescription();
 
         // Reset default home page if it's now out of range after page removal
-        int storedDefault = PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getDefaultHomePage());
+        int storedDefault = DuoContinuity.defaultPageFromStored(getContext(),
+                PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getDefaultHomePage()),
+                isTwoPanelEnabled()); // LawnchairZ: duo continuity.
         if (storedDefault >= getChildCount()) {
             setDefaultPage(DEFAULT_PAGE);
         }
@@ -3491,6 +3557,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         if (screenSwapMap.size() == 0) {
             return false;
         }
+        // LawnchairZ: duo continuity. On the cover screen a page moves with its hidden companion.
+        addDuoCompanionsToSwapMap(screenSwapMap);
         for (int i = 0; i < panelCount; i++) {
             int fromIndex = fromStart + i;
             int targetIndex = targetStart + i;
@@ -3516,6 +3584,43 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
         setCurrentPage(destinationPage, destinationPage);
         showPageIndicatorAtCurrentScroll();
         return true;
+    }
+
+    /**
+     * LawnchairZ: duo continuity. While the cover screen is showing, swapping two pages also swaps
+     * their companions, which aren't bound, so each pair stays together in the database and in the
+     * set of companions that have items.
+     */
+    private void addDuoCompanionsToSwapMap(SparseIntArray screenSwapMap) {
+        if (!DuoContinuity.hidesCompanions(getContext(), isTwoPanelEnabled())) {
+            return;
+        }
+        int size = screenSwapMap.size();
+        int[] from = new int[size];
+        int[] to = new int[size];
+        for (int i = 0; i < size; i++) {
+            from[i] = screenSwapMap.keyAt(i);
+            to[i] = screenSwapMap.valueAt(i);
+        }
+        IntArray occupied = new IntArray();
+        for (int i = 0; i < mDuoOccupiedCompanions.size(); i++) {
+            occupied.add(mDuoOccupiedCompanions.get(i));
+        }
+        for (int i = 0; i < size; i++) {
+            int fromCompanion = DuoContinuity.pairedScreenOf(from[i]);
+            int toCompanion = DuoContinuity.pairedScreenOf(to[i]);
+            screenSwapMap.put(fromCompanion, toCompanion);
+            // The companion's items now sit at its swap partner.
+            if (occupied.contains(fromCompanion)) {
+                mDuoOccupiedCompanions.removeValue(fromCompanion);
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            if (occupied.contains(DuoContinuity.pairedScreenOf(from[i]))
+                    && !mDuoOccupiedCompanions.contains(DuoContinuity.pairedScreenOf(to[i]))) {
+                mDuoOccupiedCompanions.add(DuoContinuity.pairedScreenOf(to[i]));
+            }
+        }
     }
 
     public IntArray getReorderablePageGroupStarts() {
@@ -4013,7 +4118,11 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      * Falls back to {@link #DEFAULT_PAGE} if the stored page is out of range.
      */
     public int getDefaultPage() {
-        int storedPage = PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getDefaultHomePage());
+        // LawnchairZ: duo continuity. The saved value is the pair's first screen, as in "Page
+        // pairs" mode; the cover screen shows one page per pair.
+        int storedPage = DuoContinuity.defaultPageFromStored(getContext(),
+                PreferenceCacheExtensionsKt.firstCached(mPreferenceManager2.getDefaultHomePage()),
+                isTwoPanelEnabled());
         int pageCount = getChildCount();
         if (storedPage >= 0 && storedPage < pageCount) {
             return storedPage;
@@ -4025,7 +4134,8 @@ public class Workspace<T extends View & PageIndicator> extends PagedView<T>
      * Sets the given page index as the default home page.
      */
     public void setDefaultPage(int pageIndex) {
-        com.patrykmichalik.opto.core.PreferenceExtensionsKt.setBlocking(mPreferenceManager2.getDefaultHomePage(), pageIndex);
+        com.patrykmichalik.opto.core.PreferenceExtensionsKt.setBlocking(mPreferenceManager2.getDefaultHomePage(),
+                DuoContinuity.defaultPageToStored(getContext(), pageIndex, isTwoPanelEnabled())); // LawnchairZ: duo continuity.
     }
 
     /**

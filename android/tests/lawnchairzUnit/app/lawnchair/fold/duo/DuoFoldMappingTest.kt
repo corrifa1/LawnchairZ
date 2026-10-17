@@ -90,6 +90,45 @@ class DuoFoldMappingTest {
         }
     }
 
+    // Default home page
+
+    @Test
+    fun defaultPage_savedValueIsThePairsFirstScreen() {
+        // Cover page 1 is screen 2; the unfolded pair (3, 2) starts at page index 2.
+        assertThat(DuoFoldMapping.defaultPageToStored(1, isTwoPanels = false)).isEqualTo(2)
+        assertThat(DuoFoldMapping.defaultPageToStored(2, isTwoPanels = true)).isEqualTo(2)
+        assertThat(DuoFoldMapping.defaultPageToStored(3, isTwoPanels = true)).isEqualTo(2)
+    }
+
+    @Test
+    fun defaultPage_sameSavedValueGivesTheSamePairOnBothScreens() {
+        val stored = 4
+        assertThat(DuoFoldMapping.storedToDefaultPage(stored, isTwoPanels = false)).isEqualTo(2)
+        assertThat(DuoFoldMapping.storedToDefaultPage(stored, isTwoPanels = true)).isEqualTo(4)
+        // Cover page 2 is screen 4, which is in the pair that starts at unfolded page 4.
+        assertThat(cover[2]).isEqualTo(4)
+        assertThat(unfolded.subList(4, 6)).contains(4)
+    }
+
+    @Test
+    fun defaultPage_roundTripsOnEachScreen() {
+        for (page in 0..5) {
+            val coverStored = DuoFoldMapping.defaultPageToStored(page, isTwoPanels = false)
+            assertThat(DuoFoldMapping.storedToDefaultPage(coverStored, isTwoPanels = false)).isEqualTo(page)
+        }
+        for (page in listOf(0, 2, 4)) {
+            val stored = DuoFoldMapping.defaultPageToStored(page, isTwoPanels = true)
+            assertThat(DuoFoldMapping.storedToDefaultPage(stored, isTwoPanels = true)).isEqualTo(page)
+        }
+    }
+
+    @Test
+    fun defaultPage_matchesPagePairsModeWhenTheModeIsTurnedOff() {
+        // In "Page pairs" mode the saved value is the page index of the pair's first page.
+        assertThat(DuoFoldMapping.defaultPageToStored(1, isTwoPanels = false)).isEqualTo(2)
+        assertThat(DuoFoldMapping.defaultPageToStored(0, isTwoPanels = false)).isEqualTo(0)
+    }
+
     // The in-place step before the rebind
 
     @Test

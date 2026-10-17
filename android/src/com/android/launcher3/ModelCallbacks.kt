@@ -487,9 +487,20 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         val currentAppWidgets = ArrayList<ItemInfo>()
         val otherAppWidgets = ArrayList<ItemInfo>()
 
+        // LawnchairZ: duo continuity. The cover screen doesn't bind companion screens, so their
+        // items are not inflated; remember which companions have items.
+        val hidesCompanions =
+            DuoContinuity.hidesCompanions(launcher, launcher.deviceProfile.deviceProperties.isTwoPanels)
+        val occupiedCompanions = LIntArray()
         val currentScreenCheck = currentScreenContentFilter(currentScreenIds)
         itemIdMap.forEach { item: ItemInfo ->
-            if (currentScreenCheck.test(item)) {
+            if (
+                hidesCompanions &&
+                    item.container == CONTAINER_DESKTOP &&
+                    DuoContinuity.isCompanionScreen(item.screenId)
+            ) {
+                if (!occupiedCompanions.contains(item.screenId)) occupiedCompanions.add(item.screenId)
+            } else if (currentScreenCheck.test(item)) {
                 (if (WIDGET_FILTER.test(item)) currentAppWidgets else currentWorkspaceItems).add(
                     item
                 )
@@ -508,7 +519,10 @@ class ModelCallbacks(private var launcher: Launcher) : BgDataModel.Callbacks {
         }
 
         // Bind workspace screens
-        executeCallbacksTask { bindScreens(orderedScreenIds) }
+        executeCallbacksTask {
+            launcher.workspace.setDuoOccupiedCompanions(occupiedCompanions) // LawnchairZ: duo continuity.
+            bindScreens(orderedScreenIds)
+        }
 
         // Load items on the current page.
         if (Flags.enableWorkspaceInflation()) {

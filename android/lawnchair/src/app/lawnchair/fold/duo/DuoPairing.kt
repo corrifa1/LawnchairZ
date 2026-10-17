@@ -20,6 +20,10 @@ object DuoPairing {
 
     enum class Pane { LEFT, RIGHT }
 
+    /** `WorkspaceLayoutManager.EXTRA_EMPTY_SCREEN_ID` and `EXTRA_EMPTY_SCREEN_SECOND_ID`. */
+    const val EXTRA_SCREEN = -201
+    const val EXTRA_SECOND_SCREEN = -200
+
     /** The pane that holds the cover-screen page when unfolded, for a dock on [dockSide]. */
     fun coverPane(dockSide: DockSide): Pane = when (dockSide) {
         DockSide.LEFT -> Pane.LEFT
@@ -58,8 +62,9 @@ object DuoPairing {
     /**
      * Returns [order] with every aligned pair of positions (0 and 1, 2 and 3, ...) that holds the two
      * screens of one pair put in the dock-side screen first (when [swap] is false) or second.
-     * Positions that don't hold a pair, such as extra empty screens, are left alone. The result
-     * doesn't depend on which way round [order] was, so it can undo its own effect.
+     * The two extra empty screens also form a pair, with [EXTRA_SCREEN] as the dock-side one.
+     * Positions that don't hold a pair are left alone. The result doesn't depend on which way
+     * round [order] was, so it can undo its own effect.
      */
     fun arrangePairs(order: List<Int>, swap: Boolean): List<Int> {
         val result = order.toMutableList()
@@ -67,9 +72,14 @@ object DuoPairing {
         while (i + 1 < result.size) {
             val a = result[i]
             val b = result[i + 1]
-            if (a >= 0 && b >= 0 && a xor 1 == b) {
-                val dockSide = if (isDockSideScreen(a)) a else b
-                val companion = pairedScreenOf(dockSide)
+            val dockSide = when {
+                a >= 0 && b >= 0 && a xor 1 == b -> if (isDockSideScreen(a)) a else b
+                a == EXTRA_SCREEN && b == EXTRA_SECOND_SCREEN -> a
+                a == EXTRA_SECOND_SCREEN && b == EXTRA_SCREEN -> b
+                else -> null
+            }
+            if (dockSide != null) {
+                val companion = if (dockSide == a) b else a
                 result[i] = if (swap) companion else dockSide
                 result[i + 1] = if (swap) dockSide else companion
             }
@@ -77,6 +87,24 @@ object DuoPairing {
         }
         return result
     }
+
+    /**
+     * The id for a new dock-side screen, given the next free id [candidate] from the database: even,
+     * and with both screens of its pair free according to [isTaken].
+     */
+    fun nextDockSideScreenId(candidate: Int, isTaken: (Int) -> Boolean): Int {
+        var id = if (candidate and 1 == 1) candidate + 1 else candidate
+        while (isTaken(id) || isTaken(id + 1)) id += 2
+        return id
+    }
+
+    /**
+     * Whether an empty cover page can be dropped. Its companion isn't bound on the cover, so the
+     * pair goes only if the companion has no items ([companionHasItems]) and isn't a page the user
+     * kept ([companionIsSaved]).
+     */
+    fun coverPairIsRemovable(companionHasItems: Boolean, companionIsSaved: Boolean): Boolean =
+        !companionHasItems && !companionIsSaved
 
     /**
      * The screens the cover shows for [order]: each regular screen replaced by its dock-side

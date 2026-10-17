@@ -28,6 +28,19 @@ object DuoFoldMapping {
     }
 
     /**
+     * The value to save for "default home page" when the page at [pageIndex] is chosen. It is the
+     * position of the pair's first screen (2k), the same number "Page pairs" mode uses, so turning
+     * the mode off keeps the same default. Unfolded, [pageIndex] is already the pair's first page;
+     * on the cover it is the pair number.
+     */
+    fun defaultPageToStored(pageIndex: Int, isTwoPanels: Boolean): Int =
+        if (isTwoPanels) pageIndex - pageIndex % 2 else pageIndex * 2
+
+    /** The page index for a saved default home page, the inverse of [defaultPageToStored]. */
+    fun storedToDefaultPage(stored: Int, isTwoPanels: Boolean): Int =
+        if (isTwoPanels) stored - stored % 2 else stored / 2
+
+    /**
      * The page to show on the cover screen straight after a fold, before the model rebinds, while the
      * views still follow the unfolded [viewOrder]: the dock-side screen of the pair at [currentPage].
      * Returns [currentPage] when the pair has no dock-side screen bound.
